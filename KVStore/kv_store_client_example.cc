@@ -23,7 +23,11 @@ class KVStoreClientExample {
 
     Status status = stub_->Get(&context, request, &response);
     if (status.ok()) {
-      std::cout << "[Get] Success: " << response.message() << std::endl;
+      if (response.status() == KVResStatus::SUCCESS) {
+        std::cout << "[Get-OK]: " << response.message() << std::endl;
+      } else {
+        std::cout << "[Get-ERR]: " << response.error_msg() << std::endl;
+      }
     } else {
       std::cout << "[Get] Failure: " << response.error_msg() << std::endl;
     }
@@ -40,7 +44,11 @@ class KVStoreClientExample {
 
     Status status = stub_->Put(&context, request, &response);
     if (status.ok()) {
-      std::cout << "[Put] Success: " << response.message() << std::endl;
+      if (response.status() == KVResStatus::SUCCESS) {
+        std::cout << "[Put-OK]: " << response.message() << std::endl;
+      } else {
+        std::cout << "[Put-ERR]: " << response.error_msg() << std::endl;
+      }
     } else {
       std::cout << "[Put] Failure: " << response.error_msg() << std::endl;
     }
@@ -59,7 +67,11 @@ class KVStoreClientExample {
 
     Status status = stub_->CPut(&context, request, &response);
     if (status.ok()) {
-      std::cout << "[CPut] Success: " << response.message() << std::endl;
+      if (response.status() == KVResStatus::SUCCESS) {
+        std::cout << "[CPut-OK]: " << response.message() << std::endl;
+      } else {
+        std::cout << "[CPut-ERR]: " << response.error_msg() << std::endl;
+      }
     } else {
       std::cout << "[CPut] Failure: " << response.error_msg() << std::endl;
     }
@@ -75,21 +87,39 @@ class KVStoreClientExample {
 
     Status status = stub_->Delete(&context, request, &response);
     if (status.ok()) {
-      std::cout << "[Delete] Success: " << response.message() << std::endl;
+      if (response.status() == KVResStatus::SUCCESS) {
+        std::cout << "[Delete-OK]: " << response.message() << std::endl;
+      } else {
+        std::cout << "[Delete-ERR]: " << response.error_msg() << std::endl;
+      }
     } else {
       std::cout << "[Delete] Failure: " << response.error_msg() << std::endl;
     }
   }
 
   void Test() {
-    std::string row = "some_row";
-    std::string col = "some_col";
-    std::string prev_value = "some_prev_value";
-    std::string value = "some_value";
-    Get(row, col);
-    Put(row, col, value);
-    CPut(row, col, prev_value, value);
-    Delete(row, col);
+    Put("Alice", "Alice-Col1", "Hello, I'm Alice\n");
+    Put("Alice", "Alice-Col2",
+        "This is the second col for Alice(Before delete)!\n");
+    Put("Bob", "Bob-Col1", "This is the first col for Bob (old)\n");
+    Put("Bob", "Bob-Col2", "Test splited\n content\n");
+    Put("Bob", "Bob-Col3", "\tThis is the third col for Bob\n");
+    Delete("Alice", "Alice-Col2");
+    Delete("Alice", "Alice-Col1");
+    CPut("Bob", "Bob-Col1", "This is the first col for Bob (old)\n",
+         "This is the first col for Bob (new)\n");
+    Put("Bob", "Bob-Col3", "This is the third col for Bob(no indentation)\n");
+    Put("Cindy", "Cindy-Col1", "Hello World, I'm Cindy.");
+    Put("Cindy", "Cindy-Col2", "This is Cindy's second col");
+    // -------------------------------------
+    Get("Alice", "Alice-Col1");
+    Get("Alice", "Alice-Col2");
+    Get("Bob", "Bob-Col1");
+    Get("Bob", "Bob-Col2");
+    Get("Bob", "Bob-Col3");
+    Get("Cindy", "Cindy-Col1");
+    Get("Cindy", "Cindy-Col2");
+    Get("Cindy", "Cindy-Col3");
   }
 
  private:
