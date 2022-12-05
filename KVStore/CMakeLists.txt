@@ -16,10 +16,10 @@ cmake_minimum_required(VERSION 3.5.1)
 
 project(KVStoreService C CXX)
 
-include(../cmake/common.cmake)
+include(../Cmake/common.cmake)
 
 # Proto file
-get_filename_component(rg_proto "../protos/kv_store.proto" ABSOLUTE)
+get_filename_component(rg_proto "../Protos/kv_store.proto" ABSOLUTE)
 get_filename_component(rg_proto_path "${rg_proto}" PATH)
 
 # Generated sources

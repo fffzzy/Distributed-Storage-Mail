@@ -12,8 +12,16 @@
 
 namespace KVStore {
 
+struct TabletStruct {
+  std::string path;
+  std::unordered_map<std::string, std::unordered_map<std::string, std::string>>
+      map;
+};
+
 class KVStoreServiceImpl final : public KVStoreService::Service {
  public:
+  KVStoreServiceImpl();
+
   ::grpc::Status Put(::grpc::ServerContext* context,
                      const ::KVPutRequest* request,
                      ::KVPutResponse* response) override;
@@ -29,6 +37,9 @@ class KVStoreServiceImpl final : public KVStoreService::Service {
   ::grpc::Status Delete(::grpc::ServerContext* context,
                         const ::KVDeleteRequest* request,
                         ::KVDeleteResponse* response) override;
+
+ private:
+  std::unique_ptr<TabletStruct> tablet_;
 };
 
 }  // namespace KVStore

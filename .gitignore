@@ -1,1 +1,6 @@
+# OS and editor
+.DS_Store
 .vscode/
+
+# Complied Object files
+*.o
