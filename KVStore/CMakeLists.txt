@@ -19,14 +19,14 @@ project(KVStoreService C CXX)
 include(../Cmake/common.cmake)
 
 # Proto file
-get_filename_component(rg_proto "../Protos/kv_store.proto" ABSOLUTE)
+get_filename_component(rg_proto "../Protos/kvstore.proto" ABSOLUTE)
 get_filename_component(rg_proto_path "${rg_proto}" PATH)
 
 # Generated sources
-set(rg_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/kv_store.pb.cc")
-set(rg_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/kv_store.pb.h")
-set(rg_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/kv_store.grpc.pb.cc")
-set(rg_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/kv_store.grpc.pb.h")
+set(rg_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/kvstore.pb.cc")
+set(rg_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/kvstore.pb.h")
+set(rg_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/kvstore.grpc.pb.cc")
+set(rg_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/kvstore.grpc.pb.h")
 add_custom_command(
       OUTPUT "${rg_proto_srcs}" "${rg_proto_hdrs}" "${rg_grpc_srcs}" "${rg_grpc_hdrs}"
       COMMAND ${_PROTOBUF_PROTOC}
@@ -63,7 +63,7 @@ target_link_libraries(rg_grpc_proto
 
 # Targets route_guide_(client|server)
 foreach(_target
-  kv_store_client_example kv_store_server)
+  kvstore_master kvstore_node)
   add_executable(${_target}
     "${_target}.cc")
   target_link_libraries(${_target}
