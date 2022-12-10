@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+/* Interface exported by the KVStore Service Master node. */
+service KVStoreMaster {
+  // Frontend calls FetchNodeAddr to get the address of the primary node.
+  rpc FetchNodeAddr(FetchNodeRequest) returns (FetchNodeResponse){}
+}
+
+/* Interface exported by the KVStore Service Worker nodes which actually 
+ * processes the requests from the front-end. */
+service KVStoreNode {
+  // General request containing KVStore operations: Put/Get/CPut/Delete.
+  rpc Execute(KVRequest) returns (KVResponse){}
+}
+
+/* Status of rpc response */
+enum KVStatusCode {
+  SUCCESS = 0;
+  FAILURE = 1;
+}
+
+/* General KV request from frontend. */
+message KVRequest {
+  // KVPutRequest.
+  message KVPutRequest {
+    optional string row = 1;    // [Required]
+    optional string col = 2;    // [Required]
+    optional string value = 3;  // [Required]
+  }
+
+  // KVGetRequest.
+  message KVGetRequest {
+    optional string row = 1;    // [Required]
+    optional string col = 2;    // [Required]
+  }
+
+  // KVCPutRequest.
+  message KVCPutRequest {
+    optional string row = 1;        // [Required]
+    optional string col = 2;        // [Required]
+    optional string cur_value = 3;  // [Required]
+    optional string new_value = 4;  // [Required]
+  }
+
+  // KVDeleteRequest.
+  message KVDeleteRequest {
+    optional string row = 1;    // [Required]
+    optional string col = 2;    // [Required]
+  }
+
+  // Request can only be one of put/get/cput/delete.
+  oneof request {
+    KVPutRequest put_request = 1;
+    KVGetRequest get_request = 2;
+    KVCPutRequest cput_request = 3;
+    KVDeleteRequest delete_request = 4;
+  }
+}
+
+message KVResponse {
+  // Status code indicates if operation is done successfully.
+  optional KVStatusCode status = 1; // [Required]
+
+  // If failed, message contains customized error information.
+  // If success, message is the return value for Get operation
+  // or any customized information for other operations.
+  optional string message = 2;  // [Required]
+}
+
+/* FetchNodeRequest contains row and col that will be combined
+ * to do consistent hashing later. */
+message FetchNodeRequest {
+  optional string row = 1;  // [Required]
+  optional string col = 2;  // [Required]
+}
+
+/* Response returns the address of primary cluster node. */
+message FetchNodeResponse {
+  optional string ip_addr = 1;  // [Required]
+  optional string port = 2;     // [Required]
+}
