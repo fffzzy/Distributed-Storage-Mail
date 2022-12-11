@@ -7,6 +7,7 @@ int num_tablet_total = 5;
 int num_tablet_mem = 3;
 
 namespace {
+using ::google::protobuf::Empty;
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Server;
@@ -101,6 +102,11 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
       respone->set_message("-ERR unsupported mthods.");
     }
   }
+  return Status::OK;
+}
+
+Status KVStoreNodeImpl::HealthCheck(ClientContext* context,
+                                    const Empty& request, Empty* response) {
   return Status::OK;
 }
 

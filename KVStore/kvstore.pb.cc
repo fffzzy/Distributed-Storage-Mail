@@ -255,38 +255,43 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 
 const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\rkvstore.proto\"\335\004\n\tKVRequest\022.\n\013put_req"
-  "uest\030\001 \001(\0132\027.KVRequest.KVPutRequestH\000\022.\n"
-  "\013get_request\030\002 \001(\0132\027.KVRequest.KVGetRequ"
-  "estH\000\0220\n\014cput_request\030\003 \001(\0132\030.KVRequest."
-  "KVCPutRequestH\000\0224\n\016delete_request\030\004 \001(\0132"
-  "\032.KVRequest.KVDeleteRequestH\000\032`\n\014KVPutRe"
-  "quest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001"
-  "\001\022\022\n\005value\030\003 \001(\tH\002\210\001\001B\006\n\004_rowB\006\n\004_colB\010\n"
-  "\006_value\032B\n\014KVGetRequest\022\020\n\003row\030\001 \001(\tH\000\210\001"
-  "\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032\217\001\n\r"
-  "KVCPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002"
-  " \001(\tH\001\210\001\001\022\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew"
-  "_value\030\004 \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cu"
-  "r_valueB\014\n\n_new_value\032E\n\017KVDeleteRequest"
-  "\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004"
-  "_rowB\006\n\004_colB\t\n\007request\"]\n\nKVResponse\022\"\n"
-  "\006status\030\001 \001(\0162\r.KVStatusCodeH\000\210\001\001\022\024\n\007mes"
-  "sage\030\002 \001(\tH\001\210\001\001B\t\n\007_statusB\n\n\010_message\"F"
-  "\n\020FetchNodeRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003"
-  "col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\"/\n\021FetchN"
-  "odeResponse\022\021\n\004addr\030\001 \001(\tH\000\210\001\001B\007\n\005_addr*"
-  "(\n\014KVStatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020"
-  "\0012I\n\rKVStoreMaster\0228\n\rFetchNodeAddr\022\021.Fe"
-  "tchNodeRequest\032\022.FetchNodeResponse\"\00023\n\013"
-  "KVStoreNode\022$\n\007Execute\022\n.KVRequest\032\013.KVR"
-  "esponse\"\000b\006proto3"
+  "\n\rkvstore.proto\032\033google/protobuf/empty.p"
+  "roto\"\335\004\n\tKVRequest\022.\n\013put_request\030\001 \001(\0132"
+  "\027.KVRequest.KVPutRequestH\000\022.\n\013get_reques"
+  "t\030\002 \001(\0132\027.KVRequest.KVGetRequestH\000\0220\n\014cp"
+  "ut_request\030\003 \001(\0132\030.KVRequest.KVCPutReque"
+  "stH\000\0224\n\016delete_request\030\004 \001(\0132\032.KVRequest"
+  ".KVDeleteRequestH\000\032`\n\014KVPutRequest\022\020\n\003ro"
+  "w\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\022\n\005value\030"
+  "\003 \001(\tH\002\210\001\001B\006\n\004_rowB\006\n\004_colB\010\n\006_value\032B\n\014"
+  "KVGetRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 "
+  "\001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032\217\001\n\rKVCPutReque"
+  "st\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\026"
+  "\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_value\030\004 \001("
+  "\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cur_valueB\014\n\n"
+  "_new_value\032E\n\017KVDeleteRequest\022\020\n\003row\030\001 \001"
+  "(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_co"
+  "lB\t\n\007request\"]\n\nKVResponse\022\"\n\006status\030\001 \001"
+  "(\0162\r.KVStatusCodeH\000\210\001\001\022\024\n\007message\030\002 \001(\tH"
+  "\001\210\001\001B\t\n\007_statusB\n\n\010_message\"F\n\020FetchNode"
+  "Request\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001"
+  "\210\001\001B\006\n\004_rowB\006\n\004_col\"/\n\021FetchNodeResponse"
+  "\022\021\n\004addr\030\001 \001(\tH\000\210\001\001B\007\n\005_addr*(\n\014KVStatus"
+  "Code\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\0012I\n\rKVStor"
+  "eMaster\0228\n\rFetchNodeAddr\022\021.FetchNodeRequ"
+  "est\032\022.FetchNodeResponse\"\0002t\n\013KVStoreNode"
+  "\022$\n\007Execute\022\n.KVRequest\032\013.KVResponse\"\000\022\?"
+  "\n\013HealthCheck\022\026.google.protobuf.Empty\032\026."
+  "google.protobuf.Empty\"\000b\006proto3"
   ;
+static const ::_pbi::DescriptorTable* const descriptor_table_kvstore_2eproto_deps[1] = {
+  &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
+};
 static ::_pbi::once_flag descriptor_table_kvstore_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_kvstore_2eproto = {
-    false, false, 1017, descriptor_table_protodef_kvstore_2eproto,
+    false, false, 1111, descriptor_table_protodef_kvstore_2eproto,
     "kvstore.proto",
-    &descriptor_table_kvstore_2eproto_once, nullptr, 0, 8,
+    &descriptor_table_kvstore_2eproto_once, descriptor_table_kvstore_2eproto_deps, 1, 8,
     schemas, file_default_instances, TableStruct_kvstore_2eproto::offsets,
     file_level_metadata_kvstore_2eproto, file_level_enum_descriptors_kvstore_2eproto,
     file_level_service_descriptors_kvstore_2eproto,
