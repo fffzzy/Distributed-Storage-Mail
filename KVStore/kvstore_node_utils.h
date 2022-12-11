@@ -13,6 +13,12 @@ struct Tablet {
 
 std::string GetTabletPath();
 
+std::string GetNodeDirPath(int node_idx);
+
+std::string GetTabletFilePath(int node_idx, int tablet_idx);
+
+std::string GetLogFilePath(int node_idx);
+
 }  // namespace KVStore
 
 #endif
