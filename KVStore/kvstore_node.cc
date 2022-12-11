@@ -56,33 +56,18 @@ void KVDelete(const KVRequest_KVDeleteRequest* request, KVResponse* response) {
 }  // namespace
 
 KVStoreNodeImpl::KVStoreNodeImpl() {
-  // Load tablet into memory.
-  tablet_ = std::make_unique<Tablet>();
-  tablet_->path = GetTabletPath();
-  tablet_->map =
-      std::unordered_map<std::string,
-                         std::unordered_map<std::string, std::string>>();
-
-  // Initialize master stubs.
-  std::string master_addr = "0.0.0.0:10001";
-  master_stub_ = KVStoreMaster::NewStub(
-      grpc::CreateChannel(master_addr, grpc::InsecureChannelCredentials()));
-
-  // TODO: initialize stubs to communicate with other replicas.
-  std::string replica1_addr = "0.0.0.0:10003";
-  node_stub1_ = KVStoreNode::NewStub(
-      grpc::CreateChannel(replica1_addr, grpc::InsecureChannelCredentials()));
-  // std::string replica2_addr = "0.0.0.0:10004";
-  // node_stub2_ = KVStoreNode::NewStub(
-  //     grpc::CreateChannel(replica2_addr,
-  //     grpc::InsecureChannelCredentials()));
+  // tablet_ = std::make_unique<Tablet>();
+  // tablet_->path = GetTabletPath();
+  // tablet_->map =
+  //     std::unordered_map<std::string,
+  //                        std::unordered_map<std::string, std::string>>();
 }
 
 Status KVStoreNodeImpl::Execute(ServerContext* context,
                                 const KVRequest* request, KVResponse* respone) {
   switch (request->request_case()) {
     case KVRequest::RequestCase::kGetRequest: {
-      KVGet(&request->get_request(), respone, node_stub1_.get());
+      // KVGet(&request->get_request(), respone, node_stub1_.get());
       break;
     }
     case KVRequest::RequestCase::kPutRequest: {
@@ -144,6 +129,35 @@ void KVStoreNodeImpl::ReadConfig() {
   }
 }
 
+void KVStoreNodeImpl::InitEnv() {
+  // create tablet file and log
+  system(("mkdir -p " + GetNodeDirPath(node_idx)).c_str());
+  system(("rm -rf " + GetNodeDirPath(node_idx) + "/*").c_str());
+
+  for (int i = 0; i < num_tablet_total; i++) {
+    std::fstream tabletFile;
+    tabletFile.open(GetTabletFilePath(node_idx, i),
+                    std::fstream::in | std::fstream::out | std::fstream::trunc);
+    tabletFile.close();
+  }
+
+  std::fstream tabletFile;
+  tabletFile.open(GetLogFilePath(node_idx),
+                  std::fstream::in | std::fstream::out | std::fstream::trunc);
+  tabletFile.close();
+
+  // create stub for master and peers
+  master_stub = KVStoreMaster::NewStub(
+      grpc::CreateChannel(master_addr, grpc::InsecureChannelCredentials()));
+  for (int i = 0; i < peer_addr_vec.size(); i++) {
+    peer_stub_vec.push_back(KVStoreNode::NewStub(grpc::CreateChannel(
+        peer_addr_vec[i], grpc::InsecureChannelCredentials())));
+  }
+
+  // init tablet mem vec
+  tablet_mem_vec.reserve(num_tablet_mem);
+}
+
 }  // namespace KVStore
 
 int main(int argc, char** argv) {
@@ -182,20 +196,14 @@ int main(int argc, char** argv) {
 
   node.ReadConfig();
 
-  // check config
-  std::cout << "self addr: " << node.addr << std::endl;
-  std::cout << "master addr: " << node.master_addr << std::endl;
-  std::cout << "peer addr: " << std::endl;
-  for (int i = 0; i < node.peer_addr_vec.size(); i++) {
-    std::cout << node.peer_addr_vec[i] << std::endl;
-  }
+  node.InitEnv();
 
-  // std::string server_address("0.0.0.0:10002");
+  std::string server_address(node.addr);
 
-  // ::grpc::ServerBuilder builder;
-  // builder.AddListeningPort(server_address,
-  // grpc::InsecureServerCredentials()); builder.RegisterService(&node);
-  // std::unique_ptr<::grpc::Server> server(builder.BuildAndStart());
-  // std::cout << "Server listening on " << server_address << std::endl;
-  // server->Wait();
+  ::grpc::ServerBuilder builder;
+  builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+  builder.RegisterService(&node);
+  std::unique_ptr<::grpc::Server> server(builder.BuildAndStart());
+  std::cout << "Server listening on " << server_address << std::endl;
+  server->Wait();
 }

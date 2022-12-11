@@ -34,15 +34,17 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   std::vector<std::string> peer_addr_vec;
 
  private:
-  std::unique_ptr<Tablet> tablet_;
+  // std::unique_ptr<Tablet> tablet_;
   // Stub communicates to master node.
-  std::unique_ptr<KVStoreMaster::Stub> master_stub_;
-  // Stub communicates to another replica in the same cluster.
-  std::unique_ptr<KVStoreNode::Stub> node_stub1_;
-  std::unique_ptr<KVStoreNode::Stub> node_stub2_;
+  std::unique_ptr<KVStoreMaster::Stub> master_stub;
+  // Stub communicates to replicas in the same cluster.
+  std::vector<std::unique_ptr<KVStoreNode::Stub>> peer_stub_vec;
+  // tablet mem vector
+  std::vector<std::unique_ptr<Tablet>> tablet_mem_vec;
 
  public:
   void ReadConfig();
+  void InitEnv();  // set up tablet file, log, stub with master and peers
 };
 
 }  // namespace KVStore

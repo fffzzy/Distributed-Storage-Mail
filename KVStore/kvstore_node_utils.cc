@@ -1,5 +1,20 @@
 #include "kvstore_node_utils.h"
 namespace KVStore {
+std::string database_path = "../../Database/";
+
+std::string GetNodeDirPath(int node_idx) {
+  return database_path + "node" + std::to_string(node_idx) + "/";
+}
+
+std::string GetTabletFilePath(int node_idx, int tablet_idx) {
+  return GetNodeDirPath(node_idx) + "node" + std::to_string(node_idx) +
+         "_tablet" + std::to_string(tablet_idx) + ".txt";
+}
+
+std::string GetLogFilePath(int node_idx) {
+  return GetNodeDirPath(node_idx) + "node" + std::to_string(node_idx) +
+         "_log.txt";
+}
 
 // TODO: get cluster path based on ip, get tablet path based on rowkey and
 // colkey
