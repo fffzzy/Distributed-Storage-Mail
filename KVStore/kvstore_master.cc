@@ -17,6 +17,7 @@ Status KVStoreMasterImpl::FetchNodeAddr(ServerContext* context,
                                         FetchNodeResponse* response) {
   // Use "{row}-{col}" as key for hashing.
   std::string key = absl::StrCat(request->row(), "-", request->col());
+  std::cout << "Receive request with key: " << key << std::endl;
   // TODO: sha-256, return the address of primary node in corresponding cluster.
   return Status::OK;
 }
