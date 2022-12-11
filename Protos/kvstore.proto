@@ -1,9 +1,13 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 /* Interface exported by the KVStore Service Master node. */
 service KVStoreMaster {
   // Frontend calls FetchNodeAddr to get the address of the primary node.
   rpc FetchNodeAddr(FetchNodeRequest) returns (FetchNodeResponse){}
+
+  // Register 
 }
 
 /* Interface exported by the KVStore Service Worker nodes which actually 
@@ -11,6 +15,9 @@ service KVStoreMaster {
 service KVStoreNode {
   // General request containing KVStore operations: Put/Get/CPut/Delete.
   rpc Execute(KVRequest) returns (KVResponse){}
+
+  // Health Check if node is alive.
+  rpc HealthCheck(google.protobuf.Empty) returns(google.protobuf.Empty){}
 }
 
 /* Status of rpc response */
