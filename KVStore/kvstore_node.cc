@@ -153,10 +153,7 @@ void KVDelete(const KVRequest_KVDeleteRequest* request, KVResponse* response) {
 }  // namespace
 
 KVStoreNodeImpl::KVStoreNodeImpl() {
-<<<<<<< HEAD
-=======
   // Load tablet into memory.
->>>>>>> kvstore-lsd
   tablet_ = std::make_unique<Tablet>();
   tablet_->path = GetTabletPath();
   tablet_->map =
@@ -182,11 +179,7 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
                                 const KVRequest* request, KVResponse* respone) {
   switch (request->request_case()) {
     case KVRequest::RequestCase::kGetRequest: {
-<<<<<<< HEAD
-      KVGet(&request->get_request(), respone);
-=======
       KVGet(&request->get_request(), respone, node_stub1_.get());
->>>>>>> kvstore-lsd
       break;
     }
     case KVRequest::RequestCase::kPutRequest: {
