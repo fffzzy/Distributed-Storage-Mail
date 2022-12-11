@@ -175,18 +175,17 @@ void *messageWorker(void *comm_fd)
         string file = tmp.substr(0, tail);
         string page = "HTTP/1.1 200 OK\r\n";
         string file_type = file.substr(file.find_last_of(".") + 1);
-
+        string path = page_root + file;
         ios_base::openmode mode = ios_base::in;
 
         if (file_type == "jpg" | file_type == "png")
         {
-            sendBinary(file, file_type, fd, page);
+            sendBinary(path, file_type, fd, page);
         }
         else
         {
             page += "\r\n";
-            ifstream infile(page_root + file, mode);
-            cout << page_root + file << endl;
+            ifstream infile(path, mode);
             string line;
             while (getline(infile, line))
             {
@@ -218,5 +217,5 @@ void sendBinary(string file, string image_type, int fd, string page)
         file_size = fread(&buffer[0], 1, file_length, file_stream);
     }
     FILE* fp = fdopen(fd, "wb");
-    fwrite (buffer.data(), 1 , buffer.size() , fp );
+    fwrite (buffer.data(), 1 , buffer.size() , fp);
 }
