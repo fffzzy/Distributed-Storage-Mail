@@ -76,6 +76,5 @@ message FetchNodeRequest {
 
 /* Response returns the address of primary cluster node. */
 message FetchNodeResponse {
-  optional string ip_addr = 1;  // [Required]
-  optional string port = 2;     // [Required]
+  optional string addr = 1;  // [Required]
 }

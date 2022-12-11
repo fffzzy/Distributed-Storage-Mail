@@ -1596,43 +1596,24 @@ class FetchNodeResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kIpAddrFieldNumber = 1,
-    kPortFieldNumber = 2,
+    kAddrFieldNumber = 1,
   };
-  // optional string ip_addr = 1;
-  bool has_ip_addr() const;
+  // optional string addr = 1;
+  bool has_addr() const;
   private:
-  bool _internal_has_ip_addr() const;
+  bool _internal_has_addr() const;
   public:
-  void clear_ip_addr();
-  const std::string& ip_addr() const;
+  void clear_addr();
+  const std::string& addr() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_ip_addr(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_ip_addr();
-  PROTOBUF_NODISCARD std::string* release_ip_addr();
-  void set_allocated_ip_addr(std::string* ip_addr);
+  void set_addr(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_addr();
+  PROTOBUF_NODISCARD std::string* release_addr();
+  void set_allocated_addr(std::string* addr);
   private:
-  const std::string& _internal_ip_addr() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ip_addr(const std::string& value);
-  std::string* _internal_mutable_ip_addr();
-  public:
-
-  // optional string port = 2;
-  bool has_port() const;
-  private:
-  bool _internal_has_port() const;
-  public:
-  void clear_port();
-  const std::string& port() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_port(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_port();
-  PROTOBUF_NODISCARD std::string* release_port();
-  void set_allocated_port(std::string* port);
-  private:
-  const std::string& _internal_port() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_port(const std::string& value);
-  std::string* _internal_mutable_port();
+  const std::string& _internal_addr() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_addr(const std::string& value);
+  std::string* _internal_mutable_addr();
   public:
 
   // @@protoc_insertion_point(class_scope:FetchNodeResponse)
@@ -1645,8 +1626,7 @@ class FetchNodeResponse final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ip_addr_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr port_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr addr_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_kvstore_2eproto;
@@ -2975,140 +2955,72 @@ inline void FetchNodeRequest::set_allocated_col(std::string* col) {
 
 // FetchNodeResponse
 
-// optional string ip_addr = 1;
-inline bool FetchNodeResponse::_internal_has_ip_addr() const {
+// optional string addr = 1;
+inline bool FetchNodeResponse::_internal_has_addr() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool FetchNodeResponse::has_ip_addr() const {
-  return _internal_has_ip_addr();
+inline bool FetchNodeResponse::has_addr() const {
+  return _internal_has_addr();
 }
-inline void FetchNodeResponse::clear_ip_addr() {
-  _impl_.ip_addr_.ClearToEmpty();
+inline void FetchNodeResponse::clear_addr() {
+  _impl_.addr_.ClearToEmpty();
   _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& FetchNodeResponse::ip_addr() const {
-  // @@protoc_insertion_point(field_get:FetchNodeResponse.ip_addr)
-  return _internal_ip_addr();
+inline const std::string& FetchNodeResponse::addr() const {
+  // @@protoc_insertion_point(field_get:FetchNodeResponse.addr)
+  return _internal_addr();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void FetchNodeResponse::set_ip_addr(ArgT0&& arg0, ArgT... args) {
+void FetchNodeResponse::set_addr(ArgT0&& arg0, ArgT... args) {
  _impl_._has_bits_[0] |= 0x00000001u;
- _impl_.ip_addr_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:FetchNodeResponse.ip_addr)
+ _impl_.addr_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:FetchNodeResponse.addr)
 }
-inline std::string* FetchNodeResponse::mutable_ip_addr() {
-  std::string* _s = _internal_mutable_ip_addr();
-  // @@protoc_insertion_point(field_mutable:FetchNodeResponse.ip_addr)
+inline std::string* FetchNodeResponse::mutable_addr() {
+  std::string* _s = _internal_mutable_addr();
+  // @@protoc_insertion_point(field_mutable:FetchNodeResponse.addr)
   return _s;
 }
-inline const std::string& FetchNodeResponse::_internal_ip_addr() const {
-  return _impl_.ip_addr_.Get();
+inline const std::string& FetchNodeResponse::_internal_addr() const {
+  return _impl_.addr_.Get();
 }
-inline void FetchNodeResponse::_internal_set_ip_addr(const std::string& value) {
+inline void FetchNodeResponse::_internal_set_addr(const std::string& value) {
   _impl_._has_bits_[0] |= 0x00000001u;
-  _impl_.ip_addr_.Set(value, GetArenaForAllocation());
+  _impl_.addr_.Set(value, GetArenaForAllocation());
 }
-inline std::string* FetchNodeResponse::_internal_mutable_ip_addr() {
+inline std::string* FetchNodeResponse::_internal_mutable_addr() {
   _impl_._has_bits_[0] |= 0x00000001u;
-  return _impl_.ip_addr_.Mutable(GetArenaForAllocation());
+  return _impl_.addr_.Mutable(GetArenaForAllocation());
 }
-inline std::string* FetchNodeResponse::release_ip_addr() {
-  // @@protoc_insertion_point(field_release:FetchNodeResponse.ip_addr)
-  if (!_internal_has_ip_addr()) {
+inline std::string* FetchNodeResponse::release_addr() {
+  // @@protoc_insertion_point(field_release:FetchNodeResponse.addr)
+  if (!_internal_has_addr()) {
     return nullptr;
   }
   _impl_._has_bits_[0] &= ~0x00000001u;
-  auto* p = _impl_.ip_addr_.Release();
+  auto* p = _impl_.addr_.Release();
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.ip_addr_.IsDefault()) {
-    _impl_.ip_addr_.Set("", GetArenaForAllocation());
+  if (_impl_.addr_.IsDefault()) {
+    _impl_.addr_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   return p;
 }
-inline void FetchNodeResponse::set_allocated_ip_addr(std::string* ip_addr) {
-  if (ip_addr != nullptr) {
+inline void FetchNodeResponse::set_allocated_addr(std::string* addr) {
+  if (addr != nullptr) {
     _impl_._has_bits_[0] |= 0x00000001u;
   } else {
     _impl_._has_bits_[0] &= ~0x00000001u;
   }
-  _impl_.ip_addr_.SetAllocated(ip_addr, GetArenaForAllocation());
+  _impl_.addr_.SetAllocated(addr, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.ip_addr_.IsDefault()) {
-    _impl_.ip_addr_.Set("", GetArenaForAllocation());
+  if (_impl_.addr_.IsDefault()) {
+    _impl_.addr_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:FetchNodeResponse.ip_addr)
-}
-
-// optional string port = 2;
-inline bool FetchNodeResponse::_internal_has_port() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
-  return value;
-}
-inline bool FetchNodeResponse::has_port() const {
-  return _internal_has_port();
-}
-inline void FetchNodeResponse::clear_port() {
-  _impl_.port_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000002u;
-}
-inline const std::string& FetchNodeResponse::port() const {
-  // @@protoc_insertion_point(field_get:FetchNodeResponse.port)
-  return _internal_port();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void FetchNodeResponse::set_port(ArgT0&& arg0, ArgT... args) {
- _impl_._has_bits_[0] |= 0x00000002u;
- _impl_.port_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:FetchNodeResponse.port)
-}
-inline std::string* FetchNodeResponse::mutable_port() {
-  std::string* _s = _internal_mutable_port();
-  // @@protoc_insertion_point(field_mutable:FetchNodeResponse.port)
-  return _s;
-}
-inline const std::string& FetchNodeResponse::_internal_port() const {
-  return _impl_.port_.Get();
-}
-inline void FetchNodeResponse::_internal_set_port(const std::string& value) {
-  _impl_._has_bits_[0] |= 0x00000002u;
-  _impl_.port_.Set(value, GetArenaForAllocation());
-}
-inline std::string* FetchNodeResponse::_internal_mutable_port() {
-  _impl_._has_bits_[0] |= 0x00000002u;
-  return _impl_.port_.Mutable(GetArenaForAllocation());
-}
-inline std::string* FetchNodeResponse::release_port() {
-  // @@protoc_insertion_point(field_release:FetchNodeResponse.port)
-  if (!_internal_has_port()) {
-    return nullptr;
-  }
-  _impl_._has_bits_[0] &= ~0x00000002u;
-  auto* p = _impl_.port_.Release();
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.port_.IsDefault()) {
-    _impl_.port_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  return p;
-}
-inline void FetchNodeResponse::set_allocated_port(std::string* port) {
-  if (port != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000002u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
-  }
-  _impl_.port_.SetAllocated(port, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.port_.IsDefault()) {
-    _impl_.port_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:FetchNodeResponse.port)
+  // @@protoc_insertion_point(field_set_allocated:FetchNodeResponse.addr)
 }
 
 #ifdef __GNUC__

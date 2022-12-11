@@ -131,8 +131,7 @@ PROTOBUF_CONSTEXPR FetchNodeResponse::FetchNodeResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.ip_addr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.port_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}} {}
+  , /*decltype(_impl_.addr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}} {}
 struct FetchNodeResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR FetchNodeResponseDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -230,10 +229,8 @@ const uint32_t TableStruct_kvstore_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::FetchNodeResponse, _impl_.ip_addr_),
-  PROTOBUF_FIELD_OFFSET(::FetchNodeResponse, _impl_.port_),
+  PROTOBUF_FIELD_OFFSET(::FetchNodeResponse, _impl_.addr_),
   0,
-  1,
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 9, -1, sizeof(::KVRequest_KVPutRequest)},
@@ -243,7 +240,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 46, -1, -1, sizeof(::KVRequest)},
   { 57, 65, -1, sizeof(::KVResponse)},
   { 67, 75, -1, sizeof(::FetchNodeRequest)},
-  { 77, 85, -1, sizeof(::FetchNodeResponse)},
+  { 77, 84, -1, sizeof(::FetchNodeResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -277,18 +274,17 @@ const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE
   "\006status\030\001 \001(\0162\r.KVStatusCodeH\000\210\001\001\022\024\n\007mes"
   "sage\030\002 \001(\tH\001\210\001\001B\t\n\007_statusB\n\n\010_message\"F"
   "\n\020FetchNodeRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003"
-  "col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\"Q\n\021FetchN"
-  "odeResponse\022\024\n\007ip_addr\030\001 \001(\tH\000\210\001\001\022\021\n\004por"
-  "t\030\002 \001(\tH\001\210\001\001B\n\n\010_ip_addrB\007\n\005_port*(\n\014KVS"
-  "tatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\0012I\n\rK"
-  "VStoreMaster\0228\n\rFetchNodeAddr\022\021.FetchNod"
-  "eRequest\032\022.FetchNodeResponse\"\00023\n\013KVStor"
-  "eNode\022$\n\007Execute\022\n.KVRequest\032\013.KVRespons"
-  "e\"\000b\006proto3"
+  "col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\"/\n\021FetchN"
+  "odeResponse\022\021\n\004addr\030\001 \001(\tH\000\210\001\001B\007\n\005_addr*"
+  "(\n\014KVStatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020"
+  "\0012I\n\rKVStoreMaster\0228\n\rFetchNodeAddr\022\021.Fe"
+  "tchNodeRequest\032\022.FetchNodeResponse\"\00023\n\013"
+  "KVStoreNode\022$\n\007Execute\022\n.KVRequest\032\013.KVR"
+  "esponse\"\000b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_kvstore_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_kvstore_2eproto = {
-    false, false, 1051, descriptor_table_protodef_kvstore_2eproto,
+    false, false, 1017, descriptor_table_protodef_kvstore_2eproto,
     "kvstore.proto",
     &descriptor_table_kvstore_2eproto_once, nullptr, 0, 8,
     schemas, file_default_instances, TableStruct_kvstore_2eproto::offsets,
@@ -2558,11 +2554,8 @@ void FetchNodeRequest::InternalSwap(FetchNodeRequest* other) {
 class FetchNodeResponse::_Internal {
  public:
   using HasBits = decltype(std::declval<FetchNodeResponse>()._impl_._has_bits_);
-  static void set_has_ip_addr(HasBits* has_bits) {
+  static void set_has_addr(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
-  }
-  static void set_has_port(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
   }
 };
 
@@ -2578,24 +2571,15 @@ FetchNodeResponse::FetchNodeResponse(const FetchNodeResponse& from)
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.ip_addr_){}
-    , decltype(_impl_.port_){}};
+    , decltype(_impl_.addr_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.ip_addr_.InitDefault();
+  _impl_.addr_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.ip_addr_.Set("", GetArenaForAllocation());
+    _impl_.addr_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_ip_addr()) {
-    _this->_impl_.ip_addr_.Set(from._internal_ip_addr(), 
-      _this->GetArenaForAllocation());
-  }
-  _impl_.port_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.port_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_port()) {
-    _this->_impl_.port_.Set(from._internal_port(), 
+  if (from._internal_has_addr()) {
+    _this->_impl_.addr_.Set(from._internal_addr(), 
       _this->GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:FetchNodeResponse)
@@ -2608,16 +2592,11 @@ inline void FetchNodeResponse::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.ip_addr_){}
-    , decltype(_impl_.port_){}
+    , decltype(_impl_.addr_){}
   };
-  _impl_.ip_addr_.InitDefault();
+  _impl_.addr_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.ip_addr_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.port_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.port_.Set("", GetArenaForAllocation());
+    _impl_.addr_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -2632,8 +2611,7 @@ FetchNodeResponse::~FetchNodeResponse() {
 
 inline void FetchNodeResponse::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.ip_addr_.Destroy();
-  _impl_.port_.Destroy();
+  _impl_.addr_.Destroy();
 }
 
 void FetchNodeResponse::SetCachedSize(int size) const {
@@ -2647,13 +2625,8 @@ void FetchNodeResponse::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    if (cached_has_bits & 0x00000001u) {
-      _impl_.ip_addr_.ClearNonDefaultToEmpty();
-    }
-    if (cached_has_bits & 0x00000002u) {
-      _impl_.port_.ClearNonDefaultToEmpty();
-    }
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.addr_.ClearNonDefaultToEmpty();
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -2666,23 +2639,13 @@ const char* FetchNodeResponse::_InternalParse(const char* ptr, ::_pbi::ParseCont
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // optional string ip_addr = 1;
+      // optional string addr = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_ip_addr();
+          auto str = _internal_mutable_addr();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "FetchNodeResponse.ip_addr"));
-        } else
-          goto handle_unusual;
-        continue;
-      // optional string port = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_port();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "FetchNodeResponse.port"));
+          CHK_(::_pbi::VerifyUTF8(str, "FetchNodeResponse.addr"));
         } else
           goto handle_unusual;
         continue;
@@ -2716,24 +2679,14 @@ uint8_t* FetchNodeResponse::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // optional string ip_addr = 1;
-  if (_internal_has_ip_addr()) {
+  // optional string addr = 1;
+  if (_internal_has_addr()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_ip_addr().data(), static_cast<int>(this->_internal_ip_addr().length()),
+      this->_internal_addr().data(), static_cast<int>(this->_internal_addr().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "FetchNodeResponse.ip_addr");
+      "FetchNodeResponse.addr");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_ip_addr(), target);
-  }
-
-  // optional string port = 2;
-  if (_internal_has_port()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_port().data(), static_cast<int>(this->_internal_port().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "FetchNodeResponse.port");
-    target = stream->WriteStringMaybeAliased(
-        2, this->_internal_port(), target);
+        1, this->_internal_addr(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2752,23 +2705,14 @@ size_t FetchNodeResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // optional string addr = 1;
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    // optional string ip_addr = 1;
-    if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_ip_addr());
-    }
-
-    // optional string port = 2;
-    if (cached_has_bits & 0x00000002u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_port());
-    }
-
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_addr());
   }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2787,14 +2731,8 @@ void FetchNodeResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    if (cached_has_bits & 0x00000001u) {
-      _this->_internal_set_ip_addr(from._internal_ip_addr());
-    }
-    if (cached_has_bits & 0x00000002u) {
-      _this->_internal_set_port(from._internal_port());
-    }
+  if (from._internal_has_addr()) {
+    _this->_internal_set_addr(from._internal_addr());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2817,12 +2755,8 @@ void FetchNodeResponse::InternalSwap(FetchNodeResponse* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.ip_addr_, lhs_arena,
-      &other->_impl_.ip_addr_, rhs_arena
-  );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.port_, lhs_arena,
-      &other->_impl_.port_, rhs_arena
+      &_impl_.addr_, lhs_arena,
+      &other->_impl_.addr_, rhs_arena
   );
 }
 
