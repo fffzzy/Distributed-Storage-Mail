@@ -119,4 +119,8 @@ Tablet* loadTablet(std::string tabletPath) {
   return tablet;
 }
 
+int GetTabletIdx(int digest, int num_tablet_total) {
+  return digest % num_tablet_total;
+}
+
 }  // namespace KVStore
