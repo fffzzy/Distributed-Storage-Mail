@@ -67,6 +67,12 @@ extern KVRequest_KVGetRequestDefaultTypeInternal _KVRequest_KVGetRequest_default
 class KVRequest_KVPutRequest;
 struct KVRequest_KVPutRequestDefaultTypeInternal;
 extern KVRequest_KVPutRequestDefaultTypeInternal _KVRequest_KVPutRequest_default_instance_;
+class KVRequest_KVScputRequest;
+struct KVRequest_KVScputRequestDefaultTypeInternal;
+extern KVRequest_KVScputRequestDefaultTypeInternal _KVRequest_KVScputRequest_default_instance_;
+class KVRequest_KVSdeleteRequest;
+struct KVRequest_KVSdeleteRequestDefaultTypeInternal;
+extern KVRequest_KVSdeleteRequestDefaultTypeInternal _KVRequest_KVSdeleteRequest_default_instance_;
 class KVRequest_KVSgetRequest;
 struct KVRequest_KVSgetRequestDefaultTypeInternal;
 extern KVRequest_KVSgetRequestDefaultTypeInternal _KVRequest_KVSgetRequest_default_instance_;
@@ -84,6 +90,8 @@ template<> ::KVRequest_KVCPutRequest* Arena::CreateMaybeMessage<::KVRequest_KVCP
 template<> ::KVRequest_KVDeleteRequest* Arena::CreateMaybeMessage<::KVRequest_KVDeleteRequest>(Arena*);
 template<> ::KVRequest_KVGetRequest* Arena::CreateMaybeMessage<::KVRequest_KVGetRequest>(Arena*);
 template<> ::KVRequest_KVPutRequest* Arena::CreateMaybeMessage<::KVRequest_KVPutRequest>(Arena*);
+template<> ::KVRequest_KVScputRequest* Arena::CreateMaybeMessage<::KVRequest_KVScputRequest>(Arena*);
+template<> ::KVRequest_KVSdeleteRequest* Arena::CreateMaybeMessage<::KVRequest_KVSdeleteRequest>(Arena*);
 template<> ::KVRequest_KVSgetRequest* Arena::CreateMaybeMessage<::KVRequest_KVSgetRequest>(Arena*);
 template<> ::KVRequest_KVSputRequest* Arena::CreateMaybeMessage<::KVRequest_KVSputRequest>(Arena*);
 template<> ::KVResponse* Arena::CreateMaybeMessage<::KVResponse>(Arena*);
@@ -1086,6 +1094,224 @@ class KVRequest_KVCPutRequest final :
 };
 // -------------------------------------------------------------------
 
+class KVRequest_KVScputRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVScputRequest) */ {
+ public:
+  inline KVRequest_KVScputRequest() : KVRequest_KVScputRequest(nullptr) {}
+  ~KVRequest_KVScputRequest() override;
+  explicit PROTOBUF_CONSTEXPR KVRequest_KVScputRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  KVRequest_KVScputRequest(const KVRequest_KVScputRequest& from);
+  KVRequest_KVScputRequest(KVRequest_KVScputRequest&& from) noexcept
+    : KVRequest_KVScputRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline KVRequest_KVScputRequest& operator=(const KVRequest_KVScputRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline KVRequest_KVScputRequest& operator=(KVRequest_KVScputRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const KVRequest_KVScputRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const KVRequest_KVScputRequest* internal_default_instance() {
+    return reinterpret_cast<const KVRequest_KVScputRequest*>(
+               &_KVRequest_KVScputRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(KVRequest_KVScputRequest& a, KVRequest_KVScputRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(KVRequest_KVScputRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(KVRequest_KVScputRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  KVRequest_KVScputRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<KVRequest_KVScputRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const KVRequest_KVScputRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const KVRequest_KVScputRequest& from) {
+    KVRequest_KVScputRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(KVRequest_KVScputRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "KVRequest.KVScputRequest";
+  }
+  protected:
+  explicit KVRequest_KVScputRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRowFieldNumber = 1,
+    kColFieldNumber = 2,
+    kCurValueFieldNumber = 3,
+    kNewValueFieldNumber = 4,
+  };
+  // optional string row = 1;
+  bool has_row() const;
+  private:
+  bool _internal_has_row() const;
+  public:
+  void clear_row();
+  const std::string& row() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_row(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_row();
+  PROTOBUF_NODISCARD std::string* release_row();
+  void set_allocated_row(std::string* row);
+  private:
+  const std::string& _internal_row() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_row(const std::string& value);
+  std::string* _internal_mutable_row();
+  public:
+
+  // optional string col = 2;
+  bool has_col() const;
+  private:
+  bool _internal_has_col() const;
+  public:
+  void clear_col();
+  const std::string& col() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_col(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_col();
+  PROTOBUF_NODISCARD std::string* release_col();
+  void set_allocated_col(std::string* col);
+  private:
+  const std::string& _internal_col() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_col(const std::string& value);
+  std::string* _internal_mutable_col();
+  public:
+
+  // optional string cur_value = 3;
+  bool has_cur_value() const;
+  private:
+  bool _internal_has_cur_value() const;
+  public:
+  void clear_cur_value();
+  const std::string& cur_value() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_cur_value(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_cur_value();
+  PROTOBUF_NODISCARD std::string* release_cur_value();
+  void set_allocated_cur_value(std::string* cur_value);
+  private:
+  const std::string& _internal_cur_value() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_cur_value(const std::string& value);
+  std::string* _internal_mutable_cur_value();
+  public:
+
+  // optional string new_value = 4;
+  bool has_new_value() const;
+  private:
+  bool _internal_has_new_value() const;
+  public:
+  void clear_new_value();
+  const std::string& new_value() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_new_value(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_new_value();
+  PROTOBUF_NODISCARD std::string* release_new_value();
+  void set_allocated_new_value(std::string* new_value);
+  private:
+  const std::string& _internal_new_value() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_new_value(const std::string& value);
+  std::string* _internal_mutable_new_value();
+  public:
+
+  // @@protoc_insertion_point(class_scope:KVRequest.KVScputRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr row_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr col_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr cur_value_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr new_value_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kvstore_2eproto;
+};
+// -------------------------------------------------------------------
+
 class KVRequest_KVDeleteRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVDeleteRequest) */ {
  public:
@@ -1134,7 +1360,7 @@ class KVRequest_KVDeleteRequest final :
                &_KVRequest_KVDeleteRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(KVRequest_KVDeleteRequest& a, KVRequest_KVDeleteRequest& b) {
     a.Swap(&b);
@@ -1264,6 +1490,184 @@ class KVRequest_KVDeleteRequest final :
 };
 // -------------------------------------------------------------------
 
+class KVRequest_KVSdeleteRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVSdeleteRequest) */ {
+ public:
+  inline KVRequest_KVSdeleteRequest() : KVRequest_KVSdeleteRequest(nullptr) {}
+  ~KVRequest_KVSdeleteRequest() override;
+  explicit PROTOBUF_CONSTEXPR KVRequest_KVSdeleteRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  KVRequest_KVSdeleteRequest(const KVRequest_KVSdeleteRequest& from);
+  KVRequest_KVSdeleteRequest(KVRequest_KVSdeleteRequest&& from) noexcept
+    : KVRequest_KVSdeleteRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline KVRequest_KVSdeleteRequest& operator=(const KVRequest_KVSdeleteRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline KVRequest_KVSdeleteRequest& operator=(KVRequest_KVSdeleteRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const KVRequest_KVSdeleteRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const KVRequest_KVSdeleteRequest* internal_default_instance() {
+    return reinterpret_cast<const KVRequest_KVSdeleteRequest*>(
+               &_KVRequest_KVSdeleteRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(KVRequest_KVSdeleteRequest& a, KVRequest_KVSdeleteRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(KVRequest_KVSdeleteRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(KVRequest_KVSdeleteRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  KVRequest_KVSdeleteRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<KVRequest_KVSdeleteRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const KVRequest_KVSdeleteRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const KVRequest_KVSdeleteRequest& from) {
+    KVRequest_KVSdeleteRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(KVRequest_KVSdeleteRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "KVRequest.KVSdeleteRequest";
+  }
+  protected:
+  explicit KVRequest_KVSdeleteRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRowFieldNumber = 1,
+    kColFieldNumber = 2,
+  };
+  // optional string row = 1;
+  bool has_row() const;
+  private:
+  bool _internal_has_row() const;
+  public:
+  void clear_row();
+  const std::string& row() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_row(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_row();
+  PROTOBUF_NODISCARD std::string* release_row();
+  void set_allocated_row(std::string* row);
+  private:
+  const std::string& _internal_row() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_row(const std::string& value);
+  std::string* _internal_mutable_row();
+  public:
+
+  // optional string col = 2;
+  bool has_col() const;
+  private:
+  bool _internal_has_col() const;
+  public:
+  void clear_col();
+  const std::string& col() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_col(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_col();
+  PROTOBUF_NODISCARD std::string* release_col();
+  void set_allocated_col(std::string* col);
+  private:
+  const std::string& _internal_col() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_col(const std::string& value);
+  std::string* _internal_mutable_col();
+  public:
+
+  // @@protoc_insertion_point(class_scope:KVRequest.KVSdeleteRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr row_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr col_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kvstore_2eproto;
+};
+// -------------------------------------------------------------------
+
 class KVRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest) */ {
  public:
@@ -1313,7 +1717,9 @@ class KVRequest final :
     kPutRequest = 3,
     kSputRequest = 4,
     kCputRequest = 5,
-    kDeleteRequest = 6,
+    kScputRequest = 6,
+    kDeleteRequest = 7,
+    kSdeleteRequest = 8,
     REQUEST_NOT_SET = 0,
   };
 
@@ -1322,7 +1728,7 @@ class KVRequest final :
                &_KVRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(KVRequest& a, KVRequest& b) {
     a.Swap(&b);
@@ -1397,7 +1803,9 @@ class KVRequest final :
   typedef KVRequest_KVPutRequest KVPutRequest;
   typedef KVRequest_KVSputRequest KVSputRequest;
   typedef KVRequest_KVCPutRequest KVCPutRequest;
+  typedef KVRequest_KVScputRequest KVScputRequest;
   typedef KVRequest_KVDeleteRequest KVDeleteRequest;
+  typedef KVRequest_KVSdeleteRequest KVSdeleteRequest;
 
   // accessors -------------------------------------------------------
 
@@ -1407,7 +1815,9 @@ class KVRequest final :
     kPutRequestFieldNumber = 3,
     kSputRequestFieldNumber = 4,
     kCputRequestFieldNumber = 5,
-    kDeleteRequestFieldNumber = 6,
+    kScputRequestFieldNumber = 6,
+    kDeleteRequestFieldNumber = 7,
+    kSdeleteRequestFieldNumber = 8,
   };
   // .KVRequest.KVGetRequest get_request = 1;
   bool has_get_request() const;
@@ -1499,7 +1909,25 @@ class KVRequest final :
       ::KVRequest_KVCPutRequest* cput_request);
   ::KVRequest_KVCPutRequest* unsafe_arena_release_cput_request();
 
-  // .KVRequest.KVDeleteRequest delete_request = 6;
+  // .KVRequest.KVScputRequest scput_request = 6;
+  bool has_scput_request() const;
+  private:
+  bool _internal_has_scput_request() const;
+  public:
+  void clear_scput_request();
+  const ::KVRequest_KVScputRequest& scput_request() const;
+  PROTOBUF_NODISCARD ::KVRequest_KVScputRequest* release_scput_request();
+  ::KVRequest_KVScputRequest* mutable_scput_request();
+  void set_allocated_scput_request(::KVRequest_KVScputRequest* scput_request);
+  private:
+  const ::KVRequest_KVScputRequest& _internal_scput_request() const;
+  ::KVRequest_KVScputRequest* _internal_mutable_scput_request();
+  public:
+  void unsafe_arena_set_allocated_scput_request(
+      ::KVRequest_KVScputRequest* scput_request);
+  ::KVRequest_KVScputRequest* unsafe_arena_release_scput_request();
+
+  // .KVRequest.KVDeleteRequest delete_request = 7;
   bool has_delete_request() const;
   private:
   bool _internal_has_delete_request() const;
@@ -1517,6 +1945,24 @@ class KVRequest final :
       ::KVRequest_KVDeleteRequest* delete_request);
   ::KVRequest_KVDeleteRequest* unsafe_arena_release_delete_request();
 
+  // .KVRequest.KVSdeleteRequest sdelete_request = 8;
+  bool has_sdelete_request() const;
+  private:
+  bool _internal_has_sdelete_request() const;
+  public:
+  void clear_sdelete_request();
+  const ::KVRequest_KVSdeleteRequest& sdelete_request() const;
+  PROTOBUF_NODISCARD ::KVRequest_KVSdeleteRequest* release_sdelete_request();
+  ::KVRequest_KVSdeleteRequest* mutable_sdelete_request();
+  void set_allocated_sdelete_request(::KVRequest_KVSdeleteRequest* sdelete_request);
+  private:
+  const ::KVRequest_KVSdeleteRequest& _internal_sdelete_request() const;
+  ::KVRequest_KVSdeleteRequest* _internal_mutable_sdelete_request();
+  public:
+  void unsafe_arena_set_allocated_sdelete_request(
+      ::KVRequest_KVSdeleteRequest* sdelete_request);
+  ::KVRequest_KVSdeleteRequest* unsafe_arena_release_sdelete_request();
+
   void clear_request();
   RequestCase request_case() const;
   // @@protoc_insertion_point(class_scope:KVRequest)
@@ -1527,7 +1973,9 @@ class KVRequest final :
   void set_has_put_request();
   void set_has_sput_request();
   void set_has_cput_request();
+  void set_has_scput_request();
   void set_has_delete_request();
+  void set_has_sdelete_request();
 
   inline bool has_request() const;
   inline void clear_has_request();
@@ -1544,7 +1992,9 @@ class KVRequest final :
       ::KVRequest_KVPutRequest* put_request_;
       ::KVRequest_KVSputRequest* sput_request_;
       ::KVRequest_KVCPutRequest* cput_request_;
+      ::KVRequest_KVScputRequest* scput_request_;
       ::KVRequest_KVDeleteRequest* delete_request_;
+      ::KVRequest_KVSdeleteRequest* sdelete_request_;
     } request_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -1603,7 +2053,7 @@ class KVResponse final :
                &_KVResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    9;
 
   friend void swap(KVResponse& a, KVResponse& b) {
     a.Swap(&b);
@@ -1776,7 +2226,7 @@ class FetchNodeRequest final :
                &_FetchNodeRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(FetchNodeRequest& a, FetchNodeRequest& b) {
     a.Swap(&b);
@@ -1954,7 +2404,7 @@ class FetchNodeResponse final :
                &_FetchNodeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(FetchNodeResponse& a, FetchNodeResponse& b) {
     a.Swap(&b);
@@ -3078,6 +3528,282 @@ inline void KVRequest_KVCPutRequest::set_allocated_new_value(std::string* new_va
 
 // -------------------------------------------------------------------
 
+// KVRequest_KVScputRequest
+
+// optional string row = 1;
+inline bool KVRequest_KVScputRequest::_internal_has_row() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool KVRequest_KVScputRequest::has_row() const {
+  return _internal_has_row();
+}
+inline void KVRequest_KVScputRequest::clear_row() {
+  _impl_.row_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& KVRequest_KVScputRequest::row() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVScputRequest.row)
+  return _internal_row();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVScputRequest::set_row(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.row_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVScputRequest.row)
+}
+inline std::string* KVRequest_KVScputRequest::mutable_row() {
+  std::string* _s = _internal_mutable_row();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVScputRequest.row)
+  return _s;
+}
+inline const std::string& KVRequest_KVScputRequest::_internal_row() const {
+  return _impl_.row_.Get();
+}
+inline void KVRequest_KVScputRequest::_internal_set_row(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.row_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::_internal_mutable_row() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.row_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::release_row() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVScputRequest.row)
+  if (!_internal_has_row()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.row_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.row_.IsDefault()) {
+    _impl_.row_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVScputRequest::set_allocated_row(std::string* row) {
+  if (row != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.row_.SetAllocated(row, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.row_.IsDefault()) {
+    _impl_.row_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVScputRequest.row)
+}
+
+// optional string col = 2;
+inline bool KVRequest_KVScputRequest::_internal_has_col() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool KVRequest_KVScputRequest::has_col() const {
+  return _internal_has_col();
+}
+inline void KVRequest_KVScputRequest::clear_col() {
+  _impl_.col_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& KVRequest_KVScputRequest::col() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVScputRequest.col)
+  return _internal_col();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVScputRequest::set_col(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.col_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVScputRequest.col)
+}
+inline std::string* KVRequest_KVScputRequest::mutable_col() {
+  std::string* _s = _internal_mutable_col();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVScputRequest.col)
+  return _s;
+}
+inline const std::string& KVRequest_KVScputRequest::_internal_col() const {
+  return _impl_.col_.Get();
+}
+inline void KVRequest_KVScputRequest::_internal_set_col(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.col_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::_internal_mutable_col() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.col_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::release_col() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVScputRequest.col)
+  if (!_internal_has_col()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.col_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.col_.IsDefault()) {
+    _impl_.col_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVScputRequest::set_allocated_col(std::string* col) {
+  if (col != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.col_.SetAllocated(col, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.col_.IsDefault()) {
+    _impl_.col_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVScputRequest.col)
+}
+
+// optional string cur_value = 3;
+inline bool KVRequest_KVScputRequest::_internal_has_cur_value() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool KVRequest_KVScputRequest::has_cur_value() const {
+  return _internal_has_cur_value();
+}
+inline void KVRequest_KVScputRequest::clear_cur_value() {
+  _impl_.cur_value_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline const std::string& KVRequest_KVScputRequest::cur_value() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVScputRequest.cur_value)
+  return _internal_cur_value();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVScputRequest::set_cur_value(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000004u;
+ _impl_.cur_value_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVScputRequest.cur_value)
+}
+inline std::string* KVRequest_KVScputRequest::mutable_cur_value() {
+  std::string* _s = _internal_mutable_cur_value();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVScputRequest.cur_value)
+  return _s;
+}
+inline const std::string& KVRequest_KVScputRequest::_internal_cur_value() const {
+  return _impl_.cur_value_.Get();
+}
+inline void KVRequest_KVScputRequest::_internal_set_cur_value(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.cur_value_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::_internal_mutable_cur_value() {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  return _impl_.cur_value_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::release_cur_value() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVScputRequest.cur_value)
+  if (!_internal_has_cur_value()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000004u;
+  auto* p = _impl_.cur_value_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.cur_value_.IsDefault()) {
+    _impl_.cur_value_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVScputRequest::set_allocated_cur_value(std::string* cur_value) {
+  if (cur_value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000004u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004u;
+  }
+  _impl_.cur_value_.SetAllocated(cur_value, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.cur_value_.IsDefault()) {
+    _impl_.cur_value_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVScputRequest.cur_value)
+}
+
+// optional string new_value = 4;
+inline bool KVRequest_KVScputRequest::_internal_has_new_value() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool KVRequest_KVScputRequest::has_new_value() const {
+  return _internal_has_new_value();
+}
+inline void KVRequest_KVScputRequest::clear_new_value() {
+  _impl_.new_value_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000008u;
+}
+inline const std::string& KVRequest_KVScputRequest::new_value() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVScputRequest.new_value)
+  return _internal_new_value();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVScputRequest::set_new_value(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000008u;
+ _impl_.new_value_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVScputRequest.new_value)
+}
+inline std::string* KVRequest_KVScputRequest::mutable_new_value() {
+  std::string* _s = _internal_mutable_new_value();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVScputRequest.new_value)
+  return _s;
+}
+inline const std::string& KVRequest_KVScputRequest::_internal_new_value() const {
+  return _impl_.new_value_.Get();
+}
+inline void KVRequest_KVScputRequest::_internal_set_new_value(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_.new_value_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::_internal_mutable_new_value() {
+  _impl_._has_bits_[0] |= 0x00000008u;
+  return _impl_.new_value_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVScputRequest::release_new_value() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVScputRequest.new_value)
+  if (!_internal_has_new_value()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000008u;
+  auto* p = _impl_.new_value_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.new_value_.IsDefault()) {
+    _impl_.new_value_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVScputRequest::set_allocated_new_value(std::string* new_value) {
+  if (new_value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000008u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000008u;
+  }
+  _impl_.new_value_.SetAllocated(new_value, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.new_value_.IsDefault()) {
+    _impl_.new_value_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVScputRequest.new_value)
+}
+
+// -------------------------------------------------------------------
+
 // KVRequest_KVDeleteRequest
 
 // optional string row = 1;
@@ -3214,6 +3940,146 @@ inline void KVRequest_KVDeleteRequest::set_allocated_col(std::string* col) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:KVRequest.KVDeleteRequest.col)
+}
+
+// -------------------------------------------------------------------
+
+// KVRequest_KVSdeleteRequest
+
+// optional string row = 1;
+inline bool KVRequest_KVSdeleteRequest::_internal_has_row() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool KVRequest_KVSdeleteRequest::has_row() const {
+  return _internal_has_row();
+}
+inline void KVRequest_KVSdeleteRequest::clear_row() {
+  _impl_.row_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& KVRequest_KVSdeleteRequest::row() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVSdeleteRequest.row)
+  return _internal_row();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVSdeleteRequest::set_row(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.row_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVSdeleteRequest.row)
+}
+inline std::string* KVRequest_KVSdeleteRequest::mutable_row() {
+  std::string* _s = _internal_mutable_row();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVSdeleteRequest.row)
+  return _s;
+}
+inline const std::string& KVRequest_KVSdeleteRequest::_internal_row() const {
+  return _impl_.row_.Get();
+}
+inline void KVRequest_KVSdeleteRequest::_internal_set_row(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.row_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVSdeleteRequest::_internal_mutable_row() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.row_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVSdeleteRequest::release_row() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVSdeleteRequest.row)
+  if (!_internal_has_row()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.row_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.row_.IsDefault()) {
+    _impl_.row_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVSdeleteRequest::set_allocated_row(std::string* row) {
+  if (row != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.row_.SetAllocated(row, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.row_.IsDefault()) {
+    _impl_.row_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVSdeleteRequest.row)
+}
+
+// optional string col = 2;
+inline bool KVRequest_KVSdeleteRequest::_internal_has_col() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool KVRequest_KVSdeleteRequest::has_col() const {
+  return _internal_has_col();
+}
+inline void KVRequest_KVSdeleteRequest::clear_col() {
+  _impl_.col_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& KVRequest_KVSdeleteRequest::col() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVSdeleteRequest.col)
+  return _internal_col();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVSdeleteRequest::set_col(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.col_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVSdeleteRequest.col)
+}
+inline std::string* KVRequest_KVSdeleteRequest::mutable_col() {
+  std::string* _s = _internal_mutable_col();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVSdeleteRequest.col)
+  return _s;
+}
+inline const std::string& KVRequest_KVSdeleteRequest::_internal_col() const {
+  return _impl_.col_.Get();
+}
+inline void KVRequest_KVSdeleteRequest::_internal_set_col(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.col_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVSdeleteRequest::_internal_mutable_col() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.col_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVSdeleteRequest::release_col() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVSdeleteRequest.col)
+  if (!_internal_has_col()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.col_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.col_.IsDefault()) {
+    _impl_.col_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVSdeleteRequest::set_allocated_col(std::string* col) {
+  if (col != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.col_.SetAllocated(col, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.col_.IsDefault()) {
+    _impl_.col_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVSdeleteRequest.col)
 }
 
 // -------------------------------------------------------------------
@@ -3590,7 +4456,81 @@ inline ::KVRequest_KVCPutRequest* KVRequest::mutable_cput_request() {
   return _msg;
 }
 
-// .KVRequest.KVDeleteRequest delete_request = 6;
+// .KVRequest.KVScputRequest scput_request = 6;
+inline bool KVRequest::_internal_has_scput_request() const {
+  return request_case() == kScputRequest;
+}
+inline bool KVRequest::has_scput_request() const {
+  return _internal_has_scput_request();
+}
+inline void KVRequest::set_has_scput_request() {
+  _impl_._oneof_case_[0] = kScputRequest;
+}
+inline void KVRequest::clear_scput_request() {
+  if (_internal_has_scput_request()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.request_.scput_request_;
+    }
+    clear_has_request();
+  }
+}
+inline ::KVRequest_KVScputRequest* KVRequest::release_scput_request() {
+  // @@protoc_insertion_point(field_release:KVRequest.scput_request)
+  if (_internal_has_scput_request()) {
+    clear_has_request();
+    ::KVRequest_KVScputRequest* temp = _impl_.request_.scput_request_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.request_.scput_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::KVRequest_KVScputRequest& KVRequest::_internal_scput_request() const {
+  return _internal_has_scput_request()
+      ? *_impl_.request_.scput_request_
+      : reinterpret_cast< ::KVRequest_KVScputRequest&>(::_KVRequest_KVScputRequest_default_instance_);
+}
+inline const ::KVRequest_KVScputRequest& KVRequest::scput_request() const {
+  // @@protoc_insertion_point(field_get:KVRequest.scput_request)
+  return _internal_scput_request();
+}
+inline ::KVRequest_KVScputRequest* KVRequest::unsafe_arena_release_scput_request() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.scput_request)
+  if (_internal_has_scput_request()) {
+    clear_has_request();
+    ::KVRequest_KVScputRequest* temp = _impl_.request_.scput_request_;
+    _impl_.request_.scput_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void KVRequest::unsafe_arena_set_allocated_scput_request(::KVRequest_KVScputRequest* scput_request) {
+  clear_request();
+  if (scput_request) {
+    set_has_scput_request();
+    _impl_.request_.scput_request_ = scput_request;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.scput_request)
+}
+inline ::KVRequest_KVScputRequest* KVRequest::_internal_mutable_scput_request() {
+  if (!_internal_has_scput_request()) {
+    clear_request();
+    set_has_scput_request();
+    _impl_.request_.scput_request_ = CreateMaybeMessage< ::KVRequest_KVScputRequest >(GetArenaForAllocation());
+  }
+  return _impl_.request_.scput_request_;
+}
+inline ::KVRequest_KVScputRequest* KVRequest::mutable_scput_request() {
+  ::KVRequest_KVScputRequest* _msg = _internal_mutable_scput_request();
+  // @@protoc_insertion_point(field_mutable:KVRequest.scput_request)
+  return _msg;
+}
+
+// .KVRequest.KVDeleteRequest delete_request = 7;
 inline bool KVRequest::_internal_has_delete_request() const {
   return request_case() == kDeleteRequest;
 }
@@ -3661,6 +4601,80 @@ inline ::KVRequest_KVDeleteRequest* KVRequest::_internal_mutable_delete_request(
 inline ::KVRequest_KVDeleteRequest* KVRequest::mutable_delete_request() {
   ::KVRequest_KVDeleteRequest* _msg = _internal_mutable_delete_request();
   // @@protoc_insertion_point(field_mutable:KVRequest.delete_request)
+  return _msg;
+}
+
+// .KVRequest.KVSdeleteRequest sdelete_request = 8;
+inline bool KVRequest::_internal_has_sdelete_request() const {
+  return request_case() == kSdeleteRequest;
+}
+inline bool KVRequest::has_sdelete_request() const {
+  return _internal_has_sdelete_request();
+}
+inline void KVRequest::set_has_sdelete_request() {
+  _impl_._oneof_case_[0] = kSdeleteRequest;
+}
+inline void KVRequest::clear_sdelete_request() {
+  if (_internal_has_sdelete_request()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.request_.sdelete_request_;
+    }
+    clear_has_request();
+  }
+}
+inline ::KVRequest_KVSdeleteRequest* KVRequest::release_sdelete_request() {
+  // @@protoc_insertion_point(field_release:KVRequest.sdelete_request)
+  if (_internal_has_sdelete_request()) {
+    clear_has_request();
+    ::KVRequest_KVSdeleteRequest* temp = _impl_.request_.sdelete_request_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.request_.sdelete_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::KVRequest_KVSdeleteRequest& KVRequest::_internal_sdelete_request() const {
+  return _internal_has_sdelete_request()
+      ? *_impl_.request_.sdelete_request_
+      : reinterpret_cast< ::KVRequest_KVSdeleteRequest&>(::_KVRequest_KVSdeleteRequest_default_instance_);
+}
+inline const ::KVRequest_KVSdeleteRequest& KVRequest::sdelete_request() const {
+  // @@protoc_insertion_point(field_get:KVRequest.sdelete_request)
+  return _internal_sdelete_request();
+}
+inline ::KVRequest_KVSdeleteRequest* KVRequest::unsafe_arena_release_sdelete_request() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.sdelete_request)
+  if (_internal_has_sdelete_request()) {
+    clear_has_request();
+    ::KVRequest_KVSdeleteRequest* temp = _impl_.request_.sdelete_request_;
+    _impl_.request_.sdelete_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void KVRequest::unsafe_arena_set_allocated_sdelete_request(::KVRequest_KVSdeleteRequest* sdelete_request) {
+  clear_request();
+  if (sdelete_request) {
+    set_has_sdelete_request();
+    _impl_.request_.sdelete_request_ = sdelete_request;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.sdelete_request)
+}
+inline ::KVRequest_KVSdeleteRequest* KVRequest::_internal_mutable_sdelete_request() {
+  if (!_internal_has_sdelete_request()) {
+    clear_request();
+    set_has_sdelete_request();
+    _impl_.request_.sdelete_request_ = CreateMaybeMessage< ::KVRequest_KVSdeleteRequest >(GetArenaForAllocation());
+  }
+  return _impl_.request_.sdelete_request_;
+}
+inline ::KVRequest_KVSdeleteRequest* KVRequest::mutable_sdelete_request() {
+  ::KVRequest_KVSdeleteRequest* _msg = _internal_mutable_sdelete_request();
+  // @@protoc_insertion_point(field_mutable:KVRequest.sdelete_request)
   return _msg;
 }
 
@@ -4084,6 +5098,10 @@ inline void FetchNodeResponse::set_allocated_error_message(std::string* error_me
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

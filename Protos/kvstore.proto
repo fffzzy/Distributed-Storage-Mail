@@ -61,8 +61,22 @@ message KVRequest {
     optional string new_value = 4;  // [Required]
   }
 
+  // KVScputRequest.
+  message KVScputRequest {
+    optional string row = 1;        // [Required]
+    optional string col = 2;        // [Required]
+    optional string cur_value = 3;  // [Required]
+    optional string new_value = 4;  // [Required]
+  }
+
   // KVDeleteRequest.
   message KVDeleteRequest {
+    optional string row = 1;    // [Required]
+    optional string col = 2;    // [Required]
+  }
+
+  // KVSDeleteRequest.
+  message KVSdeleteRequest {
     optional string row = 1;    // [Required]
     optional string col = 2;    // [Required]
   }
@@ -74,7 +88,9 @@ message KVRequest {
     KVPutRequest put_request = 3;
     KVSputRequest sput_request = 4;
     KVCPutRequest cput_request = 5;
-    KVDeleteRequest delete_request = 6;
+    KVScputRequest scput_request = 6;
+    KVDeleteRequest delete_request = 7;
+    KVSdeleteRequest sdelete_request = 8;
   }
 }
 

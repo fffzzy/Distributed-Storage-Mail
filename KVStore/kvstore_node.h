@@ -67,6 +67,15 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   void KVPut(const KVRequest_KVPutRequest* request, KVResponse* response);
 
   void KVSput(const KVRequest_KVSputRequest* request, KVResponse* response);
+
+  void KVCput(const KVRequest_KVCPutRequest* request, KVResponse* response);
+
+  void KVScput(const KVRequest_KVScputRequest* request, KVResponse* response);
+
+  void KVDelete(const KVRequest_KVDeleteRequest* request, KVResponse* response);
+
+  void KVSdelete(const KVRequest_KVSdeleteRequest* request,
+                 KVResponse* response);
 };
 
 }  // namespace KVStore

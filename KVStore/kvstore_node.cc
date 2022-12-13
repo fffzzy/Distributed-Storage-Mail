@@ -170,11 +170,19 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
       break;
     }
     case KVRequest::RequestCase::kCputRequest: {
-      // KVCPut(&request->cput_request(), respone);
+      KVCput(&request->cput_request(), respone);
+      break;
+    }
+    case KVRequest::RequestCase::kScputRequest: {
+      KVScput(&request->scput_request(), respone);
       break;
     }
     case KVRequest::RequestCase::kDeleteRequest: {
-      // KVDelete(&request->delete_request(), respone);
+      KVDelete(&request->delete_request(), respone);
+      break;
+    }
+    case KVRequest::RequestCase::kSdeleteRequest: {
+      KVSdelete(&request->sdelete_request(), respone);
       break;
     }
     default: {
@@ -413,6 +421,323 @@ void KVStoreNodeImpl::KVSput(const KVRequest_KVSputRequest* request,
   tablet->map[row][col] = value;
 
   VerboseLog("Sput <" + row + "><" + col + "> to node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
+
+  // set response
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVCput(const KVRequest_KVCPutRequest* request,
+                             KVResponse* response) {
+  // retrieve row and col key
+  std::string row = request->row();
+  std::string col = request->col();
+  std::string cur_value = request->cur_value();
+  std::string new_value = request->new_value();
+  VerboseLog("Receive CPut <" + row + "><" + col + ">");
+
+  // send scput request to secondary nodes
+  // TODO: fault tolerance
+  for (int i = 0; i < peer_stub_vec.size(); i++) {
+    KVRequest secondary_request;
+    secondary_request.mutable_scput_request()->set_row(row);
+    secondary_request.mutable_scput_request()->set_col(col);
+    secondary_request.mutable_scput_request()->set_cur_value(cur_value);
+    secondary_request.mutable_scput_request()->set_new_value(new_value);
+
+    KVResponse secondary_response;
+    ClientContext secondary_context;
+    Status status = peer_stub_vec[i].get()->Execute(
+        &secondary_context, secondary_request, &secondary_response);
+    // TODO: check status and take corresponding actions
+    if (status.ok()) {
+      if (secondary_response.status() == KVStatusCode::SUCCESS) {
+      } else if (secondary_response.status() == KVStatusCode::FAILURE) {
+      }
+    } else {
+    }
+    VerboseLog("Send Scput <" + row + "><" + col + "> to " + peer_addr_vec[i]);
+  }
+
+  /* cput to local tablet */
+  unsigned long digest = GetDigest(row, col);
+  int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
+
+  // check if tablet is in memory
+  Tablet* tablet = GetTabletFromMem(tablet_idx);
+
+  // if tablet is not in mem
+  if (tablet == NULL) {
+    /* load target tablet to mem */
+    // if vec is full, unload the first one
+    if (tablet_mem_vec.size() == num_tablet_mem) {
+      UnloadTablet();
+    }
+    // load target tablet
+    tablet = LoadTablet(tablet_idx);
+  }
+
+  // target tablet should not be null
+  assert(tablet != NULL);
+
+  // check if row key exists and cur_value matches
+  if (tablet->map.find(row) == tablet->map.end() ||
+      tablet->map[row].find(col) == tablet->map[row].end()) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("CPut target cell not found");
+    return;
+  }
+
+  if (tablet->map[row][col].compare(cur_value) != 0) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("CPut condition doesn't match");
+    return;
+  }
+
+  // if matches, log and write to tablet
+  // append put record to log
+  // format: put <row> <col> <value_size> <value>
+  std::fstream log_file;
+  std::string log_file_path = GetLogFilePath(node_idx, tablet_idx);
+  log_file.open(log_file_path, std::fstream::out | std::fstream::app);
+  if (!log_file.is_open()) {
+    std::cerr << "cannot open " << log_file_path << std::endl;
+  } else {
+    log_file << "put " << row << " " << col << " " << new_value.length() << " "
+             << new_value << "\n";
+  }
+  log_file.close();
+
+  // put new value to tablet
+  assert(tablet->map.find(row) != tablet->map.end() &&
+         tablet->map[row].find(col) != tablet->map[row].end());
+  tablet->map[row][col] = new_value;
+
+  VerboseLog("CPut <" + row + "><" + col + "> to node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
+
+  // set response
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVScput(const KVRequest_KVScputRequest* request,
+                              KVResponse* response) {
+  // retrieve row and col key
+  std::string row = request->row();
+  std::string col = request->col();
+  std::string cur_value = request->cur_value();
+  std::string new_value = request->new_value();
+  VerboseLog("Receive Scput <" + row + "><" + col + ">");
+
+  unsigned long digest = GetDigest(row, col);
+  int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
+
+  // check if tablet is in memory
+  Tablet* tablet = GetTabletFromMem(tablet_idx);
+
+  // if tablet is not in mem
+  if (tablet == NULL) {
+    /* load target tablet to mem */
+    // if vec is full, unload the first one
+    if (tablet_mem_vec.size() == num_tablet_mem) {
+      UnloadTablet();
+    }
+    // load target tablet
+    tablet = LoadTablet(tablet_idx);
+  }
+
+  // target tablet should not be null
+  assert(tablet != NULL);
+
+  // check if row key exists and cur_value matches
+  if (tablet->map.find(row) == tablet->map.end() ||
+      tablet->map[row].find(col) == tablet->map[row].end()) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("Scput target cell not found");
+    return;
+  }
+
+  if (tablet->map[row][col].compare(cur_value) != 0) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("Scput condition doesn't match");
+    return;
+  }
+
+  // if matches, log and write to tablet
+  // append put record to log
+  // format: put <row> <col> <value_size> <value>
+  std::fstream log_file;
+  std::string log_file_path = GetLogFilePath(node_idx, tablet_idx);
+  log_file.open(log_file_path, std::fstream::out | std::fstream::app);
+  if (!log_file.is_open()) {
+    std::cerr << "cannot open " << log_file_path << std::endl;
+  } else {
+    log_file << "put " << row << " " << col << " " << new_value.length() << " "
+             << new_value << "\n";
+  }
+  log_file.close();
+
+  // put new value to tablet
+  assert(tablet->map.find(row) != tablet->map.end() &&
+         tablet->map[row].find(col) != tablet->map[row].end());
+  tablet->map[row][col] = new_value;
+
+  VerboseLog("Scput <" + row + "><" + col + "> to node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
+
+  // set response
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVDelete(const KVRequest_KVDeleteRequest* request,
+                               KVResponse* response) {
+  // retrieve row and col key
+  std::string row = request->row();
+  std::string col = request->col();
+  VerboseLog("Receive Delete <" + row + "><" + col + ">");
+
+  // send sdelete request to secondary nodes
+  // TODO: fault tolerance
+  for (int i = 0; i < peer_stub_vec.size(); i++) {
+    KVRequest secondary_request;
+    secondary_request.mutable_sdelete_request()->set_row(row);
+    secondary_request.mutable_sdelete_request()->set_col(col);
+    KVResponse secondary_response;
+    ClientContext secondary_context;
+    Status status = peer_stub_vec[i].get()->Execute(
+        &secondary_context, secondary_request, &secondary_response);
+    // TODO: check status and take corresponding actions
+    if (status.ok()) {
+      if (secondary_response.status() == KVStatusCode::SUCCESS) {
+      } else if (secondary_response.status() == KVStatusCode::FAILURE) {
+      }
+    } else {
+    }
+    VerboseLog("Send Sdelete <" + row + "><" + col + "> to " +
+               peer_addr_vec[i]);
+  }
+
+  /* delete from local tablet */
+  unsigned long digest = GetDigest(row, col);
+  int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
+
+  // check if tablet is in memory
+  Tablet* tablet = GetTabletFromMem(tablet_idx);
+
+  // if tablet is not in mem
+  if (tablet == NULL) {
+    /* load target tablet to mem */
+    // if vec is full, unload the first one
+    if (tablet_mem_vec.size() == num_tablet_mem) {
+      UnloadTablet();
+    }
+    // load target tablet
+    tablet = LoadTablet(tablet_idx);
+  }
+
+  // target tablet should not be null
+  assert(tablet != NULL);
+
+  // check if target cell exists
+  if (tablet->map.find(row) == tablet->map.end() ||
+      tablet->map[row].find(col) == tablet->map[row].end()) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("Delete target cell not found");
+    return;
+  }
+
+  // append delete log
+  std::fstream log_file;
+  std::string log_file_path = GetLogFilePath(node_idx, tablet_idx);
+  log_file.open(log_file_path, std::fstream::out | std::fstream::app);
+  if (!log_file.is_open()) {
+    std::cerr << "cannot open " << log_file_path << std::endl;
+  } else {
+    log_file << "delete " << row << " " << col << "\n";
+  }
+  log_file.close();
+
+  // delete entry
+  tablet->map[row].erase(col);
+  // check if row is empty, if empty, delete row
+  if (tablet->map[row].size() == 0) {
+    tablet->map.erase(row);
+  }
+
+  VerboseLog("Delete <" + row + "><" + col + "> from node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
+
+  // set response
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVSdelete(const KVRequest_KVSdeleteRequest* request,
+                                KVResponse* response) {
+  // retrieve row and col key
+  std::string row = request->row();
+  std::string col = request->col();
+  VerboseLog("Receive Delete <" + row + "><" + col + ">");
+
+  /* delete from local tablet */
+  unsigned long digest = GetDigest(row, col);
+  int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
+
+  // check if tablet is in memory
+  Tablet* tablet = GetTabletFromMem(tablet_idx);
+
+  // if tablet is not in mem
+  if (tablet == NULL) {
+    /* load target tablet to mem */
+    // if vec is full, unload the first one
+    if (tablet_mem_vec.size() == num_tablet_mem) {
+      UnloadTablet();
+    }
+    // load target tablet
+    tablet = LoadTablet(tablet_idx);
+  }
+
+  // target tablet should not be null
+  assert(tablet != NULL);
+
+  // check if target cell exists
+  if (tablet->map.find(row) == tablet->map.end() ||
+      tablet->map[row].find(col) == tablet->map[row].end()) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("Sdelete target cell not found");
+    return;
+  }
+
+  // append delete log
+  std::fstream log_file;
+  std::string log_file_path = GetLogFilePath(node_idx, tablet_idx);
+  log_file.open(log_file_path, std::fstream::out | std::fstream::app);
+  if (!log_file.is_open()) {
+    std::cerr << "cannot open " << log_file_path << std::endl;
+  } else {
+    log_file << "delete " << row << " " << col << "\n";
+  }
+  log_file.close();
+
+  // delete entry
+  tablet->map[row].erase(col);
+  // check if row is empty, if empty, delete row
+  if (tablet->map[row].size() == 0) {
+    tablet->map.erase(row);
+  }
+
+  VerboseLog("Sdelete <" + row + "><" + col + "> from node " +
              std::to_string(node_idx) + " tablet " +
              std::to_string(tablet_idx));
 

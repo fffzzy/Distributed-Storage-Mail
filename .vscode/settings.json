@@ -90,6 +90,7 @@
     "algorithm": "cpp",
     "*.inc": "cpp",
     "filesystem": "cpp",
-    "codecvt": "cpp"
+    "codecvt": "cpp",
+    "__memory": "cpp"
   }
 }
