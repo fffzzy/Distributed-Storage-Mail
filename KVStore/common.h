@@ -3,6 +3,12 @@
 
 #include <absl/strings/str_cat.h>
 #include <absl/strings/string_view.h>
+#include <grpc/grpc.h>
+#include <grpcpp/grpcpp.h>
+#include <grpcpp/security/server_credentials.h>
+#include <grpcpp/server.h>
+#include <grpcpp/server_builder.h>
+#include <grpcpp/server_context.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>

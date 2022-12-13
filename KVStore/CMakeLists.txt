@@ -63,7 +63,7 @@ target_link_libraries(kvstore_node_helper
 
 # Targets kvstore_node_(client|server)
 foreach(_target
-  kvstore_master kvstore_node)
+  kvstore_master kvstore_node kvstore_client)
   add_executable(${_target}
     "${_target}.cc")
   target_link_libraries(${_target}
