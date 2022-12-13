@@ -92,11 +92,7 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
 
 Status KVStoreNodeImpl::CheckHealth(ServerContext* context,
                                     const Empty* request, Empty* response) {
-  return Status::OK;
-}
-
-Status KVStoreNodeImpl::SelectLeader(ServerContext* context,
-                                     const Empty* request, Empty* response) {
+  fprintf(stderr, "[Health Check] responding back to master ... \n");
   return Status::OK;
 }
 

@@ -10,6 +10,9 @@ using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 
+// Verbose mode.
+bool verbose_ = false;
+
 // Acquire lock to access cluster information.
 pthread_mutex_t cluster_lock_;
 
@@ -17,25 +20,35 @@ pthread_mutex_t cluster_lock_;
 void* ThreadFunc(void* args) {
   std::vector<Cluster>* clusters = (std::vector<Cluster>*)args;
 
-  Empty empty_req;
-  Empty empty_res;
   while (true) {
     pthread_mutex_lock(&cluster_lock_);
-    fprintf(stderr, "[Health Check] start checking ... ... \n");
+    if (verbose_) {
+      fprintf(stderr, "[Health Check] start checking ... ... \n");
+    }
+
     for (auto& cluster : (*clusters)) {
       auto& isAlive = cluster.isAlive;
       // Check health of each replica node within a cluster.
       for (const auto& it : cluster.stubs) {
         ClientContext context;
+        Empty empty_req;
+        Empty empty_res;
         Status status = it.second->CheckHealth(&context, empty_req, &empty_res);
         if (status.ok()) {
           isAlive[it.first] = true;
-          fprintf(stderr, "[Health Check] node %s in Cluster-%d is OK ...\n",
-                  it.first.c_str(), cluster.id);
+          if (verbose_) {
+            fprintf(stderr, "[Health Check] node %s in Cluster-%d is OK ...\n",
+                    it.first.c_str(), cluster.id);
+          }
+
         } else {
           isAlive[it.first] = false;
-          fprintf(stderr, "[Health Check] node %s in Cluster-%d Crashed ...\n",
-                  it.first.c_str(), cluster.id);
+          if (verbose_) {
+            fprintf(stderr,
+                    "[Health Check] node %s in Cluster-%d Crashed ...\n",
+                    it.first.c_str(), cluster.id);
+          }
+
           if (cluster.primary.compare(it.first) == 0) {
             cluster.primary.clear();
           }
@@ -46,24 +59,31 @@ void* ThreadFunc(void* args) {
         for (const auto& [addr, alive] : isAlive) {
           if (alive) {
             cluster.primary = addr;
-            ClientContext context;
-            Status status = cluster.stubs[addr]->SelectLeader(
-                &context, empty_req, &empty_res);
-            if (status.ok()) {
+            if (verbose_) {
               fprintf(stderr,
                       "[Health Check] primary node in Cluster-%d changes to %s "
                       "...\n",
                       cluster.id, addr.c_str());
-              break;
             }
+
+            break;
           }
         }
-      } else {
-        fprintf(
-            stderr,
-            "[Health Check] original primary node %s in Cluster-%d is OK ...\n",
-            cluster.primary.c_str(), cluster.id);
       }
+      if (verbose_) {
+        if (cluster.primary.empty()) {
+          fprintf(stderr,
+                  "[Health Check] no KVStore nodes in Cluster-%d is available "
+                  "... \n",
+                  cluster.id);
+        } else {
+          fprintf(stderr, "[Health Check] primary node in Cluster-%d is %s\n",
+                  cluster.id, cluster.primary.c_str());
+        }
+      }
+    }
+    if (verbose_) {
+      fprintf(stderr, "\n");
     }
     pthread_mutex_unlock(&cluster_lock_);
     sleep(1);
@@ -117,15 +137,17 @@ void KVStoreMasterImpl::ReadConfig() {
   fclose(file);
 
   // Show cluster information.
-  fprintf(stderr, "========== Cluster Informations ==========\n");
-  for (auto const& cluster : clusters_) {
-    fprintf(stderr, "Cluster-%d primary node: %s\n", cluster.id,
-            cluster.primary.c_str());
-    for (auto const& [addr, stub] : cluster.stubs) {
-      std::cout << "Replica node: " << addr << std::endl;
+  if (verbose_) {
+    fprintf(stderr, "========== Cluster Informations ==========\n");
+    for (auto const& cluster : clusters_) {
+      fprintf(stderr, "Cluster-%d primary node: %s\n", cluster.id,
+              cluster.primary.c_str());
+      for (auto const& [addr, stub] : cluster.stubs) {
+        std::cout << "Replica node: " << addr << std::endl;
+      }
     }
+    fprintf(stderr, "==========================================\n\n");
   }
-  fprintf(stderr, "==========================================\n\n");
 }
 
 void KVStoreMasterImpl::CheckReplicaHealth() {
@@ -144,16 +166,37 @@ std::string KVStoreMasterImpl::GetAddr() { return master_addr_; }
 Status KVStoreMasterImpl::FetchNodeAddr(ServerContext* context,
                                         const FetchNodeRequest* request,
                                         FetchNodeResponse* response) {
-  // Use "{row}-{col}" as key for hashing.
-  std::string key = absl::StrCat(request->row(), "-", request->col());
-  std::cout << "Receive request with key: " << key << std::endl;
-  // TODO: sha-256, return the address of primary node in corresponding cluster.
+  int hash_code = GetDigest(request->row(), request->col()) % clusters_.size();
+  pthread_mutex_lock(&cluster_lock_);
+  std::string primary_addr = clusters_[hash_code].primary;
+  pthread_mutex_unlock(&cluster_lock_);
+  if (primary_addr.empty()) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_error_message("-ERR service unavailable.");
+  } else {
+    response->set_status(KVStatusCode::SUCCESS);
+    response->set_addr(primary_addr);
+  }
   return Status::OK;
 }
 
 }  // namespace KVStore
 
 int main(int argc, char** argv) {
+  /* read from command line */
+  int opt;
+  while ((opt = getopt(argc, argv, "v")) != -1) {
+    switch (opt) {
+      case 'v':
+        KVStore::verbose_ = true;
+        break;
+      default:
+        fprintf(stderr, "[Command Line Format] ./kvstore_node [-v]\n");
+        exit(-1);
+        break;
+    }
+  }
+
   KVStore::KVStoreMasterImpl master;
   master.ReadConfig();
 

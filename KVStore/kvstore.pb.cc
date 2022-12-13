@@ -318,19 +318,18 @@ const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE
   "\210\001\001B\t\n\007_statusB\007\n\005_addrB\020\n\016_error_messag"
   "e*(\n\014KVStatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILUR"
   "E\020\0012I\n\rKVStoreMaster\0228\n\rFetchNodeAddr\022\021."
-  "FetchNodeRequest\032\022.FetchNodeResponse\"\0002\266"
-  "\001\n\013KVStoreNode\022$\n\007Execute\022\n.KVRequest\032\013."
-  "KVResponse\"\000\022\?\n\013CheckHealth\022\026.google.pro"
-  "tobuf.Empty\032\026.google.protobuf.Empty\"\000\022@\n"
-  "\014SelectLeader\022\026.google.protobuf.Empty\032\026."
-  "google.protobuf.Empty\"\000b\006proto3"
+  "FetchNodeRequest\032\022.FetchNodeResponse\"\0002t"
+  "\n\013KVStoreNode\022$\n\007Execute\022\n.KVRequest\032\013.K"
+  "VResponse\"\000\022\?\n\013CheckHealth\022\026.google.prot"
+  "obuf.Empty\032\026.google.protobuf.Empty\"\000b\006pr"
+  "oto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_kvstore_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_kvstore_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_kvstore_2eproto = {
-    false, false, 1391, descriptor_table_protodef_kvstore_2eproto,
+    false, false, 1324, descriptor_table_protodef_kvstore_2eproto,
     "kvstore.proto",
     &descriptor_table_kvstore_2eproto_once, descriptor_table_kvstore_2eproto_deps, 1, 9,
     schemas, file_default_instances, TableStruct_kvstore_2eproto::offsets,
