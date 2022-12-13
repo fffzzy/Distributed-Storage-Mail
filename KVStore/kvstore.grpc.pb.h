@@ -254,12 +254,23 @@ class KVStoreNode final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> PrepareAsyncExecute(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>>(PrepareAsyncExecuteRaw(context, request, cq));
     }
+    // Health Check if the replica node is alive.
+    virtual ::grpc::Status CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::google::protobuf::Empty* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> AsyncCheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(AsyncCheckHealthRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>> PrepareAsyncCheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>>(PrepareAsyncCheckHealthRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
       // General request containing KVStore operations: Put/Get/CPut/Delete.
       virtual void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Health Check if the replica node is alive.
+      virtual void CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -267,6 +278,8 @@ class KVStoreNode final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* AsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* AsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::google::protobuf::Empty>* PrepareAsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -278,11 +291,20 @@ class KVStoreNode final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>> PrepareAsyncExecute(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>>(PrepareAsyncExecuteRaw(context, request, cq));
     }
+    ::grpc::Status CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::google::protobuf::Empty* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> AsyncCheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(AsyncCheckHealthRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>> PrepareAsyncCheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>>(PrepareAsyncCheckHealthRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
       void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) override;
       void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)>) override;
+      void CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -296,7 +318,10 @@ class KVStoreNode final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::KVResponse>* AsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::KVResponse>* PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* AsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* PrepareAsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_Execute_;
+    const ::grpc::internal::RpcMethod rpcmethod_CheckHealth_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -306,6 +331,8 @@ class KVStoreNode final {
     virtual ~Service();
     // General request containing KVStore operations: Put/Get/CPut/Delete.
     virtual ::grpc::Status Execute(::grpc::ServerContext* context, const ::KVRequest* request, ::KVResponse* response);
+    // Health Check if the replica node is alive.
+    virtual ::grpc::Status CheckHealth(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_Execute : public BaseClass {
@@ -327,7 +354,27 @@ class KVStoreNode final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_Execute<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_CheckHealth : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_CheckHealth() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_CheckHealth() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CheckHealth(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCheckHealth(::grpc::ServerContext* context, ::google::protobuf::Empty* request, ::grpc::ServerAsyncResponseWriter< ::google::protobuf::Empty>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_Execute<WithAsyncMethod_CheckHealth<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_Execute : public BaseClass {
    private:
@@ -355,7 +402,34 @@ class KVStoreNode final {
     virtual ::grpc::ServerUnaryReactor* Execute(
       ::grpc::CallbackServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_Execute<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_CheckHealth : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_CheckHealth() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response) { return this->CheckHealth(context, request, response); }));}
+    void SetMessageAllocatorFor_CheckHealth(
+        ::grpc::MessageAllocator< ::google::protobuf::Empty, ::google::protobuf::Empty>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::google::protobuf::Empty, ::google::protobuf::Empty>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_CheckHealth() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CheckHealth(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* CheckHealth(
+      ::grpc::CallbackServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::google::protobuf::Empty* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_Execute<WithCallbackMethod_CheckHealth<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_Execute : public BaseClass {
@@ -370,6 +444,23 @@ class KVStoreNode final {
     }
     // disable synchronous version of this method
     ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_CheckHealth : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_CheckHealth() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_CheckHealth() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CheckHealth(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::google::protobuf::Empty* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -395,6 +486,26 @@ class KVStoreNode final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_CheckHealth : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_CheckHealth() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_CheckHealth() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CheckHealth(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCheckHealth(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_Execute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -414,6 +525,28 @@ class KVStoreNode final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* Execute(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_CheckHealth : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_CheckHealth() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->CheckHealth(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_CheckHealth() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CheckHealth(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* CheckHealth(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -443,9 +576,36 @@ class KVStoreNode final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedExecute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::KVRequest,::KVResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_Execute<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_CheckHealth : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_CheckHealth() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::google::protobuf::Empty, ::google::protobuf::Empty>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::google::protobuf::Empty, ::google::protobuf::Empty>* streamer) {
+                       return this->StreamedCheckHealth(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_CheckHealth() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status CheckHealth(::grpc::ServerContext* /*context*/, const ::google::protobuf::Empty* /*request*/, ::google::protobuf::Empty* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedCheckHealth(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::google::protobuf::Empty,::google::protobuf::Empty>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_Execute<WithStreamedUnaryMethod_CheckHealth<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_Execute<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_Execute<WithStreamedUnaryMethod_CheckHealth<Service > > StreamedService;
 };
 
 

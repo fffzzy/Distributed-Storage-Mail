@@ -146,7 +146,9 @@ PROTOBUF_CONSTEXPR FetchNodeResponse::FetchNodeResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.addr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}} {}
+  , /*decltype(_impl_.addr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.error_message_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.status_)*/0} {}
 struct FetchNodeResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR FetchNodeResponseDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -255,8 +257,12 @@ const uint32_t TableStruct_kvstore_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::FetchNodeResponse, _impl_.status_),
   PROTOBUF_FIELD_OFFSET(::FetchNodeResponse, _impl_.addr_),
+  PROTOBUF_FIELD_OFFSET(::FetchNodeResponse, _impl_.error_message_),
+  2,
   0,
+  1,
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 9, -1, sizeof(::KVRequest_KVPutRequest)},
@@ -267,7 +273,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 56, -1, -1, sizeof(::KVRequest)},
   { 68, 76, -1, sizeof(::KVResponse)},
   { 78, 86, -1, sizeof(::FetchNodeRequest)},
-  { 88, 95, -1, sizeof(::FetchNodeResponse)},
+  { 88, 97, -1, sizeof(::FetchNodeResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -283,41 +289,49 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 
 const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\rkvstore.proto\"\324\005\n\tKVRequest\022.\n\013put_req"
-  "uest\030\001 \001(\0132\027.KVRequest.KVPutRequestH\000\022.\n"
-  "\013get_request\030\002 \001(\0132\027.KVRequest.KVGetRequ"
-  "estH\000\0220\n\014cput_request\030\003 \001(\0132\030.KVRequest."
-  "KVCPutRequestH\000\0224\n\016delete_request\030\004 \001(\0132"
-  "\032.KVRequest.KVDeleteRequestH\000\0220\n\014sget_re"
-  "quest\030\005 \001(\0132\030.KVRequest.KVSGetRequestH\000\032"
-  "`\n\014KVPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col"
-  "\030\002 \001(\tH\001\210\001\001\022\022\n\005value\030\003 \001(\tH\002\210\001\001B\006\n\004_rowB"
-  "\006\n\004_colB\010\n\006_value\032B\n\014KVGetRequest\022\020\n\003row"
-  "\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n"
-  "\004_col\032\217\001\n\rKVCPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001"
-  "\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\026\n\tcur_value\030\003 \001(\tH\002"
-  "\210\001\001\022\026\n\tnew_value\030\004 \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_"
-  "colB\014\n\n_cur_valueB\014\n\n_new_value\032E\n\017KVDel"
-  "eteRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001("
-  "\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032C\n\rKVSGetRequest\022"
+  "\n\rkvstore.proto\032\033google/protobuf/empty.p"
+  "roto\"\324\005\n\tKVRequest\022.\n\013put_request\030\001 \001(\0132"
+  "\027.KVRequest.KVPutRequestH\000\022.\n\013get_reques"
+  "t\030\002 \001(\0132\027.KVRequest.KVGetRequestH\000\0220\n\014cp"
+  "ut_request\030\003 \001(\0132\030.KVRequest.KVCPutReque"
+  "stH\000\0224\n\016delete_request\030\004 \001(\0132\032.KVRequest"
+  ".KVDeleteRequestH\000\0220\n\014sget_request\030\005 \001(\013"
+  "2\030.KVRequest.KVSGetRequestH\000\032`\n\014KVPutReq"
+  "uest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001"
+  "\022\022\n\005value\030\003 \001(\tH\002\210\001\001B\006\n\004_rowB\006\n\004_colB\010\n\006"
+  "_value\032B\n\014KVGetRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001"
+  "\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032\217\001\n\rK"
+  "VCPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 "
+  "\001(\tH\001\210\001\001\022\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_"
+  "value\030\004 \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cur"
+  "_valueB\014\n\n_new_value\032E\n\017KVDeleteRequest\022"
   "\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_"
-  "rowB\006\n\004_colB\t\n\007request\"]\n\nKVResponse\022\"\n\006"
-  "status\030\001 \001(\0162\r.KVStatusCodeH\000\210\001\001\022\024\n\007mess"
-  "age\030\002 \001(\tH\001\210\001\001B\t\n\007_statusB\n\n\010_message\"F\n"
-  "\020FetchNodeRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003c"
-  "ol\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\"/\n\021FetchNo"
-  "deResponse\022\021\n\004addr\030\001 \001(\tH\000\210\001\001B\007\n\005_addr*("
-  "\n\014KVStatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\001"
-  "2I\n\rKVStoreMaster\0228\n\rFetchNodeAddr\022\021.Fet"
-  "chNodeRequest\032\022.FetchNodeResponse\"\00023\n\013K"
-  "VStoreNode\022$\n\007Execute\022\n.KVRequest\032\013.KVRe"
-  "sponse\"\000b\006proto3"
+  "rowB\006\n\004_col\032C\n\rKVSGetRequest\022\020\n\003row\030\001 \001("
+  "\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col"
+  "B\t\n\007request\"]\n\nKVResponse\022\"\n\006status\030\001 \001("
+  "\0162\r.KVStatusCodeH\000\210\001\001\022\024\n\007message\030\002 \001(\tH\001"
+  "\210\001\001B\t\n\007_statusB\n\n\010_message\"F\n\020FetchNodeR"
+  "equest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210"
+  "\001\001B\006\n\004_rowB\006\n\004_col\"\214\001\n\021FetchNodeResponse"
+  "\022\"\n\006status\030\001 \001(\0162\r.KVStatusCodeH\000\210\001\001\022\021\n\004"
+  "addr\030\002 \001(\tH\001\210\001\001\022\032\n\rerror_message\030\003 \001(\tH\002"
+  "\210\001\001B\t\n\007_statusB\007\n\005_addrB\020\n\016_error_messag"
+  "e*(\n\014KVStatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILUR"
+  "E\020\0012I\n\rKVStoreMaster\0228\n\rFetchNodeAddr\022\021."
+  "FetchNodeRequest\032\022.FetchNodeResponse\"\0002t"
+  "\n\013KVStoreNode\022$\n\007Execute\022\n.KVRequest\032\013.K"
+  "VResponse\"\000\022\?\n\013CheckHealth\022\026.google.prot"
+  "obuf.Empty\032\026.google.protobuf.Empty\"\000b\006pr"
+  "oto3"
   ;
+static const ::_pbi::DescriptorTable* const descriptor_table_kvstore_2eproto_deps[1] = {
+  &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
+};
 static ::_pbi::once_flag descriptor_table_kvstore_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_kvstore_2eproto = {
-    false, false, 1136, descriptor_table_protodef_kvstore_2eproto,
+    false, false, 1324, descriptor_table_protodef_kvstore_2eproto,
     "kvstore.proto",
-    &descriptor_table_kvstore_2eproto_once, nullptr, 0, 9,
+    &descriptor_table_kvstore_2eproto_once, descriptor_table_kvstore_2eproto_deps, 1, 9,
     schemas, file_default_instances, TableStruct_kvstore_2eproto::offsets,
     file_level_metadata_kvstore_2eproto, file_level_enum_descriptors_kvstore_2eproto,
     file_level_service_descriptors_kvstore_2eproto,
@@ -2922,8 +2936,14 @@ void FetchNodeRequest::InternalSwap(FetchNodeRequest* other) {
 class FetchNodeResponse::_Internal {
  public:
   using HasBits = decltype(std::declval<FetchNodeResponse>()._impl_._has_bits_);
+  static void set_has_status(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
   static void set_has_addr(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
+  }
+  static void set_has_error_message(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
   }
 };
 
@@ -2939,7 +2959,9 @@ FetchNodeResponse::FetchNodeResponse(const FetchNodeResponse& from)
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.addr_){}};
+    , decltype(_impl_.addr_){}
+    , decltype(_impl_.error_message_){}
+    , decltype(_impl_.status_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   _impl_.addr_.InitDefault();
@@ -2950,6 +2972,15 @@ FetchNodeResponse::FetchNodeResponse(const FetchNodeResponse& from)
     _this->_impl_.addr_.Set(from._internal_addr(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.error_message_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.error_message_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_error_message()) {
+    _this->_impl_.error_message_.Set(from._internal_error_message(), 
+      _this->GetArenaForAllocation());
+  }
+  _this->_impl_.status_ = from._impl_.status_;
   // @@protoc_insertion_point(copy_constructor:FetchNodeResponse)
 }
 
@@ -2961,10 +2992,16 @@ inline void FetchNodeResponse::SharedCtor(
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.addr_){}
+    , decltype(_impl_.error_message_){}
+    , decltype(_impl_.status_){0}
   };
   _impl_.addr_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.addr_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.error_message_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.error_message_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -2980,6 +3017,7 @@ FetchNodeResponse::~FetchNodeResponse() {
 inline void FetchNodeResponse::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.addr_.Destroy();
+  _impl_.error_message_.Destroy();
 }
 
 void FetchNodeResponse::SetCachedSize(int size) const {
@@ -2993,9 +3031,15 @@ void FetchNodeResponse::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    _impl_.addr_.ClearNonDefaultToEmpty();
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _impl_.addr_.ClearNonDefaultToEmpty();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _impl_.error_message_.ClearNonDefaultToEmpty();
+    }
   }
+  _impl_.status_ = 0;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -3007,13 +3051,32 @@ const char* FetchNodeResponse::_InternalParse(const char* ptr, ::_pbi::ParseCont
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // optional string addr = 1;
+      // optional .KVStatusCode status = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_status(static_cast<::KVStatusCode>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // optional string addr = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_addr();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "FetchNodeResponse.addr"));
+        } else
+          goto handle_unusual;
+        continue;
+      // optional string error_message = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_error_message();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "FetchNodeResponse.error_message"));
         } else
           goto handle_unusual;
         continue;
@@ -3047,14 +3110,31 @@ uint8_t* FetchNodeResponse::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // optional string addr = 1;
+  // optional .KVStatusCode status = 1;
+  if (_internal_has_status()) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      1, this->_internal_status(), target);
+  }
+
+  // optional string addr = 2;
   if (_internal_has_addr()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_addr().data(), static_cast<int>(this->_internal_addr().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "FetchNodeResponse.addr");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_addr(), target);
+        2, this->_internal_addr(), target);
+  }
+
+  // optional string error_message = 3;
+  if (_internal_has_error_message()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_error_message().data(), static_cast<int>(this->_internal_error_message().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "FetchNodeResponse.error_message");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_error_message(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3073,14 +3153,29 @@ size_t FetchNodeResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // optional string addr = 1;
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_addr());
-  }
+  if (cached_has_bits & 0x00000007u) {
+    // optional string addr = 2;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_addr());
+    }
 
+    // optional string error_message = 3;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+          this->_internal_error_message());
+    }
+
+    // optional .KVStatusCode status = 1;
+    if (cached_has_bits & 0x00000004u) {
+      total_size += 1 +
+        ::_pbi::WireFormatLite::EnumSize(this->_internal_status());
+    }
+
+  }
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -3099,8 +3194,18 @@ void FetchNodeResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_addr()) {
-    _this->_internal_set_addr(from._internal_addr());
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000007u) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_set_addr(from._internal_addr());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_set_error_message(from._internal_error_message());
+    }
+    if (cached_has_bits & 0x00000004u) {
+      _this->_impl_.status_ = from._impl_.status_;
+    }
+    _this->_impl_._has_bits_[0] |= cached_has_bits;
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -3126,6 +3231,11 @@ void FetchNodeResponse::InternalSwap(FetchNodeResponse* other) {
       &_impl_.addr_, lhs_arena,
       &other->_impl_.addr_, rhs_arena
   );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.error_message_, lhs_arena,
+      &other->_impl_.error_message_, rhs_arena
+  );
+  swap(_impl_.status_, other->_impl_.status_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FetchNodeResponse::GetMetadata() const {
