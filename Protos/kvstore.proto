@@ -26,6 +26,19 @@ enum KVStatusCode {
 
 /* General KV request from frontend. */
 message KVRequest {
+  // KVGetRequest.
+  message KVGetRequest {
+    optional string row = 1;    // [Required]
+    optional string col = 2;    // [Required]
+  }
+
+  // KVSGetRequest, Get request from primary to secondary
+  // simply notify secondary nodes to switch tablet without returning value
+  message KVSgetRequest {
+    optional string row = 1;    // [Required]
+    optional string col = 2;    // [Required]
+  }
+
   // KVPutRequest.
   message KVPutRequest {
     optional string row = 1;    // [Required]
@@ -33,10 +46,11 @@ message KVRequest {
     optional string value = 3;  // [Required]
   }
 
-  // KVGetRequest.
-  message KVGetRequest {
+  // KVSputRequest.
+  message KVSputRequest {
     optional string row = 1;    // [Required]
     optional string col = 2;    // [Required]
+    optional string value = 3;  // [Required]
   }
 
   // KVCPutRequest.
@@ -53,20 +67,14 @@ message KVRequest {
     optional string col = 2;    // [Required]
   }
 
-  // KVSGetRequest, Get request from primary to secondary
-  // simply notify secondary nodes to switch tablet without returning value
-  message KVSGetRequest {
-    optional string row = 1;    // [Required]
-    optional string col = 2;    // [Required]
-  }
-
   // Request can only be one of put/get/cput/delete.
   oneof request {
-    KVPutRequest put_request = 1;
-    KVGetRequest get_request = 2;
-    KVCPutRequest cput_request = 3;
-    KVDeleteRequest delete_request = 4;
-    KVSGetRequest sget_request = 5;
+    KVGetRequest get_request = 1;
+    KVSgetRequest sget_request = 2;
+    KVPutRequest put_request = 3;
+    KVSputRequest sput_request = 4;
+    KVCPutRequest cput_request = 5;
+    KVDeleteRequest delete_request = 6;
   }
 }
 

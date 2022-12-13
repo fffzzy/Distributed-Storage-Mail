@@ -18,10 +18,14 @@ std::string GetNodeDirPath(int node_idx);
 
 std::string GetTabletFilePath(int node_idx, int tablet_idx);
 
-std::string GetLogFilePath(int node_idx);
+std::string GetLogFilePath(int node_idx, int tablet_idx);
+
+int WriteTabletToFile(Tablet* tablet);
+
+Tablet* LoadTabletFromFile(int node_idx, int tablet_idx);
 
 // index ranges from 0 to num_tablet_total - 1 (inclusive)
-int GetTabletIdx(int digest, int num_tablet_total);
+int Digest2TabletIdx(int digest, int num_tablet_total);
 
 }  // namespace KVStore
 

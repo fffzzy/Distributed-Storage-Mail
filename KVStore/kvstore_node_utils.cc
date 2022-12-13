@@ -11,66 +11,48 @@ std::string GetTabletFilePath(int node_idx, int tablet_idx) {
          "_tablet" + std::to_string(tablet_idx) + ".txt";
 }
 
-std::string GetLogFilePath(int node_idx) {
-  return GetNodeDirPath(node_idx) + "node" + std::to_string(node_idx) +
-         "_log.txt";
+std::string GetLogFilePath(int node_idx, int tablet_idx) {
+  return GetNodeDirPath(node_idx) + "node" + std::to_string(node_idx) + "_log" +
+         std::to_string(tablet_idx) + ".txt";
 }
 
-// TODO: get cluster path based on ip, get tablet path based on rowkey and
-// colkey
-std::string GetTabletPath() {
-  // TODO: always return test tablet
-  std::string tabletPath = "../Database/cluster1/node1/tablet1.txt";
-
-  // if file does not exist, create new file
-  std::fstream tabletFile;
-  tabletFile.open(tabletPath,
-                  std::fstream::in | std::fstream::out | std::fstream::app);
-  if (!tabletFile) {
-    tabletFile.open(tabletPath,
-                    std::fstream::in | std::fstream::out | std::fstream::app);
-  }
-  tabletFile.close();
-
-  return tabletPath;
-}
-
-int WriteTablet(Tablet* tablet) {
+int WriteTabletToFile(Tablet* tablet) {
   // if file does not exist, create new file
   std::string path = tablet->path;
-  std::fstream tabletFile;
-  tabletFile.open(path,
-                  std::fstream::in | std::fstream::out | std::fstream::trunc);
-  if (!tabletFile) {
-    tabletFile.open(path,
-                    std::fstream::in | std::fstream::out | std::fstream::trunc);
+  std::fstream tablet_file;
+  tablet_file.open(path,
+                   std::fstream::in | std::fstream::out | std::fstream::trunc);
+  if (!tablet_file) {
+    tablet_file.open(
+        path, std::fstream::in | std::fstream::out | std::fstream::trunc);
   }
   // close file
-  tabletFile.close();
+  tablet_file.close();
 
   /* write to file */
   std::unordered_map<std::string, std::unordered_map<std::string, std::string>>
       map = tablet->map;
   std::ofstream file(path);
   if (!file.is_open()) {
+    std::cerr << "cannot open " << path << std::endl;
     return -1;
   }
   // firstly write numRows, ended by \n
   file << map.size() << "\n";
   // for each row
   for (std::pair<std::string, std::unordered_map<std::string, std::string>>
-           rowEntry : map) {
-    std::string rowKey = rowEntry.first;
-    std::unordered_map<std::string, std::string> row = rowEntry.second;
+           row_entry : map) {
+    std::string row_key = row_entry.first;
+    std::unordered_map<std::string, std::string> row = row_entry.second;
     // write row key and numCols, splited by a space and ended by \n
-    file << rowKey << " " << row.size() << "\n";
+    file << row_key << " " << row.size() << "\n";
 
     // for each col
-    for (std::pair<std::string, std::string> colEntry : row) {
-      std::string colKey = colEntry.first;
-      std::string cell = colEntry.second;
+    for (std::pair<std::string, std::string> col_entry : row) {
+      std::string col_key = col_entry.first;
+      std::string cell = col_entry.second;
       // write col key <sp> cell size <sp> cell , ended by \n
-      file << colKey << " " << cell.length() << " " << cell << "\n";
+      file << col_key << " " << cell.length() << " " << cell << "\n";
     }
   }
   // write finishes, close file
@@ -79,47 +61,50 @@ int WriteTablet(Tablet* tablet) {
   return 0;
 }
 
-Tablet* loadTablet(std::string tabletPath) {
-  std::ifstream file(tabletPath);
+Tablet* LoadTabletFromFile(int node_idx, int tablet_idx) {
+  std::string tablet_path = GetTabletFilePath(node_idx, tablet_idx);
+
+  std::ifstream file(tablet_path);
   if (!file.is_open()) {
     return NULL;
   }
 
   Tablet* tablet = new Tablet();
-  tablet->path = tabletPath;
+  tablet->tablet_idx = tablet_idx;
+  tablet->path = tablet_path;
 
-  int numRows;
-  file >> numRows;
+  int num_rows;
+  file >> num_rows;
 
   // insert each row
-  for (int r = 0; r < numRows; r++) {
-    std::string rowKey;
-    int numCols;
-    file >> rowKey >> numCols;
-    tablet->map[rowKey] = std::unordered_map<std::string, std::string>();
+  for (int r = 0; r < num_rows; r++) {
+    std::string row_key;
+    int num_cols;
+    file >> row_key >> num_cols;
+    tablet->map[row_key] = std::unordered_map<std::string, std::string>();
 
     // insert each col
-    for (int c = 0; c < numCols; c++) {
-      std::string colKey;
-      int cellSize;
-      file >> colKey >> cellSize;
+    for (int c = 0; c < num_cols; c++) {
+      std::string col_key;
+      int cell_size;
+      file >> col_key >> cell_size;
 
       // skip a whitespace
       char ignorebuffer[10];
       file.read(ignorebuffer, 1);
-      char buffer[cellSize];
-      file.read(buffer, cellSize);
-      std::string cell = std::string(buffer, cellSize);
+      char buffer[cell_size];
+      file.read(buffer, cell_size);
+      std::string cell = std::string(buffer, cell_size);
 
       // insert to map
-      tablet->map[rowKey][colKey] = cell;
+      tablet->map[row_key][col_key] = cell;
     }
   }
 
   return tablet;
 }
 
-int GetTabletIdx(int digest, int num_tablet_total) {
+int Digest2TabletIdx(int digest, int num_tablet_total) {
   return digest % num_tablet_total;
 }
 
