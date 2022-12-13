@@ -22,9 +22,13 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
                          const ::KVRequest* request,
                          ::KVResponse* response) override;
 
-  ::grpc::Status HealthCheck(::grpc::ClientContext* context,
-                             const ::google::protobuf::Empty& request,
+  ::grpc::Status CheckHealth(::grpc::ServerContext* context,
+                             const ::google::protobuf::Empty* request,
                              ::google::protobuf::Empty* response) override;
+
+  ::grpc::Status SelectLeader(::grpc::ServerContext* context,
+                              const ::google::protobuf::Empty* request,
+                              ::google::protobuf::Empty* response) override;
 
  public:
   std::string addr;  // ip+port of this node

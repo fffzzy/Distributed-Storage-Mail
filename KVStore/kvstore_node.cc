@@ -90,8 +90,13 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
   return Status::OK;
 }
 
-Status KVStoreNodeImpl::HealthCheck(ClientContext* context,
-                                    const Empty& request, Empty* response) {
+Status KVStoreNodeImpl::CheckHealth(ServerContext* context,
+                                    const Empty* request, Empty* response) {
+  return Status::OK;
+}
+
+Status KVStoreNodeImpl::SelectLeader(ServerContext* context,
+                                     const Empty* request, Empty* response) {
   return Status::OK;
 }
 

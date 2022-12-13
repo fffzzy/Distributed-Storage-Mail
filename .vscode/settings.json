@@ -89,6 +89,7 @@
     "variant": "cpp",
     "algorithm": "cpp",
     "*.inc": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "codecvt": "cpp"
   }
 }

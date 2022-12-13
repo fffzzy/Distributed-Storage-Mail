@@ -6,8 +6,6 @@ import "google/protobuf/empty.proto";
 service KVStoreMaster {
   // Frontend calls FetchNodeAddr to get the address of the primary node.
   rpc FetchNodeAddr(FetchNodeRequest) returns (FetchNodeResponse){}
-
-  // Register 
 }
 
 /* Interface exported by the KVStore Service Worker nodes which actually 
@@ -16,8 +14,11 @@ service KVStoreNode {
   // General request containing KVStore operations: Put/Get/CPut/Delete.
   rpc Execute(KVRequest) returns (KVResponse){}
 
-  // Health Check if node is alive.
-  rpc HealthCheck(google.protobuf.Empty) returns(google.protobuf.Empty){}
+  // Health Check if the replica node is alive.
+  rpc CheckHealth(google.protobuf.Empty) returns(google.protobuf.Empty){}
+
+  // Select current replica node as primary node of the cluster.
+  rpc SelectLeader(google.protobuf.Empty) returns(google.protobuf.Empty){}
 }
 
 /* Status of rpc response */
@@ -83,5 +84,7 @@ message FetchNodeRequest {
 
 /* Response returns the address of primary cluster node. */
 message FetchNodeResponse {
-  optional string addr = 1;  // [Required]
+  optional KVStatusCode status = 1; // [Required]
+  optional string addr = 2;
+  optional string error_message = 3;
 }

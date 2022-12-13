@@ -1597,9 +1597,11 @@ class FetchNodeResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kAddrFieldNumber = 1,
+    kAddrFieldNumber = 2,
+    kErrorMessageFieldNumber = 3,
+    kStatusFieldNumber = 1,
   };
-  // optional string addr = 1;
+  // optional string addr = 2;
   bool has_addr() const;
   private:
   bool _internal_has_addr() const;
@@ -1617,6 +1619,37 @@ class FetchNodeResponse final :
   std::string* _internal_mutable_addr();
   public:
 
+  // optional string error_message = 3;
+  bool has_error_message() const;
+  private:
+  bool _internal_has_error_message() const;
+  public:
+  void clear_error_message();
+  const std::string& error_message() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_error_message(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_error_message();
+  PROTOBUF_NODISCARD std::string* release_error_message();
+  void set_allocated_error_message(std::string* error_message);
+  private:
+  const std::string& _internal_error_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error_message(const std::string& value);
+  std::string* _internal_mutable_error_message();
+  public:
+
+  // optional .KVStatusCode status = 1;
+  bool has_status() const;
+  private:
+  bool _internal_has_status() const;
+  public:
+  void clear_status();
+  ::KVStatusCode status() const;
+  void set_status(::KVStatusCode value);
+  private:
+  ::KVStatusCode _internal_status() const;
+  void _internal_set_status(::KVStatusCode value);
+  public:
+
   // @@protoc_insertion_point(class_scope:FetchNodeResponse)
  private:
   class _Internal;
@@ -1628,6 +1661,8 @@ class FetchNodeResponse final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr addr_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr error_message_;
+    int status_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_kvstore_2eproto;
@@ -2956,7 +2991,35 @@ inline void FetchNodeRequest::set_allocated_col(std::string* col) {
 
 // FetchNodeResponse
 
-// optional string addr = 1;
+// optional .KVStatusCode status = 1;
+inline bool FetchNodeResponse::_internal_has_status() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool FetchNodeResponse::has_status() const {
+  return _internal_has_status();
+}
+inline void FetchNodeResponse::clear_status() {
+  _impl_.status_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline ::KVStatusCode FetchNodeResponse::_internal_status() const {
+  return static_cast< ::KVStatusCode >(_impl_.status_);
+}
+inline ::KVStatusCode FetchNodeResponse::status() const {
+  // @@protoc_insertion_point(field_get:FetchNodeResponse.status)
+  return _internal_status();
+}
+inline void FetchNodeResponse::_internal_set_status(::KVStatusCode value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.status_ = value;
+}
+inline void FetchNodeResponse::set_status(::KVStatusCode value) {
+  _internal_set_status(value);
+  // @@protoc_insertion_point(field_set:FetchNodeResponse.status)
+}
+
+// optional string addr = 2;
 inline bool FetchNodeResponse::_internal_has_addr() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -3022,6 +3085,74 @@ inline void FetchNodeResponse::set_allocated_addr(std::string* addr) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:FetchNodeResponse.addr)
+}
+
+// optional string error_message = 3;
+inline bool FetchNodeResponse::_internal_has_error_message() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool FetchNodeResponse::has_error_message() const {
+  return _internal_has_error_message();
+}
+inline void FetchNodeResponse::clear_error_message() {
+  _impl_.error_message_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const std::string& FetchNodeResponse::error_message() const {
+  // @@protoc_insertion_point(field_get:FetchNodeResponse.error_message)
+  return _internal_error_message();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void FetchNodeResponse::set_error_message(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_.error_message_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:FetchNodeResponse.error_message)
+}
+inline std::string* FetchNodeResponse::mutable_error_message() {
+  std::string* _s = _internal_mutable_error_message();
+  // @@protoc_insertion_point(field_mutable:FetchNodeResponse.error_message)
+  return _s;
+}
+inline const std::string& FetchNodeResponse::_internal_error_message() const {
+  return _impl_.error_message_.Get();
+}
+inline void FetchNodeResponse::_internal_set_error_message(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.error_message_.Set(value, GetArenaForAllocation());
+}
+inline std::string* FetchNodeResponse::_internal_mutable_error_message() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  return _impl_.error_message_.Mutable(GetArenaForAllocation());
+}
+inline std::string* FetchNodeResponse::release_error_message() {
+  // @@protoc_insertion_point(field_release:FetchNodeResponse.error_message)
+  if (!_internal_has_error_message()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  auto* p = _impl_.error_message_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.error_message_.IsDefault()) {
+    _impl_.error_message_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void FetchNodeResponse::set_allocated_error_message(std::string* error_message) {
+  if (error_message != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.error_message_.SetAllocated(error_message, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.error_message_.IsDefault()) {
+    _impl_.error_message_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:FetchNodeResponse.error_message)
 }
 
 #ifdef __GNUC__
