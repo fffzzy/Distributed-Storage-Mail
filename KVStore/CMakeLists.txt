@@ -51,24 +51,24 @@ target_link_libraries(rg_grpc_proto
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
-# # route_guide_helper
-# add_library(route_guide_helper
-#   "helper.h"
-#   "helper.cc")
-# target_link_libraries(route_guide_helper
-#   rg_grpc_proto
-#   ${_REFLECTION}
-#   ${_GRPC_GRPCPP}
-#   ${_PROTOBUF_LIBPROTOBUF})
+# # kvstore_node_helper
+add_library(kvstore_node_helper
+  "kvstore_node_utils.h"
+  "kvstore_node_utils.cc")
+target_link_libraries(kvstore_node_helper
+  rg_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF})
 
-# Targets route_guide_(client|server)
+# Targets kvstore_node_(client|server)
 foreach(_target
-  kvstore_master kvstore_node)
+  kvstore_master kvstore_node kvstore_client)
   add_executable(${_target}
     "${_target}.cc")
   target_link_libraries(${_target}
     rg_grpc_proto
-    # route_guide_helper
+    kvstore_node_helper
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})

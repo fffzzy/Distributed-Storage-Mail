@@ -13,7 +13,9 @@
 
 # OS and editor
 .DS_Store
-.vscode/
+.vscode
+.vscode/settings.json
+Database/node*
 
 # Complied Object files
 *.o
