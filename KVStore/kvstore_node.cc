@@ -48,6 +48,9 @@ void KVStoreNodeImpl::UnloadTablet() {
   Tablet* tablet_to_unload = tablet_mem_vec.front();
   tablet_mem_vec.erase(tablet_mem_vec.begin());
 
+  VerboseLog("Unload node " + std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_to_unload->tablet_idx));
+
   // write tablet to file
   WriteTabletToFile(tablet_to_unload);
 
@@ -65,6 +68,9 @@ Tablet* KVStoreNodeImpl::LoadTablet(int tablet_idx) {
   // load tablet with idx tablet_idx
   Tablet* tablet = LoadTabletFromFile(node_idx, tablet_idx);
 
+  VerboseLog("Load node " + std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet->tablet_idx));
+
   // insert the new tablet to tablet_mem_vec
   assert(tablet_mem_vec.size() < num_tablet_mem);
   tablet_mem_vec.push_back(tablet);
@@ -74,7 +80,7 @@ Tablet* KVStoreNodeImpl::LoadTablet(int tablet_idx) {
 
 Status KVStoreNodeImpl::CheckHealth(ServerContext* context,
                                     const Empty* request, Empty* response) {
-  fprintf(stderr, "[Health Check] responding back to master ... \n");
+  // fprintf(stderr, "[Health Check] responding back to master ... \n");
   return Status::OK;
 }
 
@@ -122,7 +128,12 @@ void KVStoreNodeImpl::InitEnv() {
     tablet_file.open(GetTabletFilePath(node_idx, i), std::fstream::in |
                                                          std::fstream::out |
                                                          std::fstream::trunc);
+
     tablet_file.close();
+
+    std::ofstream tablet_file_init(GetTabletFilePath(node_idx, i));
+    tablet_file_init << 0 << "\n";
+    tablet_file_init.close();
 
     std::fstream log_file;
     log_file.open(GetLogFilePath(node_idx, i),
@@ -179,10 +190,13 @@ void KVStoreNodeImpl::KVGet(const KVRequest_KVGetRequest* request,
   // retrieve row and col key
   std::string row = request->row();
   std::string col = request->col();
-  VerboseLog("Receive Get <" + row + "><" + col + ">");
 
-  int digest = GetDigest(row, col);
+  unsigned long digest = GetDigest(row, col);
   int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
+
+  VerboseLog("Receive Get <" + row + "><" + col + "> from node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
 
   // check if tablet is in memory
   Tablet* tablet = GetTabletFromMem(tablet_idx);
@@ -222,9 +236,15 @@ void KVStoreNodeImpl::KVGet(const KVRequest_KVGetRequest* request,
   // target tablet should not be null
   assert(tablet != NULL);
 
-  // set response
-  response->set_status(KVStatusCode::SUCCESS);
-  response->set_message(tablet->map[row][col]);
+  // check if row col exists
+  if (tablet->map.find(row) == tablet->map.end() ||
+      tablet->map[row].find(col) == tablet->map[row].end()) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("value not found");
+  } else {
+    response->set_status(KVStatusCode::SUCCESS);
+    response->set_message(tablet->map[row][col]);
+  }
 
   return;
 }
@@ -234,10 +254,13 @@ void KVStoreNodeImpl::KVSget(const KVRequest_KVSgetRequest* request,
   // retrieve row and col key
   std::string row = request->row();
   std::string col = request->col();
-  VerboseLog("Receive Sget <" + row + "><" + col + ">");
 
-  int digest = GetDigest(row, col);
+  unsigned long digest = GetDigest(row, col);
   int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
+
+  VerboseLog("Receive Sget <" + row + "><" + col + "> from node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
 
   // assert tablet is not in mem
   Tablet* tablet = GetTabletFromMem(tablet_idx);
@@ -292,7 +315,7 @@ void KVStoreNodeImpl::KVPut(const KVRequest_KVPutRequest* request,
   }
 
   /* write to local tablet */
-  int digest = GetDigest(row, col);
+  unsigned long digest = GetDigest(row, col);
   int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
 
   // check if tablet is in memory
@@ -330,6 +353,10 @@ void KVStoreNodeImpl::KVPut(const KVRequest_KVPutRequest* request,
     tablet->map[row] = std::unordered_map<std::string, std::string>();
   }
   tablet->map[row][col] = value;
+
+  VerboseLog("Put <" + row + "><" + col + "> to node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
 
   // set response
   response->set_status(KVStatusCode::SUCCESS);
@@ -346,7 +373,7 @@ void KVStoreNodeImpl::KVSput(const KVRequest_KVSputRequest* request,
   VerboseLog("Receive Sput <" + row + "><" + col + ">");
 
   /* write to local tablet */
-  int digest = GetDigest(row, col);
+  unsigned long digest = GetDigest(row, col);
   int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
 
   // check if tablet is in memory
@@ -384,6 +411,10 @@ void KVStoreNodeImpl::KVSput(const KVRequest_KVSputRequest* request,
     tablet->map[row] = std::unordered_map<std::string, std::string>();
   }
   tablet->map[row][col] = value;
+
+  VerboseLog("Sput <" + row + "><" + col + "> to node " +
+             std::to_string(node_idx) + " tablet " +
+             std::to_string(tablet_idx));
 
   // set response
   response->set_status(KVStatusCode::SUCCESS);

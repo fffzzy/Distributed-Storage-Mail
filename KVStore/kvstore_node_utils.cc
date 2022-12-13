@@ -66,6 +66,7 @@ Tablet* LoadTabletFromFile(int node_idx, int tablet_idx) {
 
   std::ifstream file(tablet_path);
   if (!file.is_open()) {
+    std::cerr << "cannot open " << tablet_path << std::endl;
     return NULL;
   }
 

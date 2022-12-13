@@ -23,16 +23,16 @@
 
 // it's a deterministic hash function, whether the node recovers from a crash or
 // not.
-inline int GetDigest(const std::string row, const std::string col) {
+inline unsigned long GetDigest(const std::string row, const std::string col) {
   std::string s = absl::StrCat(row, col);
 
   const int p = 31;
   const int n = 1e9 + 7;
-  int digest = 0;
-  long pow = 1;
+  unsigned long digest = 0;
+  unsigned long pow = 1;
 
   for (int i = 0; i < s.length(); i++) {
-    digest = (digest + (s.at(i) - 'a' + 1) * pow) % n;
+    digest = (digest + s.at(i) * pow) % n;
     pow = (pow * p) % n;
   }
 

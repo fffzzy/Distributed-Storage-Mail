@@ -102,15 +102,15 @@ void KVStoreClient::Put(const std::string& row, const std::string& col,
   Status status = stub->Execute(&context, req, &res);
   if (status.ok()) {
     if (res.status() == KVStatusCode::SUCCESS) {
-      fprintf(stderr, "[CPut] Succeeds: %s\n", res.message().c_str());
+      fprintf(stderr, "[Put] Succeeds: %s\n", res.message().c_str());
       return;
     } else {
-      fprintf(stderr, "[CPut] operation failed: %s\n", res.message().c_str());
+      fprintf(stderr, "[Put] operation failed: %s\n", res.message().c_str());
       return;
     }
   }
 
-  fprintf(stderr, "[CPut] grpc failed.\n");
+  fprintf(stderr, "[Put] grpc failed.\n");
   return;
 }
 
