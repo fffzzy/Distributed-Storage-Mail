@@ -6,6 +6,8 @@ import "google/protobuf/empty.proto";
 service KVStoreMaster {
   // Frontend calls FetchNodeAddr to get the address of the primary node.
   rpc FetchNodeAddr(FetchNodeRequest) returns (FetchNodeResponse){}
+
+  // Register 
 }
 
 /* Interface exported by the KVStore Service Worker nodes which actually 
@@ -56,12 +58,20 @@ message KVRequest {
     optional string col = 2;    // [Required]
   }
 
+  // KVSGetRequest, Get request from primary to secondary
+  // simply notify secondary nodes to switch tablet without returning value
+  message KVSGetRequest {
+    optional string row = 1;    // [Required]
+    optional string col = 2;    // [Required]
+  }
+
   // Request can only be one of put/get/cput/delete.
   oneof request {
     KVPutRequest put_request = 1;
     KVGetRequest get_request = 2;
     KVCPutRequest cput_request = 3;
     KVDeleteRequest delete_request = 4;
+    KVSGetRequest sget_request = 5;
   }
 }
 

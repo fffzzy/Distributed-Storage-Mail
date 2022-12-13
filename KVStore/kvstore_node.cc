@@ -67,7 +67,7 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
                                 const KVRequest* request, KVResponse* respone) {
   switch (request->request_case()) {
     case KVRequest::RequestCase::kGetRequest: {
-      // KVGet(&request->get_request(), respone, node_stub1_.get());
+      // KVGet(&request->get_request(), respone);
       break;
     }
     case KVRequest::RequestCase::kPutRequest: {
@@ -158,9 +158,41 @@ void KVStoreNodeImpl::InitEnv() {
     peer_stub_vec.push_back(KVStoreNode::NewStub(grpc::CreateChannel(
         peer_addr_vec[i], grpc::InsecureChannelCredentials())));
   }
+}
 
-  // init tablet mem vec
-  tablet_mem_vec.reserve(num_tablet_mem);
+void KVStoreNodeImpl::KVGet(const KVRequest_KVGetRequest* request,
+                            KVResponse* response) {
+  // retrieve row and col key
+  std::string row = request->row();
+  std::string col = request->col();
+  int digest = GetDigest(row, col);
+  int tablet_idx = GetTabletIdx(digest, num_tablet_total);
+
+  // check if tablet is in memory
+  Tablet* tablet = GetTabletFromMem(tablet_idx);
+
+  // if tablet is mem, directly return its value, do not need to notify other
+  // nodes
+  if (tablet != NULL) {
+    response->set_status(KVStatusCode::SUCCESS);
+    response->set_message(tablet->map[row][col]);
+  } else {
+    // tablet is not found
+    // firstly notify peers to switch tablet
+    // TODO: fault tolerance
+    for (int i = 0; i < peer_stub_vec.size(); i++) {
+    }
+  }
+}
+
+Tablet* KVStoreNodeImpl::GetTabletFromMem(int tablet_idx) {
+  for (int i = 0; i < tablet_mem_vec.size(); i++) {
+    if (tablet_mem_vec[i].get()->tablet_idx == tablet_idx) {
+      return tablet_mem_vec[i].get();
+    }
+  }
+
+  return NULL;
 }
 
 }  // namespace KVStore
