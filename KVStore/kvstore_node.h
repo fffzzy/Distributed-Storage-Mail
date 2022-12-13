@@ -35,7 +35,7 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   // Stub communicates to replicas in the same cluster.
   std::vector<std::unique_ptr<KVStoreNode::Stub>> peer_stub_vec;
   // tablet mem vector
-  std::vector<std::unique_ptr<Tablet>> tablet_mem_vec;
+  std::vector<Tablet*> tablet_mem_vec;
 
  public:
   void ReadConfig();
@@ -46,6 +46,13 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
 
   // get tablet from memory, if not found, return NULL
   Tablet* GetTabletFromMem(int tablet_idx);
+
+  // unload the first tablet in tablet_mem_vec to file
+  void UnloadTablet();
+
+  void VerboseLog(char* msg);
+
+  void VerboseLog(std::string msg);
 };
 
 }  // namespace KVStore

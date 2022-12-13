@@ -154,8 +154,10 @@ void KVStoreNodeImpl::KVGet(const KVRequest_KVGetRequest* request,
   // retrieve row and col key
   std::string row = request->row();
   std::string col = request->col();
+  VerboseLog(absl::StrCat("Receive Get for <", row, "><", col, ">"));
+
   int digest = GetDigest(row, col);
-  int tablet_idx = GetTabletIdx(digest, num_tablet_total);
+  int tablet_idx = Digest2TabletIdx(digest, num_tablet_total);
 
   // check if tablet is in memory
   Tablet* tablet = GetTabletFromMem(tablet_idx);
@@ -165,23 +167,71 @@ void KVStoreNodeImpl::KVGet(const KVRequest_KVGetRequest* request,
   if (tablet != NULL) {
     response->set_status(KVStatusCode::SUCCESS);
     response->set_message(tablet->map[row][col]);
+
+    return;
   } else {
     // tablet is not found
     // firstly notify peers to switch tablet
     // TODO: fault tolerance
     for (int i = 0; i < peer_stub_vec.size(); i++) {
+      KVRequest secondary_request;
+      secondary_request.mutable_sget_request()->set_row(row);
+      secondary_request.mutable_sget_request()->set_col(col);
+
+      KVResponse secondary_response;
+      ClientContext secondary_context;
+      Status status = peer_stub_vec[i].get()->Execute(
+          &secondary_context, secondary_request, &secondary_response);
+      // TODO: check status and take corresponding actions
+      if (status.ok()) {
+        if (secondary_response.status() == KVStatusCode::SUCCESS) {
+        } else if (secondary_response.status() == KVStatusCode::FAILURE) {
+        }
+      } else {
+      }
+      VerboseLog(absl::StrCat("Send SGet <", row, "><", col, "> to ",
+                              peer_addr_vec[i]));
+    }
+
+    // load target tablet to mem
+    // if vec is full, unload the first one
+    if (tablet_mem_vec.size() == num_tablet_mem) {
+      UnloadTablet();
     }
   }
 }
 
 Tablet* KVStoreNodeImpl::GetTabletFromMem(int tablet_idx) {
   for (int i = 0; i < tablet_mem_vec.size(); i++) {
-    if (tablet_mem_vec[i].get()->tablet_idx == tablet_idx) {
-      return tablet_mem_vec[i].get();
+    if (tablet_mem_vec[i]->tablet_idx == tablet_idx) {
+      return tablet_mem_vec[i];
     }
   }
 
   return NULL;
+}
+
+void KVStoreNodeImpl::UnloadTablet() {
+  // erase the first tablet from vec
+  Tablet* table_to_unload = tablet_mem_vec.front();
+  tablet_mem_vec.erase(tablet_mem_vec.begin());
+
+  // write tablet to file
+  WriteTabletToFile(table_to_unload);
+
+  // clear log for this tablet
+}
+
+void KVStoreNodeImpl::VerboseLog(char* msg) {
+  if (verbose) {
+    fprintf(stdout, "%s\n", msg);
+  }
+}
+
+void KVStoreNodeImpl::VerboseLog(std::string msg) {
+  if (verbose) {
+    fprintf(stdout, "%s\n", msg.c_str());
+  }
 }
 
 }  // namespace KVStore
