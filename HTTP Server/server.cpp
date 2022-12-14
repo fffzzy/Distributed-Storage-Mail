@@ -114,40 +114,12 @@ sockaddr_in parseSockaddr(string s)
     return addr;
 }
 
-void sigHandler(int num)
-{
-    char SHUTDOWN[] = "-ERR Server shutting down\r\n";
-
-    is_shut_down = true;
-    close(listen_fd);
-    for (auto fd : fds)
-    {
-        write(fd, SHUTDOWN, strlen(SHUTDOWN));
-        close(fd);
-        if (is_verbose)
-        {
-            // fprintf(stderr, "fd: %d\n", fd);
-            fprintf(stderr, "[%d] Connection closed\n", fd);
-        }
-    }
-    for (auto thread : threads)
-    {
-        pthread_kill(thread, 0);
-    }
-}
-
 void *messageWorker(void *comm_fd)
 {
-    char buffer[1025] = {};
-
-    const char *GREETING = "+OK Server ready\r\n";
-    const char *OK = "+OK ";
-    const char *BYE = "+OK Goodbye!\r\n";
-    const char *UNKNOWN = "-ERR Unknown command\r\n";
-    const char *CLOSE = "Connection closed\r\n";
+    char buffer[128000] = {};
 
     int fd = *(int *)comm_fd;
-    read(fd, buffer, 1024);
+    read(fd, buffer, 127999);
     if (is_verbose)
         printf("%s\n", buffer);
 
@@ -165,6 +137,24 @@ void *messageWorker(void *comm_fd)
     }
     else if (!strncmp(buffer, "GET /api/", 9))
     {
+        string buf(buffer);
+        buf = buf.substr(9);
+        APIHandler handler(buf, fd, is_verbose);
+        handler.parseGet();
+    }
+    else if (!strncmp(buffer, "POST /api/", 10))
+    {
+        string buf(buffer);
+        buf = buf.substr(10);
+        APIHandler handler(buf, fd, is_verbose);
+        handler.parsePost();
+    }
+    else if (!strncmp(buffer, "DELETE /api/", 12))
+    {
+        string buf(buffer);
+        buf = buf.substr(12);
+        APIHandler handler(buf, fd, is_verbose);
+        handler.parseDelete();
     }
     else if (!strncmp(buffer, "GET", 3))
     {
@@ -216,6 +206,6 @@ void sendBinary(string file, string image_type, int fd, string page)
 
         file_size = fread(&buffer[0], 1, file_length, file_stream);
     }
-    FILE* fp = fdopen(fd, "wb");
-    fwrite (buffer.data(), 1 , buffer.size() , fp);
+    FILE *fp = fdopen(fd, "wb");
+    fwrite(buffer.data(), 1, buffer.size(), fp);
 }

@@ -18,7 +18,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include <sys/sendfile.h>
+// #include <sys/sendfile.h>
+#include "kvstore_client.hpp"
+#include "api_handler.hpp"
 
 using namespace std;
 
