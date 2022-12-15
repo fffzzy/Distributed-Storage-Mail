@@ -18,6 +18,8 @@ project(KVStoreService C CXX)
 
 include(../Cmake/common.cmake)
 
+set(CMAKE_EXE_LINKER_FLAGS "-Xlinker -v -v")
+
 # Proto file
 get_filename_component(rg_proto "../Protos/kvstore.proto" ABSOLUTE)
 get_filename_component(rg_proto_path "${rg_proto}" PATH)
@@ -52,10 +54,20 @@ target_link_libraries(rg_grpc_proto
   ${_PROTOBUF_LIBPROTOBUF})
 
 # # kvstore_node_helper
-add_library(kvstore_node_helper
+add_library(kvstore_node_utils_helper
   "kvstore_node_utils.h"
   "kvstore_node_utils.cc")
-target_link_libraries(kvstore_node_helper
+target_link_libraries(kvstore_node_utils_helper
+  rg_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF})
+
+# kvstore_client_helper
+add_library(kvstore_client_helper
+  "kvstore_client.h"
+  "kvstore_client.cc")
+target_link_libraries(kvstore_client_helper
   rg_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
@@ -63,13 +75,16 @@ target_link_libraries(kvstore_node_helper
 
 # Targets kvstore_node_(client|server)
 foreach(_target
-  kvstore_master kvstore_node kvstore_client)
+  kvstore_master kvstore_node)
   add_executable(${_target}
     "${_target}.cc")
   target_link_libraries(${_target}
     rg_grpc_proto
-    kvstore_node_helper
+    kvstore_node_utils_helper
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
 endforeach()
+
+add_executable(kvstore_test_client kvstore_test_client.cc)
+target_link_libraries(kvstore_test_client kvstore_client_helper)
