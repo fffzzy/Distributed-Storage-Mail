@@ -8,7 +8,8 @@ static int listen_fd;
 static int port;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
-static string page_root = "./React/build";
+static string page_root = "./React/build1";
+static KVStoreClient kvstore("127.0.0.1:8017");
 
 int main(int argc, char *argv[])
 {
@@ -141,21 +142,21 @@ void *messageWorker(void *comm_fd)
     {
         string buf(buffer);
         buf = buf.substr(9);
-        APIHandler handler(buf, fd, is_verbose);
+        APIHandler handler(buf, fd, is_verbose, kvstore);
         handler.parseGet();
     }
     else if (!strncmp(buffer, "POST /api/", 10))
     {
         string buf(buffer);
         buf = buf.substr(10);
-        APIHandler handler(buf, fd, is_verbose);
+        APIHandler handler(buf, fd, is_verbose, kvstore);
         handler.parsePost();
     }
     else if (!strncmp(buffer, "DELETE /api/", 12))
     {
         string buf(buffer);
         buf = buf.substr(12);
-        APIHandler handler(buf, fd, is_verbose);
+        APIHandler handler(buf, fd, is_verbose, kvstore);
         handler.parseDelete();
     }
     else if (!strncmp(buffer, "GET", 3))

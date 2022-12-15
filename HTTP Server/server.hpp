@@ -19,9 +19,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 // #include <sys/sendfile.h>
-#include "kvstore_client.hpp"
 #include "api_handler.hpp"
-
+#include "local_kvstore.hpp"
 using namespace std;
 
 enum ServerType {

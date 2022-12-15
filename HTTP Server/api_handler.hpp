@@ -23,7 +23,7 @@
 
 using json = nlohmann::json;
 
-#include "kvstore_client.hpp"
+#include "local_kvstore.hpp"
 
 using namespace std;
 
@@ -47,9 +47,9 @@ public:
   json data;
   int fd;
   bool is_verbose;
-  KVStoreClient kvstore;
+  KVStoreClient& kvstore;
 
-  APIHandler(string buf, int f, bool is_verb) : fd(f), is_verbose(is_verb), kvstore("127.0.0.1:8017") {
+  APIHandler(string buf, int f, bool is_verb, KVStoreClient& kvstore) : fd(f), is_verbose(is_verb), kvstore(kvstore) {
     size_t division = buf.find("\r\n\r\n");
     header = buf.substr(0, division + 2);
     string body = buf.substr(division + 4);

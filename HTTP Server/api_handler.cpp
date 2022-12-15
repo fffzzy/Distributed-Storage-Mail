@@ -101,11 +101,13 @@ void APIHandler::login()
         {
             string cookie = username + "=" + urlEncode(username);
             kvstore.Put(username, "cookie", cookie);
-            page = "HTTP/1.1 200 success Set-Cookie: " + cookie + "\r\n\r\n";
+            page = "HTTP/1.1 200 success\r\nSet-Cookie: " + cookie  + "; path=/ \r\n\r\n";
+            if (is_verbose) cout << page << endl;
         }
         else
         {
             page = "HTTP/1.1 401 unauthorized if pwd incorrect\r\n\r\n";
+            cout << "your pw: " + password << "\n" << "real pw: " + real_pw << endl;
         }
         write(fd, page.c_str(), page.length());
     }
@@ -118,7 +120,7 @@ void APIHandler::logout()
     {
         kvstore.Delete(username, "cookie");
     }
-    string page = "HTTP/1.1 200 success\r\n\r\n";
+    string page = "HTTP/1.1 200 success\r\nSet-Cookie: " + username + "=deleted; path=/; expires=Thu, Jan 01 1970 00:00:00 UTC; \r\n\r\n";
     write(fd, page.c_str(), page.length());
 }
 
