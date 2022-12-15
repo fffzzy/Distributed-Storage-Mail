@@ -1,5 +1,6 @@
+#pragma once
 #include <string>
-#include "../KVStore/kvstore.grpc.pb.h"
+// #include "../KVStore/kvstore.grpc.pb.h"
 
 class KVStoreClient {
  public:
@@ -16,5 +17,5 @@ class KVStoreClient {
   void Delete(const std::string& row, const std::string& col) {};
 
  private:
-  std::unique_ptr<KVStoreMaster::Stub> kvstore_master_;
+  // std::unique_ptr<KVStoreMaster::Stub> kvstore_master_;
 };

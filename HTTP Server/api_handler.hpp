@@ -18,7 +18,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-// #include <sys/sendfile.h>
+#include <nlohmann/json.hpp>
+
+
+using json = nlohmann::json;
 
 #include "kvstore_client.hpp"
 
@@ -40,13 +43,25 @@ enum CookieType
 
 class APIHandler{
 public:
-  string buffer;
+  string header;
+  json data;
   int fd;
   bool is_verbose;
   KVStoreClient kvstore;
 
-  APIHandler(string buf, int f, bool is_verb) : buffer(buf), fd(f), is_verbose(is_verb), kvstore("127.0.0.1:8017") {
-    if (is_verbose) cout << buffer << endl;
+  APIHandler(string buf, int f, bool is_verb) : fd(f), is_verbose(is_verb), kvstore("127.0.0.1:8017") {
+    size_t division = buf.find("\r\n\r\n");
+    header = buf.substr(0, division + 2);
+    string body = buf.substr(division + 4);
+    if (body.find("{") == string::npos) {
+      data = nullptr;
+    } else {
+      data = json::parse(body);
+    }
+    if (is_verbose) {
+      cout << buf << endl;
+      cout << data << endl;
+    }
   };
   void parsePost();
   void parseGet();

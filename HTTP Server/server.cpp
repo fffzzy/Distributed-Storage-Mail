@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     listen(listen_fd, 100);
     while (!is_shut_down)
     {
+        cout << "Server start" << endl;
         struct sockaddr_in client_addr;
         socklen_t client_addrlen = sizeof(client_addr);
         int comm_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_addrlen);
@@ -106,6 +107,7 @@ sockaddr_in parseSockaddr(string s)
     int idx = s.find(":");
     string ip = s.substr(0, idx);
     int port = stoi(s.substr(idx + 1));
+    if (is_verbose) cout << port << endl;
     struct sockaddr_in addr;
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;

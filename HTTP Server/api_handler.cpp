@@ -2,15 +2,15 @@
 
 void APIHandler::parsePost()
 {
-    if (buffer.substr(0, 6) == "signup")
+    if (header.substr(0, 6) == "signup")
     {
         signup();
     }
-    else if (buffer.substr(0, 5) == "login")
+    else if (header.substr(0, 5) == "login")
     {
         login();
     }
-    else if (buffer.substr(0, 6) == "logout")
+    else if (header.substr(0, 6) == "logout")
     {
         logout();
     }
@@ -21,15 +21,15 @@ void APIHandler::parsePost()
 
 void APIHandler::parseGet()
 {
-    if (buffer.substr(0, 6) == "signup")
+    if (header.substr(0, 6) == "signup")
     {
         signup();
     }
-    else if (buffer.substr(0, 5) == "login")
+    else if (header.substr(0, 5) == "login")
     {
         login();
     }
-    else if (buffer.substr(0, 6) == "logout")
+    else if (header.substr(0, 6) == "logout")
     {
         logout();
     }
@@ -40,15 +40,15 @@ void APIHandler::parseGet()
 
 void APIHandler::parseDelete()
 {
-    if (buffer.substr(0, 6) == "signup")
+    if (header.substr(0, 6) == "signup")
     {
         signup();
     }
-    else if (buffer.substr(0, 5) == "login")
+    else if (header.substr(0, 5) == "login")
     {
         login();
     }
-    else if (buffer.substr(0, 6) == "logout")
+    else if (header.substr(0, 6) == "logout")
     {
         logout();
     }
@@ -59,20 +59,14 @@ void APIHandler::parseDelete()
 
 void APIHandler::signup()
 {
-    auto index = buffer.find("username=");
-    if (index == -1)
+    if (!data.contains("username"))
     {
         cout << "No username found in the request body" << endl;
     }
     else
     {
-        auto body = buffer.substr(index);
-        size_t i = body.find("=");
-        size_t j = body.find("&");
-        string username = body.substr(i + 1, j - i - 1);
-        i = body.find("=", i + 1);
-        j = body.find(" ");
-        string password = body.substr(i + 1, j - i - 1);
+        string username = data["username"];
+        string password = data["password"];
         if (is_verbose)
         {
             cout << "username: " << username << endl;
@@ -80,26 +74,22 @@ void APIHandler::signup()
         }
         kvstore.Put(username, "password", password);
         string page = "HTTP/1.1 201 successfully created\r\n\r\n";
+        if (is_verbose)
+            cout << page << endl;
         write(fd, page.c_str(), page.length());
     }
 }
 
 void APIHandler::login()
 {
-    auto index = buffer.find("username=");
-    if (index == -1)
+    if (!data.contains("username"))
     {
         cout << "No username found in the request body" << endl;
     }
     else
     {
-        auto body = buffer.substr(index);
-        size_t i = body.find("=");
-        size_t j = body.find("&");
-        string username = body.substr(i + 1, j - i - 1);
-        i = body.find("=", i + 1);
-        j = body.find(" ");
-        string password = body.substr(i + 1, j - i - 1);
+        string username = data["username"];
+        string password = data["password"];
         if (is_verbose)
         {
             cout << "username: " << username << endl;
@@ -135,15 +125,15 @@ void APIHandler::logout()
 string APIHandler::checkCookie()
 {
     string cookie_matcher = "Cookie: ";
-    size_t cookie_start = buffer.find(cookie_matcher);
+    size_t cookie_start = header.find(cookie_matcher);
     if (cookie_start != string::npos)
     {
         cookie_start += cookie_matcher.size();
-        size_t user_name_end_index = buffer.find("=", cookie_start);
-        string username = buffer.substr(cookie_start, user_name_end_index - cookie_start);
+        size_t user_name_end_index = header.find("=", cookie_start);
+        string username = header.substr(cookie_start, user_name_end_index - cookie_start);
 
-        size_t cookie_end = buffer.find("\r", cookie_start);
-        string cookie_value = buffer.substr(user_name_end_index + 1, cookie_end - cookie_start - 1);
+        size_t cookie_end = header.find("\r", cookie_start);
+        string cookie_value = header.substr(user_name_end_index + 1, cookie_end - cookie_start - 1);
         string real_cookie = kvstore.Get(username, "cookie");
         if (real_cookie == cookie_value)
         {
