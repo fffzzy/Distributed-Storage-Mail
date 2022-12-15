@@ -56,14 +56,14 @@ void* ThreadFunc(void* args) {
       }
       // If primary node is done, select a new one.
       if (cluster.primary.empty()) {
-        for (const auto& [addr, alive] : isAlive) {
-          if (alive) {
-            cluster.primary = addr;
+        for (const auto& entry : isAlive) {
+          if (entry.second) {
+            cluster.primary = entry.first;
             if (verbose_) {
               fprintf(stderr,
                       "[Health Check] primary node in Cluster-%d changes to %s "
                       "...\n",
-                      cluster.id, addr.c_str());
+                      cluster.id, entry.first.c_str());
             }
 
             break;
@@ -142,8 +142,8 @@ void KVStoreMasterImpl::ReadConfig() {
     for (auto const& cluster : clusters_) {
       fprintf(stderr, "Cluster-%d primary node: %s\n", cluster.id,
               cluster.primary.c_str());
-      for (auto const& [addr, stub] : cluster.stubs) {
-        std::cout << "Replica node: " << addr << std::endl;
+      for (auto const& it : cluster.stubs) {
+        std::cout << "Replica node: " << it.first << std::endl;
       }
     }
     fprintf(stderr, "==========================================\n\n");

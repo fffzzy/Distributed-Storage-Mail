@@ -20,7 +20,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 if (NOT DEFINED CMAKE_CXX_STANDARD)
-  set (CMAKE_CXX_STANDARD 17)
+  set (CMAKE_CXX_STANDARD 14)
 endif()
 
 if(MSVC)
