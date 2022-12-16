@@ -14,6 +14,8 @@
 
 namespace KVStore {
 
+enum KVStoreNodeStatus { ALIVE, SHUTDOWN, RECOVERYING };
+
 class KVStoreNodeImpl final : public KVStoreNode::Service {
  public:
   std::string addr;  // ip+port of this node
@@ -21,6 +23,7 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   int node_idx = -1;
   std::string master_addr;
   std::vector<std::string> peer_addr_vec;
+  KVStoreNodeStatus node_status = KVStoreNodeStatus::ALIVE;
 
  private:
   // Stub communicates to master node.

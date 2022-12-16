@@ -152,43 +152,47 @@ void KVStoreNodeImpl::InitEnv() {
 
 Status KVStoreNodeImpl::Execute(ServerContext* context,
                                 const KVRequest* request, KVResponse* respone) {
-  switch (request->request_case()) {
-    case KVRequest::RequestCase::kGetRequest: {
-      KVGet(&request->get_request(), respone);
-      break;
+  if (node_status == KVStoreNodeStatus::ALIVE) {
+    switch (request->request_case()) {
+      case KVRequest::RequestCase::kGetRequest: {
+        KVGet(&request->get_request(), respone);
+        break;
+      }
+      case KVRequest::RequestCase::kSgetRequest: {
+        KVSget(&request->sget_request(), respone);
+        break;
+      }
+      case KVRequest::RequestCase::kPutRequest: {
+        KVPut(&request->put_request(), respone);
+        break;
+      }
+      case KVRequest::RequestCase::kSputRequest: {
+        KVSput(&request->sput_request(), respone);
+        break;
+      }
+      case KVRequest::RequestCase::kCputRequest: {
+        KVCput(&request->cput_request(), respone);
+        break;
+      }
+      case KVRequest::RequestCase::kScputRequest: {
+        KVScput(&request->scput_request(), respone);
+        break;
+      }
+      case KVRequest::RequestCase::kDeleteRequest: {
+        KVDelete(&request->delete_request(), respone);
+        break;
+      }
+      case KVRequest::RequestCase::kSdeleteRequest: {
+        KVSdelete(&request->sdelete_request(), respone);
+        break;
+      }
+      default: {
+        respone->set_status(KVStatusCode::FAILURE);
+        respone->set_message("-ERR unsupported mthods when node is alive");
+      }
     }
-    case KVRequest::RequestCase::kSgetRequest: {
-      KVSget(&request->sget_request(), respone);
-      break;
-    }
-    case KVRequest::RequestCase::kPutRequest: {
-      KVPut(&request->put_request(), respone);
-      break;
-    }
-    case KVRequest::RequestCase::kSputRequest: {
-      KVSput(&request->sput_request(), respone);
-      break;
-    }
-    case KVRequest::RequestCase::kCputRequest: {
-      KVCput(&request->cput_request(), respone);
-      break;
-    }
-    case KVRequest::RequestCase::kScputRequest: {
-      KVScput(&request->scput_request(), respone);
-      break;
-    }
-    case KVRequest::RequestCase::kDeleteRequest: {
-      KVDelete(&request->delete_request(), respone);
-      break;
-    }
-    case KVRequest::RequestCase::kSdeleteRequest: {
-      KVSdelete(&request->sdelete_request(), respone);
-      break;
-    }
-    default: {
-      respone->set_status(KVStatusCode::FAILURE);
-      respone->set_message("-ERR unsupported mthods.");
-    }
+  } else if (node_status == KVStoreNodeStatus::SHUTDOWN) {
+  } else if (node_status == KVStoreNodeStatus::RECOVERYING) {
   }
   return Status::OK;
 }
