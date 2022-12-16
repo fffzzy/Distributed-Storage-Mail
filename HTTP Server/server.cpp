@@ -8,7 +8,7 @@ static int listen_fd;
 static int port;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
-static string page_root = "./React/build1";
+static string page_root = "../React/build1";
 static KVStoreClient kvstore("127.0.0.1:8017");
 
 int main(int argc, char *argv[]) {
@@ -54,7 +54,7 @@ void parseInput(int argc, char *argv[]) {
 
   int index = atoi(argv[optind]);
 
-  ifstream server_list("../servers.config");
+  ifstream server_list("../../servers.config");
 
   int line_num = 1;
   string line;
