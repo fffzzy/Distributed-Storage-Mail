@@ -72,9 +72,10 @@ void APIHandler::login()
         string page;
         if (real_pw == password)
         {
-            string cookie = username + "=" + urlEncode(username);
+            time_t t = chrono::system_clock::to_time_t(chrono::system_clock::now());
+            string cookie = urlEncode(ctime(&t));
             kvstore.Put(username, "cookie", cookie);
-            page = "HTTP/1.1 200 success\r\nSet-Cookie: " + cookie + "; path=/ \r\n\r\n";
+            page = "HTTP/1.1 200 success\r\nSet-Cookie: " + username + "=" + cookie + "; path=/; expires=Thu, Jan 01 2023 00:00:00 UTC \r\n\r\n";
             if (is_verbose)
                 cout << page << endl;
         }
@@ -95,7 +96,7 @@ void APIHandler::logout()
     {
         kvstore.Delete(username, "cookie");
     }
-    string page = "HTTP/1.1 200 success\r\nSet-Cookie: " + username + "=deleted; path=/; expires=Thu, Jan 01 1970 00:00:00 UTC; \r\n\r\n";
+    string page = "HTTP/1.1 200 success\r\nSet-Cookie: " + username + "=deleted; path=/; expires=Thu, Jan 01 1970 00:00:00 UTC \r\n\r\n";
     write(fd, page.c_str(), page.length());
 }
 
@@ -108,14 +109,14 @@ string APIHandler::checkCookie()
         cookie_start += cookie_matcher.size();
         size_t user_name_end_index = header.find("=", cookie_start);
         string username = header.substr(cookie_start, user_name_end_index - cookie_start);
-
+        cout << "username in cookie:" << username << endl;
         size_t cookie_end = header.find("\r", cookie_start);
-        string cookie_value = header.substr(user_name_end_index + 1, cookie_end - cookie_start - 1);
+        string cookie_value = header.substr(user_name_end_index + 1, cookie_end - user_name_end_index - 1);
         string real_cookie = kvstore.Get(username, "cookie");
         if (is_verbose)
         {
-            cout << "Cookie in browser: " << cookie_value << endl;
-            cout << "Cookie in database: " << real_cookie << endl;
+            cout << "Cookie in browser: " << cookie_value << "length: " << cookie_value.size() << endl;
+            cout << "Cookie in database: " << real_cookie << "length: " << real_cookie.size() << endl;
         }
         if (real_cookie == cookie_value)
         {
@@ -123,11 +124,13 @@ string APIHandler::checkCookie()
         }
         else
         {
+            if (is_verbose) cout << "The cookie sent by browser doesn't exist in database." << endl;
             return "";
         }
     }
     else
     {
+        if (is_verbose) cout << "No cookie attached in the header." << endl;
         return "";
     }
 }

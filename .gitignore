@@ -17,5 +17,6 @@
 .vscode/settings.json
 Database/node*
 
+HTTP\ Server/local_test.cpp
 # Complied Object files
 *.o

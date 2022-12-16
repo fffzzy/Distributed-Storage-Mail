@@ -5,7 +5,7 @@ static bool is_shut_down = false;
 static vector<int> fds;
 static vector<pthread_t> threads;
 static int listen_fd;
-static int port;
+static int port = 8018;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
 static string page_root = "./React/build1";
@@ -17,14 +17,22 @@ int main(int argc, char *argv[])
     parseInput(argc, argv);
 
     listen_fd = socket(PF_INET, SOCK_STREAM, 0);
-    bind(listen_fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
+    struct sockaddr_in servaddr;
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htons(INADDR_ANY);
+    servaddr.sin_port = htons(port);
+    if (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+        servaddr.sin_port = htons(--port);
+        bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    }
+    cout << port << endl;
     listen(listen_fd, 100);
     while (!is_shut_down)
     {
-        cout << "Server start" << endl;
-        struct sockaddr_in client_addr;
-        socklen_t client_addrlen = sizeof(client_addr);
-        int comm_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_addrlen);
+        struct sockaddr_in clientaddr;
+        socklen_t clientaddrlen = sizeof(clientaddr);
+        int comm_fd = accept(listen_fd, (struct sockaddr *)&clientaddr, &clientaddrlen);
         if (!is_shut_down)
         {
             fds.push_back(comm_fd);
@@ -59,48 +67,48 @@ void parseInput(int argc, char *argv[])
         }
     }
 
-    int index = atoi(argv[optind]);
+    // int index = atoi(argv[optind]);
 
-    ifstream server_list("../servers.config");
+    // ifstream server_list("../servers.config");
 
-    int line_num = 1;
-    string line;
-    ServerType type;
-    while (getline(server_list, line))
-    {
-        if (line == "HTTP Servers")
-        {
-            type = HTTP_SERVER;
-        }
-        else if (line == "Backend Coordinator")
-        {
-            type = BACKEND_COORDINATOR;
-        }
-        else if (line == "Backend Servers")
-        {
-            type = OTHERS;
-        }
-        else
-        {
-            switch (type)
-            {
-            case HTTP_SERVER:
-                if (line_num == index)
-                {
-                    self_addr = parseSockaddr(line);
-                }
-                line_num++;
-                break;
+    // int line_num = 1;
+    // string line;
+    // ServerType type;
+    // while (getline(server_list, line))
+    // {
+    //     if (line == "HTTP Servers")
+    //     {
+    //         type = HTTP_SERVER;
+    //     }
+    //     else if (line == "Backend Coordinator")
+    //     {
+    //         type = BACKEND_COORDINATOR;
+    //     }
+    //     else if (line == "Backend Servers")
+    //     {
+    //         type = OTHERS;
+    //     }
+    //     else
+    //     {
+    //         switch (type)
+    //         {
+    //         case HTTP_SERVER:
+    //             if (line_num == index)
+    //             {
+    //                 self_addr = parseSockaddr(line);
+    //             }
+    //             line_num++;
+    //             break;
 
-            case BACKEND_COORDINATOR:
-                if (!line.empty())
-                    backend_coordinator_addr = parseSockaddr(line);
+    //         case BACKEND_COORDINATOR:
+    //             if (!line.empty())
+    //                 backend_coordinator_addr = parseSockaddr(line);
 
-            default:
-                break;
-            }
-        }
-    }
+    //         default:
+    //             break;
+    //         }
+    //     }
+    // }
 }
 
 sockaddr_in parseSockaddr(string s)
