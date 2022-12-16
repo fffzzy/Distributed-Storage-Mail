@@ -5,171 +5,173 @@ static bool is_shut_down = false;
 static vector<int> fds;
 static vector<pthread_t> threads;
 static int listen_fd;
+static int port;
+static sockaddr_in backend_coordinator_addr;
+static sockaddr_in self_addr;
+static string page_root = "../React/build1";
+static KVStoreClient kvstore("127.0.0.1:8017");
 
-int main(int argc, char *argv[])
-{
-    int port = 10000;
-    int opt;
+int main(int argc, char *argv[]) {
+  // signal(SIGINT, sigHandler);
+  parseInput(argc, argv);
 
-    signal(SIGINT, sigHandler);
-
-    while ((opt = getopt(argc, argv, "p:av")) != -1)
-    {
-        switch (opt)
-        {
-        case 'p':
-            port = atoi(optarg);
-            break;
-
-        case 'a':
-            fprintf(stderr, "Zhouyang Fang (fangzhy)");
-            exit(EXIT_FAILURE);
-
-        case 'v':
-            is_verbose = true;
-            break;
-
-        default: /* '?' */
-            fprintf(stderr, "Usage: %s [-v] [-a] [-p portno]\n",
-                    argv[0]);
-            exit(EXIT_FAILURE);
-        }
+  listen_fd = socket(PF_INET, SOCK_STREAM, 0);
+  bind(listen_fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
+  listen(listen_fd, 100);
+  while (!is_shut_down) {
+    cout << "Server start" << endl;
+    struct sockaddr_in client_addr;
+    socklen_t client_addrlen = sizeof(client_addr);
+    int comm_fd =
+        accept(listen_fd, (struct sockaddr *)&client_addr, &client_addrlen);
+    if (!is_shut_down) {
+      fds.push_back(comm_fd);
+      // printf("Connection from %s\n", inet_ntoa(clientaddr.sin_addr));
+      if (is_verbose) fprintf(stderr, "[%d] New connection\n", comm_fd);
+      pthread_t p;
+      threads.push_back(p);
+      pthread_create(&threads.back(), NULL, messageWorker, (void *)&comm_fd);
     }
+  }
 
-    listen_fd = socket(PF_INET, SOCK_STREAM, 0);
-    struct sockaddr_in servaddr;
-    bzero(&servaddr, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = htons(INADDR_ANY);
-    servaddr.sin_port = htons(port);
-    bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr));
-    listen(listen_fd, 100);
-    while (!is_shut_down)
-    {
-        struct sockaddr_in clientaddr;
-        socklen_t clientaddrlen = sizeof(clientaddr);
-        int comm_fd = accept(listen_fd, (struct sockaddr *)&clientaddr, &clientaddrlen);
-        if (!is_shut_down)
-        {
-            fds.push_back(comm_fd);
-            // printf("Connection from %s\n", inet_ntoa(clientaddr.sin_addr));
-            if (is_verbose)
-                fprintf(stderr, "[%d] New connection\n", comm_fd);
-            pthread_t p;
-            threads.push_back(p);
-            pthread_create(&threads.back(), NULL, messageWorker, (void *)&comm_fd);
-        }
-    }
-
-    return 0;
+  return 0;
 }
 
-void sigHandler(int num)
-{
-    char SHUTDOWN[] = "-ERR Server shutting down\r\n";
+void parseInput(int argc, char *argv[]) {
+  int opt;
 
-    is_shut_down = true;
-    close(listen_fd);
-    for (auto fd : fds)
-    {
-        write(fd, SHUTDOWN, strlen(SHUTDOWN));
-        close(fd);
-        if (is_verbose)
-        {
-            // fprintf(stderr, "fd: %d\n", fd);
-            fprintf(stderr, "[%d] Connection closed\n", fd);
-        }
+  while ((opt = getopt(argc, argv, "v")) != -1) {
+    switch (opt) {
+      case 'v':
+        is_verbose = true;
+        break;
+
+      default: /* '?' */
+        fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
+        exit(EXIT_FAILURE);
     }
-    for (auto thread : threads)
-    {
-        pthread_kill(thread, 0);
+  }
+
+  int index = atoi(argv[optind]);
+
+  ifstream server_list("../../servers.config");
+
+  int line_num = 1;
+  string line;
+  ServerType type;
+  while (getline(server_list, line)) {
+    if (line == "HTTP Servers") {
+      type = HTTP_SERVER;
+    } else if (line == "Backend Coordinator") {
+      type = BACKEND_COORDINATOR;
+    } else if (line == "Backend Servers") {
+      type = OTHERS;
+    } else {
+      switch (type) {
+        case HTTP_SERVER:
+          if (line_num == index) {
+            self_addr = parseSockaddr(line);
+          }
+          line_num++;
+          break;
+
+        case BACKEND_COORDINATOR:
+          if (!line.empty()) backend_coordinator_addr = parseSockaddr(line);
+
+        default:
+          break;
+      }
     }
+  }
 }
 
-void *messageWorker(void *comm_fd)
-{
-    char buffer[1020] = {};
-    char *head = buffer;
-    char *tail;
-    char *text_head;
-    char command[6];
-    char message[1001];
-    int size;
+sockaddr_in parseSockaddr(string s) {
+  int idx = s.find(":");
+  string ip = s.substr(0, idx);
+  int port = stoi(s.substr(idx + 1));
+  if (is_verbose) cout << port << endl;
+  struct sockaddr_in addr;
+  bzero(&addr, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port);
+  inet_pton(AF_INET, ip.c_str(), &(addr.sin_addr));
+  return addr;
+}
 
-    const char *GREETING = "+OK Server ready (Author: Zhouyang Fang / fangzhy)\r\n";
-    const char *OK = "+OK ";
-    const char *BYE = "+OK Goodbye!\r\n";
-    const char *UNKNOWN = "-ERR Unknown command\r\n";
-    const char *CLOSE = "Connection closed\r\n";
+void *messageWorker(void *comm_fd) {
+  char buffer[128000] = {};
 
-    int fd = *(int *)comm_fd;
-    write(fd, GREETING, strlen(GREETING));
+  int fd = *(int *)comm_fd;
+  read(fd, buffer, 127999);
+  if (is_verbose) printf("%s\n", buffer);
 
-    while (true)
-    {
-        read(fd, head, 1020 - strlen(buffer));
-        while ((tail = strstr(buffer, "\r\n")) != NULL)
-        {
-            tail += 2 * sizeof(char);
-            memcpy(command, buffer, 5 * sizeof(char));
-            command[5] = '\0';
-            text_head = buffer + 5;
+  if (!strncmp(buffer, "GET / ", 6)) {
+    string page = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
 
-            if (!strcasecmp(command, "ECHO "))
-            {
-                memcpy(message, OK, strlen(OK));
-                size = tail - text_head;
-                memcpy(message + 4, text_head, size);
-                message[size + 4] = '\0';
-                write(fd, message, strlen(message));
-                if (is_verbose)
-                {
-                    // fprintf(stderr, "char size: %d\n", int(sizeof(char)));
-                    fprintf(stderr, "[%d] C: %.*s", fd, int(tail - buffer), buffer);
-                    fprintf(stderr, "[%d] S: %s", fd, message);
-                }
-            }
-            else if (!strcasecmp(command, "QUIT\r"))
-            {
-                memcpy(message, BYE, strlen(BYE) + 1);
-                write(fd, message, strlen(message));
-                if (is_verbose)
-                {
-                    fprintf(stderr, "[%d] C: QUIT\n", fd);
-                    fprintf(stderr, "[%d] S: %s", fd, message);
-                    fprintf(stderr, "[%d] Connection closed\n", fd);
-                }
-                return NULL;
-            }
-            else
-            {
-                memcpy(message, UNKNOWN, strlen(UNKNOWN) + 1);
-                write(fd, message, strlen(message));
-                if (is_verbose)
-                {
-                    // fprintf(stderr, "%s\n", command);
-                    fprintf(stderr, "%s", buffer);
-                }
-            }
-            head = buffer;
-            while (head != tail)
-            {
-                *head = '\0';
-                head++;
-            }
-            head = buffer;
-            while (*tail != '\0')
-            {
-                *head = *tail;
-                *tail = '\0';
-                head++;
-                tail++;
-            }
-        }
-        while (*head != '\0')
-            head++;
-
-        // fprintf(stderr, "%d\n", *head);
+    ifstream infile(page_root + "/index.html");
+    string line;
+    while (getline(infile, line)) {
+      page += line;
     }
-    close(fd);
+    write(fd, page.c_str(), page.length());
+  } else if (!strncmp(buffer, "GET /api/", 9)) {
+    string buf(buffer);
+    buf = buf.substr(9);
+    APIHandler handler(buf, fd, is_verbose, kvstore);
+    handler.parseGet();
+  } else if (!strncmp(buffer, "POST /api/", 10)) {
+    string buf(buffer);
+    buf = buf.substr(10);
+    APIHandler handler(buf, fd, is_verbose, kvstore);
+    handler.parsePost();
+  } else if (!strncmp(buffer, "DELETE /api/", 12)) {
+    string buf(buffer);
+    buf = buf.substr(12);
+    APIHandler handler(buf, fd, is_verbose, kvstore);
+    handler.parseDelete();
+  } else if (!strncmp(buffer, "GET", 3)) {
+    string buf(buffer);
+    int head = buf.find(" ");
+    string tmp = buf.substr(head + 1);
+    int tail = tmp.find(" ");
+    string file = tmp.substr(0, tail);
+    string page = "HTTP/1.1 200 OK\r\n";
+    string file_type = file.substr(file.find_last_of(".") + 1);
+    string path = page_root + file;
+    ios_base::openmode mode = ios_base::in;
+
+    if (file_type == "jpg" | file_type == "png") {
+      sendBinary(path, file_type, fd, page);
+    } else {
+      page += "\r\n";
+      ifstream infile(path, mode);
+      string line;
+      while (getline(infile, line)) {
+        page += line;
+      }
+      write(fd, page.c_str(), page.length());
+    }
+  }
+
+  close(fd);
+  return comm_fd;
+}
+
+void sendBinary(string file, string image_type, int fd, string page) {
+  vector<char> buffer;
+  page += "Content-Type: image/" + image_type + "\r\n\r\n";
+  write(fd, page.c_str(), page.length());
+  FILE *file_stream = fopen(file.c_str(), "rb");
+  size_t file_size;
+  if (file_stream != nullptr) {
+    fseek(file_stream, 0, SEEK_END);
+    long file_length = ftell(file_stream);
+    rewind(file_stream);
+
+    buffer.resize(file_length);
+
+    file_size = fread(&buffer[0], 1, file_length, file_stream);
+  }
+  FILE *fp = fdopen(fd, "wb");
+  fwrite(buffer.data(), 1, buffer.size(), fp);
 }
