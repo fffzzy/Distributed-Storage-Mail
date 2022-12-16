@@ -120,23 +120,23 @@ void KVStoreNode::Stub::async::Execute(::grpc::ClientContext* context, const ::K
   return result;
 }
 
-::grpc::Status KVStoreNode::Stub::CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::google::protobuf::Empty* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::google::protobuf::Empty, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_CheckHealth_, context, request, response);
+::grpc::Status KVStoreNode::Stub::CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::KVResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::google::protobuf::Empty, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_CheckHealth_, context, request, response);
 }
 
-void KVStoreNode::Stub::async::CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::google::protobuf::Empty, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_CheckHealth_, context, request, response, std::move(f));
+void KVStoreNode::Stub::async::CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::KVResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::google::protobuf::Empty, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_CheckHealth_, context, request, response, std::move(f));
 }
 
-void KVStoreNode::Stub::async::CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response, ::grpc::ClientUnaryReactor* reactor) {
+void KVStoreNode::Stub::async::CheckHealth(::grpc::ClientContext* context, const ::google::protobuf::Empty* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) {
   ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_CheckHealth_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* KVStoreNode::Stub::PrepareAsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::google::protobuf::Empty, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_CheckHealth_, context, request);
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreNode::Stub::PrepareAsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::KVResponse, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_CheckHealth_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::google::protobuf::Empty>* KVStoreNode::Stub::AsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreNode::Stub::AsyncCheckHealthRaw(::grpc::ClientContext* context, const ::google::protobuf::Empty& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncCheckHealthRaw(context, request, cq);
   result->StartCall();
@@ -157,11 +157,11 @@ KVStoreNode::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       KVStoreNode_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< KVStoreNode::Service, ::google::protobuf::Empty, ::google::protobuf::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< KVStoreNode::Service, ::google::protobuf::Empty, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KVStoreNode::Service* service,
              ::grpc::ServerContext* ctx,
              const ::google::protobuf::Empty* req,
-             ::google::protobuf::Empty* resp) {
+             ::KVResponse* resp) {
                return service->CheckHealth(ctx, req, resp);
              }, this)));
 }
@@ -176,7 +176,7 @@ KVStoreNode::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status KVStoreNode::Service::CheckHealth(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::google::protobuf::Empty* response) {
+::grpc::Status KVStoreNode::Service::CheckHealth(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::KVResponse* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -14,7 +14,7 @@
 
 namespace KVStore {
 
-enum KVStoreNodeStatus { ALIVE, SHUTDOWN, RECOVERYING };
+enum KVStoreNodeStatus { ALIVE, SUSPEND, RECOVERYING };
 
 class KVStoreNodeImpl final : public KVStoreNode::Service {
  public:
@@ -52,7 +52,7 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
  public:
   ::grpc::Status CheckHealth(::grpc::ServerContext* context,
                              const ::google::protobuf::Empty* request,
-                             ::google::protobuf::Empty* response) override;
+                             ::KVResponse* response) override;
 
   void ReadConfig();
 

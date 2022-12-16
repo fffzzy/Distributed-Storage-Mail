@@ -79,8 +79,15 @@ Tablet* KVStoreNodeImpl::LoadTablet(int tablet_idx) {
 }
 
 Status KVStoreNodeImpl::CheckHealth(ServerContext* context,
-                                    const Empty* request, Empty* response) {
-  // fprintf(stderr, "[Health Check] responding back to master ... \n");
+                                    const Empty* request,
+                                    KVResponse* response) {
+  if (node_status == KVStoreNodeStatus::ALIVE) {
+    response->set_status(KVStatusCode::SUCCESS);
+  } else if (node_status == KVStoreNodeStatus::SUSPEND) {
+    response->set_status(KVStatusCode::SUSPEND);
+  } else if (node_status == KVStoreNodeStatus::RECOVERYING) {
+    response->set_status(KVStatusCode::RECOVERING);
+  }
   return Status::OK;
 }
 
@@ -151,47 +158,48 @@ void KVStoreNodeImpl::InitEnv() {
 }
 
 Status KVStoreNodeImpl::Execute(ServerContext* context,
-                                const KVRequest* request, KVResponse* respone) {
+                                const KVRequest* request,
+                                KVResponse* response) {
   if (node_status == KVStoreNodeStatus::ALIVE) {
     switch (request->request_case()) {
       case KVRequest::RequestCase::kGetRequest: {
-        KVGet(&request->get_request(), respone);
+        KVGet(&request->get_request(), response);
         break;
       }
       case KVRequest::RequestCase::kSgetRequest: {
-        KVSget(&request->sget_request(), respone);
+        KVSget(&request->sget_request(), response);
         break;
       }
       case KVRequest::RequestCase::kPutRequest: {
-        KVPut(&request->put_request(), respone);
+        KVPut(&request->put_request(), response);
         break;
       }
       case KVRequest::RequestCase::kSputRequest: {
-        KVSput(&request->sput_request(), respone);
+        KVSput(&request->sput_request(), response);
         break;
       }
       case KVRequest::RequestCase::kCputRequest: {
-        KVCput(&request->cput_request(), respone);
+        KVCput(&request->cput_request(), response);
         break;
       }
       case KVRequest::RequestCase::kScputRequest: {
-        KVScput(&request->scput_request(), respone);
+        KVScput(&request->scput_request(), response);
         break;
       }
       case KVRequest::RequestCase::kDeleteRequest: {
-        KVDelete(&request->delete_request(), respone);
+        KVDelete(&request->delete_request(), response);
         break;
       }
       case KVRequest::RequestCase::kSdeleteRequest: {
-        KVSdelete(&request->sdelete_request(), respone);
+        KVSdelete(&request->sdelete_request(), response);
         break;
       }
       default: {
-        respone->set_status(KVStatusCode::FAILURE);
-        respone->set_message("-ERR unsupported mthods when node is alive");
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message("-ERR unsupported mthods when node is alive");
       }
     }
-  } else if (node_status == KVStoreNodeStatus::SHUTDOWN) {
+  } else if (node_status == KVStoreNodeStatus::SUSPEND) {
   } else if (node_status == KVStoreNodeStatus::RECOVERYING) {
   }
   return Status::OK;
@@ -216,24 +224,30 @@ void KVStoreNodeImpl::KVGet(const KVRequest_KVGetRequest* request,
   // if tablet is not in mem
   if (tablet == NULL) {
     // firstly notify peers to switch tablet
-    // TODO: fault tolerance
     for (int i = 0; i < peer_stub_vec.size(); i++) {
-      KVRequest secondary_request;
-      secondary_request.mutable_sget_request()->set_row(row);
-      secondary_request.mutable_sget_request()->set_col(col);
+      // check if secondary is alive
+      ClientContext healthcheck_context;
+      Empty healthcheck_request;
+      KVResponse healthcheck_response;
+      Status healthcheck_status = peer_stub_vec[i].get()->CheckHealth(
+          &healthcheck_context, healthcheck_request, &healthcheck_response);
+      if (healthcheck_status.ok() &&
+          healthcheck_response.status() == KVStatusCode::SUCCESS) {
+        // only if alive, send secondary request
+        KVRequest secondary_request;
+        secondary_request.mutable_sget_request()->set_row(row);
+        secondary_request.mutable_sget_request()->set_col(col);
 
-      KVResponse secondary_response;
-      ClientContext secondary_context;
-      Status status = peer_stub_vec[i].get()->Execute(
-          &secondary_context, secondary_request, &secondary_response);
-      // TODO: check status and take corresponding actions
-      if (status.ok()) {
-        if (secondary_response.status() == KVStatusCode::SUCCESS) {
-        } else if (secondary_response.status() == KVStatusCode::FAILURE) {
-        }
+        KVResponse secondary_response;
+        ClientContext secondary_context;
+        Status status = peer_stub_vec[i].get()->Execute(
+            &secondary_context, secondary_request, &secondary_response);
+        VerboseLog("Send Sget <" + row + "><" + col + "> to " +
+                   peer_addr_vec[i]);
       } else {
+        VerboseLog("Cannot send sget to " + peer_addr_vec[i] +
+                   " as it's not alive");
       }
-      VerboseLog("Send Sget <" + row + "><" + col + "> to " + peer_addr_vec[i]);
     }
 
     /* load target tablet to mem */
@@ -305,25 +319,30 @@ void KVStoreNodeImpl::KVPut(const KVRequest_KVPutRequest* request,
   VerboseLog("Receive Put <" + row + "><" + col + ">");
 
   // send sput request to secondary nodes
-  // TODO: fault tolerance
   for (int i = 0; i < peer_stub_vec.size(); i++) {
-    KVRequest secondary_request;
-    secondary_request.mutable_sput_request()->set_row(row);
-    secondary_request.mutable_sput_request()->set_col(col);
-    secondary_request.mutable_sput_request()->set_value(value);
+    // check if secondary is alive
+    ClientContext healthcheck_context;
+    Empty healthcheck_request;
+    KVResponse healthcheck_response;
+    Status healthcheck_status = peer_stub_vec[i].get()->CheckHealth(
+        &healthcheck_context, healthcheck_request, &healthcheck_response);
+    if (healthcheck_status.ok() &&
+        healthcheck_response.status() == KVStatusCode::SUCCESS) {
+      // only if alive, send secondary request
+      KVRequest secondary_request;
+      secondary_request.mutable_sput_request()->set_row(row);
+      secondary_request.mutable_sput_request()->set_col(col);
+      secondary_request.mutable_sput_request()->set_value(value);
 
-    KVResponse secondary_response;
-    ClientContext secondary_context;
-    Status status = peer_stub_vec[i].get()->Execute(
-        &secondary_context, secondary_request, &secondary_response);
-    // TODO: check status and take corresponding actions
-    if (status.ok()) {
-      if (secondary_response.status() == KVStatusCode::SUCCESS) {
-      } else if (secondary_response.status() == KVStatusCode::FAILURE) {
-      }
+      KVResponse secondary_response;
+      ClientContext secondary_context;
+      Status status = peer_stub_vec[i].get()->Execute(
+          &secondary_context, secondary_request, &secondary_response);
+      VerboseLog("Send Sput <" + row + "><" + col + "> to " + peer_addr_vec[i]);
     } else {
+      VerboseLog("Cannot send sput to " + peer_addr_vec[i] +
+                 " as it's not alive");
     }
-    VerboseLog("Send Sput <" + row + "><" + col + "> to " + peer_addr_vec[i]);
   }
 
   /* write to local tablet */
@@ -446,24 +465,31 @@ void KVStoreNodeImpl::KVCput(const KVRequest_KVCPutRequest* request,
   // send scput request to secondary nodes
   // TODO: fault tolerance
   for (int i = 0; i < peer_stub_vec.size(); i++) {
-    KVRequest secondary_request;
-    secondary_request.mutable_scput_request()->set_row(row);
-    secondary_request.mutable_scput_request()->set_col(col);
-    secondary_request.mutable_scput_request()->set_cur_value(cur_value);
-    secondary_request.mutable_scput_request()->set_new_value(new_value);
+    // check if secondary is alive
+    ClientContext healthcheck_context;
+    Empty healthcheck_request;
+    KVResponse healthcheck_response;
+    Status healthcheck_status = peer_stub_vec[i].get()->CheckHealth(
+        &healthcheck_context, healthcheck_request, &healthcheck_response);
+    if (healthcheck_status.ok() &&
+        healthcheck_response.status() == KVStatusCode::SUCCESS) {
+      // only if alive, send secondary request
+      KVRequest secondary_request;
+      secondary_request.mutable_scput_request()->set_row(row);
+      secondary_request.mutable_scput_request()->set_col(col);
+      secondary_request.mutable_scput_request()->set_cur_value(cur_value);
+      secondary_request.mutable_scput_request()->set_new_value(new_value);
 
-    KVResponse secondary_response;
-    ClientContext secondary_context;
-    Status status = peer_stub_vec[i].get()->Execute(
-        &secondary_context, secondary_request, &secondary_response);
-    // TODO: check status and take corresponding actions
-    if (status.ok()) {
-      if (secondary_response.status() == KVStatusCode::SUCCESS) {
-      } else if (secondary_response.status() == KVStatusCode::FAILURE) {
-      }
+      KVResponse secondary_response;
+      ClientContext secondary_context;
+      Status status = peer_stub_vec[i].get()->Execute(
+          &secondary_context, secondary_request, &secondary_response);
+      VerboseLog("Send Scput <" + row + "><" + col + "> to " +
+                 peer_addr_vec[i]);
     } else {
+      VerboseLog("Cannot send scput to " + peer_addr_vec[i] +
+                 " as it's not alive");
     }
-    VerboseLog("Send Scput <" + row + "><" + col + "> to " + peer_addr_vec[i]);
   }
 
   /* cput to local tablet */
@@ -610,24 +636,28 @@ void KVStoreNodeImpl::KVDelete(const KVRequest_KVDeleteRequest* request,
   VerboseLog("Receive Delete <" + row + "><" + col + ">");
 
   // send sdelete request to secondary nodes
-  // TODO: fault tolerance
   for (int i = 0; i < peer_stub_vec.size(); i++) {
-    KVRequest secondary_request;
-    secondary_request.mutable_sdelete_request()->set_row(row);
-    secondary_request.mutable_sdelete_request()->set_col(col);
-    KVResponse secondary_response;
-    ClientContext secondary_context;
-    Status status = peer_stub_vec[i].get()->Execute(
-        &secondary_context, secondary_request, &secondary_response);
-    // TODO: check status and take corresponding actions
-    if (status.ok()) {
-      if (secondary_response.status() == KVStatusCode::SUCCESS) {
-      } else if (secondary_response.status() == KVStatusCode::FAILURE) {
-      }
+    ClientContext healthcheck_context;
+    Empty healthcheck_request;
+    KVResponse healthcheck_response;
+    Status healthcheck_status = peer_stub_vec[i].get()->CheckHealth(
+        &healthcheck_context, healthcheck_request, &healthcheck_response);
+    if (healthcheck_status.ok() &&
+        healthcheck_response.status() == KVStatusCode::SUCCESS) {
+      // only if alive, send secondary request
+      KVRequest secondary_request;
+      secondary_request.mutable_sdelete_request()->set_row(row);
+      secondary_request.mutable_sdelete_request()->set_col(col);
+      KVResponse secondary_response;
+      ClientContext secondary_context;
+      Status status = peer_stub_vec[i].get()->Execute(
+          &secondary_context, secondary_request, &secondary_response);
+      VerboseLog("Send Sdelete <" + row + "><" + col + "> to " +
+                 peer_addr_vec[i]);
     } else {
+      VerboseLog("Cannot send sdelete to " + peer_addr_vec[i] +
+                 " as it's not alive");
     }
-    VerboseLog("Send Sdelete <" + row + "><" + col + "> to " +
-               peer_addr_vec[i]);
   }
 
   /* delete from local tablet */

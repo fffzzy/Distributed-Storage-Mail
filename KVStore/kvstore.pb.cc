@@ -146,6 +146,28 @@ struct KVRequest_KVSdeleteRequestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 KVRequest_KVSdeleteRequestDefaultTypeInternal _KVRequest_KVSdeleteRequest_default_instance_;
+PROTOBUF_CONSTEXPR KVRequest_KVSuspendRequest::KVRequest_KVSuspendRequest(
+    ::_pbi::ConstantInitialized) {}
+struct KVRequest_KVSuspendRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR KVRequest_KVSuspendRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~KVRequest_KVSuspendRequestDefaultTypeInternal() {}
+  union {
+    KVRequest_KVSuspendRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 KVRequest_KVSuspendRequestDefaultTypeInternal _KVRequest_KVSuspendRequest_default_instance_;
+PROTOBUF_CONSTEXPR KVRequest_KVAckrecoverRequest::KVRequest_KVAckrecoverRequest(
+    ::_pbi::ConstantInitialized) {}
+struct KVRequest_KVAckrecoverRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR KVRequest_KVAckrecoverRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~KVRequest_KVAckrecoverRequestDefaultTypeInternal() {}
+  union {
+    KVRequest_KVAckrecoverRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 KVRequest_KVAckrecoverRequestDefaultTypeInternal _KVRequest_KVAckrecoverRequest_default_instance_;
 PROTOBUF_CONSTEXPR KVRequest::KVRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.request_)*/{}
@@ -206,7 +228,7 @@ struct FetchNodeResponseDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 FetchNodeResponseDefaultTypeInternal _FetchNodeResponse_default_instance_;
-static ::_pb::Metadata file_level_metadata_kvstore_2eproto[12];
+static ::_pb::Metadata file_level_metadata_kvstore_2eproto[14];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_kvstore_2eproto[1];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_kvstore_2eproto = nullptr;
 
@@ -304,11 +326,25 @@ const uint32_t TableStruct_kvstore_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   0,
   1,
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVSuspendRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVAckrecoverRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::KVRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   PROTOBUF_FIELD_OFFSET(::KVRequest, _impl_._oneof_case_[0]),
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
@@ -360,10 +396,12 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 58, 68, -1, sizeof(::KVRequest_KVScputRequest)},
   { 72, 80, -1, sizeof(::KVRequest_KVDeleteRequest)},
   { 82, 90, -1, sizeof(::KVRequest_KVSdeleteRequest)},
-  { 92, -1, -1, sizeof(::KVRequest)},
-  { 107, 115, -1, sizeof(::KVResponse)},
-  { 117, 125, -1, sizeof(::FetchNodeRequest)},
-  { 127, 136, -1, sizeof(::FetchNodeResponse)},
+  { 92, -1, -1, sizeof(::KVRequest_KVSuspendRequest)},
+  { 98, -1, -1, sizeof(::KVRequest_KVAckrecoverRequest)},
+  { 104, -1, -1, sizeof(::KVRequest)},
+  { 121, 129, -1, sizeof(::KVResponse)},
+  { 131, 139, -1, sizeof(::FetchNodeRequest)},
+  { 141, 150, -1, sizeof(::FetchNodeResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -375,6 +413,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::_KVRequest_KVScputRequest_default_instance_._instance,
   &::_KVRequest_KVDeleteRequest_default_instance_._instance,
   &::_KVRequest_KVSdeleteRequest_default_instance_._instance,
+  &::_KVRequest_KVSuspendRequest_default_instance_._instance,
+  &::_KVRequest_KVAckrecoverRequest_default_instance_._instance,
   &::_KVRequest_default_instance_._instance,
   &::_KVResponse_default_instance_._instance,
   &::_FetchNodeRequest_default_instance_._instance,
@@ -383,7 +423,7 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\rkvstore.proto\032\033google/protobuf/empty.p"
-  "roto\"\260\t\n\tKVRequest\022.\n\013get_request\030\001 \001(\0132"
+  "roto\"\321\n\n\tKVRequest\022.\n\013get_request\030\001 \001(\0132"
   "\027.KVRequest.KVGetRequestH\000\0220\n\014sget_reque"
   "st\030\002 \001(\0132\030.KVRequest.KVSgetRequestH\000\022.\n\013"
   "put_request\030\003 \001(\0132\027.KVRequest.KVPutReque"
@@ -393,49 +433,54 @@ const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE
   "t\030\006 \001(\0132\031.KVRequest.KVScputRequestH\000\0224\n\016"
   "delete_request\030\007 \001(\0132\032.KVRequest.KVDelet"
   "eRequestH\000\0226\n\017sdelete_request\030\010 \001(\0132\033.KV"
-  "Request.KVSdeleteRequestH\000\032B\n\014KVGetReque"
-  "st\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006"
-  "\n\004_rowB\006\n\004_col\032C\n\rKVSgetRequest\022\020\n\003row\030\001"
-  " \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_"
-  "col\032`\n\014KVPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n"
-  "\003col\030\002 \001(\tH\001\210\001\001\022\022\n\005value\030\003 \001(\tH\002\210\001\001B\006\n\004_"
-  "rowB\006\n\004_colB\010\n\006_value\032a\n\rKVSputRequest\022\020"
-  "\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\022\n\005va"
-  "lue\030\003 \001(\tH\002\210\001\001B\006\n\004_rowB\006\n\004_colB\010\n\006_value"
-  "\032\217\001\n\rKVCPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003"
-  "col\030\002 \001(\tH\001\210\001\001\022\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026"
-  "\n\tnew_value\030\004 \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014"
-  "\n\n_cur_valueB\014\n\n_new_value\032\220\001\n\016KVScputRe"
-  "quest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001"
-  "\001\022\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_value\030\004"
-  " \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cur_valueB"
-  "\014\n\n_new_value\032E\n\017KVDeleteRequest\022\020\n\003row\030"
-  "\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004"
-  "_col\032F\n\020KVSdeleteRequest\022\020\n\003row\030\001 \001(\tH\000\210"
-  "\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_colB\t\n\007"
-  "request\"]\n\nKVResponse\022\"\n\006status\030\001 \001(\0162\r."
-  "KVStatusCodeH\000\210\001\001\022\024\n\007message\030\002 \001(\tH\001\210\001\001B"
-  "\t\n\007_statusB\n\n\010_message\"F\n\020FetchNodeReque"
-  "st\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006"
-  "\n\004_rowB\006\n\004_col\"\214\001\n\021FetchNodeResponse\022\"\n\006"
-  "status\030\001 \001(\0162\r.KVStatusCodeH\000\210\001\001\022\021\n\004addr"
-  "\030\002 \001(\tH\001\210\001\001\022\032\n\rerror_message\030\003 \001(\tH\002\210\001\001B"
-  "\t\n\007_statusB\007\n\005_addrB\020\n\016_error_message*(\n"
-  "\014KVStatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\0012"
-  "I\n\rKVStoreMaster\0228\n\rFetchNodeAddr\022\021.Fetc"
-  "hNodeRequest\032\022.FetchNodeResponse\"\0002t\n\013KV"
-  "StoreNode\022$\n\007Execute\022\n.KVRequest\032\013.KVRes"
-  "ponse\"\000\022\?\n\013CheckHealth\022\026.google.protobuf"
-  ".Empty\032\026.google.protobuf.Empty\"\000b\006proto3"
+  "Request.KVSdeleteRequestH\000\0226\n\017suspend_re"
+  "quest\030\t \001(\0132\033.KVRequest.KVSuspendRequest"
+  "H\000\022<\n\022recoverack_request\030\n \001(\0132\036.KVReque"
+  "st.KVAckrecoverRequestH\000\032B\n\014KVGetRequest"
+  "\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004"
+  "_rowB\006\n\004_col\032C\n\rKVSgetRequest\022\020\n\003row\030\001 \001"
+  "(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_co"
+  "l\032`\n\014KVPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003c"
+  "ol\030\002 \001(\tH\001\210\001\001\022\022\n\005value\030\003 \001(\tH\002\210\001\001B\006\n\004_ro"
+  "wB\006\n\004_colB\010\n\006_value\032a\n\rKVSputRequest\022\020\n\003"
+  "row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\022\n\005valu"
+  "e\030\003 \001(\tH\002\210\001\001B\006\n\004_rowB\006\n\004_colB\010\n\006_value\032\217"
+  "\001\n\rKVCPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003co"
+  "l\030\002 \001(\tH\001\210\001\001\022\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\t"
+  "new_value\030\004 \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n"
+  "_cur_valueB\014\n\n_new_value\032\220\001\n\016KVScputRequ"
+  "est\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022"
+  "\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_value\030\004 \001"
+  "(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cur_valueB\014\n"
+  "\n_new_value\032E\n\017KVDeleteRequest\022\020\n\003row\030\001 "
+  "\001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_c"
+  "ol\032F\n\020KVSdeleteRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001"
+  "\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032\022\n\020KV"
+  "SuspendRequest\032\025\n\023KVAckrecoverRequestB\t\n"
+  "\007request\"]\n\nKVResponse\022\"\n\006status\030\001 \001(\0162\r"
+  ".KVStatusCodeH\000\210\001\001\022\024\n\007message\030\002 \001(\tH\001\210\001\001"
+  "B\t\n\007_statusB\n\n\010_message\"F\n\020FetchNodeRequ"
+  "est\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B"
+  "\006\n\004_rowB\006\n\004_col\"\214\001\n\021FetchNodeResponse\022\"\n"
+  "\006status\030\001 \001(\0162\r.KVStatusCodeH\000\210\001\001\022\021\n\004add"
+  "r\030\002 \001(\tH\001\210\001\001\022\032\n\rerror_message\030\003 \001(\tH\002\210\001\001"
+  "B\t\n\007_statusB\007\n\005_addrB\020\n\016_error_message*E"
+  "\n\014KVStatusCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\001"
+  "\022\013\n\007SUSPEND\020\002\022\016\n\nRECOVERING\020\0032I\n\rKVStore"
+  "Master\0228\n\rFetchNodeAddr\022\021.FetchNodeReque"
+  "st\032\022.FetchNodeResponse\"\0002i\n\013KVStoreNode\022"
+  "$\n\007Execute\022\n.KVRequest\032\013.KVResponse\"\000\0224\n"
+  "\013CheckHealth\022\026.google.protobuf.Empty\032\013.K"
+  "VResponse\"\000b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_kvstore_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_kvstore_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_kvstore_2eproto = {
-    false, false, 1800, descriptor_table_protodef_kvstore_2eproto,
+    false, false, 1979, descriptor_table_protodef_kvstore_2eproto,
     "kvstore.proto",
-    &descriptor_table_kvstore_2eproto_once, descriptor_table_kvstore_2eproto_deps, 1, 12,
+    &descriptor_table_kvstore_2eproto_once, descriptor_table_kvstore_2eproto_deps, 1, 14,
     schemas, file_default_instances, TableStruct_kvstore_2eproto::offsets,
     file_level_metadata_kvstore_2eproto, file_level_enum_descriptors_kvstore_2eproto,
     file_level_service_descriptors_kvstore_2eproto,
@@ -454,6 +499,8 @@ bool KVStatusCode_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
+    case 2:
+    case 3:
       return true;
     default:
       return false;
@@ -3025,6 +3072,86 @@ void KVRequest_KVSdeleteRequest::InternalSwap(KVRequest_KVSdeleteRequest* other)
 
 // ===================================================================
 
+class KVRequest_KVSuspendRequest::_Internal {
+ public:
+};
+
+KVRequest_KVSuspendRequest::KVRequest_KVSuspendRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:KVRequest.KVSuspendRequest)
+}
+KVRequest_KVSuspendRequest::KVRequest_KVSuspendRequest(const KVRequest_KVSuspendRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  KVRequest_KVSuspendRequest* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:KVRequest.KVSuspendRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData KVRequest_KVSuspendRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*KVRequest_KVSuspendRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata KVRequest_KVSuspendRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
+      file_level_metadata_kvstore_2eproto[8]);
+}
+
+// ===================================================================
+
+class KVRequest_KVAckrecoverRequest::_Internal {
+ public:
+};
+
+KVRequest_KVAckrecoverRequest::KVRequest_KVAckrecoverRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:KVRequest.KVAckrecoverRequest)
+}
+KVRequest_KVAckrecoverRequest::KVRequest_KVAckrecoverRequest(const KVRequest_KVAckrecoverRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  KVRequest_KVAckrecoverRequest* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:KVRequest.KVAckrecoverRequest)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData KVRequest_KVAckrecoverRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*KVRequest_KVAckrecoverRequest::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata KVRequest_KVAckrecoverRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
+      file_level_metadata_kvstore_2eproto[9]);
+}
+
+// ===================================================================
+
 class KVRequest::_Internal {
  public:
   static const ::KVRequest_KVGetRequest& get_request(const KVRequest* msg);
@@ -3035,6 +3162,8 @@ class KVRequest::_Internal {
   static const ::KVRequest_KVScputRequest& scput_request(const KVRequest* msg);
   static const ::KVRequest_KVDeleteRequest& delete_request(const KVRequest* msg);
   static const ::KVRequest_KVSdeleteRequest& sdelete_request(const KVRequest* msg);
+  static const ::KVRequest_KVSuspendRequest& suspend_request(const KVRequest* msg);
+  static const ::KVRequest_KVAckrecoverRequest& recoverack_request(const KVRequest* msg);
 };
 
 const ::KVRequest_KVGetRequest&
@@ -3068,6 +3197,14 @@ KVRequest::_Internal::delete_request(const KVRequest* msg) {
 const ::KVRequest_KVSdeleteRequest&
 KVRequest::_Internal::sdelete_request(const KVRequest* msg) {
   return *msg->_impl_.request_.sdelete_request_;
+}
+const ::KVRequest_KVSuspendRequest&
+KVRequest::_Internal::suspend_request(const KVRequest* msg) {
+  return *msg->_impl_.request_.suspend_request_;
+}
+const ::KVRequest_KVAckrecoverRequest&
+KVRequest::_Internal::recoverack_request(const KVRequest* msg) {
+  return *msg->_impl_.request_.recoverack_request_;
 }
 void KVRequest::set_allocated_get_request(::KVRequest_KVGetRequest* get_request) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -3189,6 +3326,36 @@ void KVRequest::set_allocated_sdelete_request(::KVRequest_KVSdeleteRequest* sdel
   }
   // @@protoc_insertion_point(field_set_allocated:KVRequest.sdelete_request)
 }
+void KVRequest::set_allocated_suspend_request(::KVRequest_KVSuspendRequest* suspend_request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_request();
+  if (suspend_request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(suspend_request);
+    if (message_arena != submessage_arena) {
+      suspend_request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, suspend_request, submessage_arena);
+    }
+    set_has_suspend_request();
+    _impl_.request_.suspend_request_ = suspend_request;
+  }
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.suspend_request)
+}
+void KVRequest::set_allocated_recoverack_request(::KVRequest_KVAckrecoverRequest* recoverack_request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_request();
+  if (recoverack_request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(recoverack_request);
+    if (message_arena != submessage_arena) {
+      recoverack_request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, recoverack_request, submessage_arena);
+    }
+    set_has_recoverack_request();
+    _impl_.request_.recoverack_request_ = recoverack_request;
+  }
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.recoverack_request)
+}
 KVRequest::KVRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -3244,6 +3411,16 @@ KVRequest::KVRequest(const KVRequest& from)
     case kSdeleteRequest: {
       _this->_internal_mutable_sdelete_request()->::KVRequest_KVSdeleteRequest::MergeFrom(
           from._internal_sdelete_request());
+      break;
+    }
+    case kSuspendRequest: {
+      _this->_internal_mutable_suspend_request()->::KVRequest_KVSuspendRequest::MergeFrom(
+          from._internal_suspend_request());
+      break;
+    }
+    case kRecoverackRequest: {
+      _this->_internal_mutable_recoverack_request()->::KVRequest_KVAckrecoverRequest::MergeFrom(
+          from._internal_recoverack_request());
       break;
     }
     case REQUEST_NOT_SET: {
@@ -3336,6 +3513,18 @@ void KVRequest::clear_request() {
       }
       break;
     }
+    case kSuspendRequest: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.request_.suspend_request_;
+      }
+      break;
+    }
+    case kRecoverackRequest: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.request_.recoverack_request_;
+      }
+      break;
+    }
     case REQUEST_NOT_SET: {
       break;
     }
@@ -3420,6 +3609,22 @@ const char* KVRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx
       case 8:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
           ptr = ctx->ParseMessage(_internal_mutable_sdelete_request(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .KVRequest.KVSuspendRequest suspend_request = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 74)) {
+          ptr = ctx->ParseMessage(_internal_mutable_suspend_request(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .KVRequest.KVAckrecoverRequest recoverack_request = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 82)) {
+          ptr = ctx->ParseMessage(_internal_mutable_recoverack_request(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -3509,6 +3714,20 @@ uint8_t* KVRequest::_InternalSerialize(
         _Internal::sdelete_request(this).GetCachedSize(), target, stream);
   }
 
+  // .KVRequest.KVSuspendRequest suspend_request = 9;
+  if (_internal_has_suspend_request()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(9, _Internal::suspend_request(this),
+        _Internal::suspend_request(this).GetCachedSize(), target, stream);
+  }
+
+  // .KVRequest.KVAckrecoverRequest recoverack_request = 10;
+  if (_internal_has_recoverack_request()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(10, _Internal::recoverack_request(this),
+        _Internal::recoverack_request(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3582,6 +3801,20 @@ size_t KVRequest::ByteSizeLong() const {
           *_impl_.request_.sdelete_request_);
       break;
     }
+    // .KVRequest.KVSuspendRequest suspend_request = 9;
+    case kSuspendRequest: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.request_.suspend_request_);
+      break;
+    }
+    // .KVRequest.KVAckrecoverRequest recoverack_request = 10;
+    case kRecoverackRequest: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.request_.recoverack_request_);
+      break;
+    }
     case REQUEST_NOT_SET: {
       break;
     }
@@ -3645,6 +3878,16 @@ void KVRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROT
           from._internal_sdelete_request());
       break;
     }
+    case kSuspendRequest: {
+      _this->_internal_mutable_suspend_request()->::KVRequest_KVSuspendRequest::MergeFrom(
+          from._internal_suspend_request());
+      break;
+    }
+    case kRecoverackRequest: {
+      _this->_internal_mutable_recoverack_request()->::KVRequest_KVAckrecoverRequest::MergeFrom(
+          from._internal_recoverack_request());
+      break;
+    }
     case REQUEST_NOT_SET: {
       break;
     }
@@ -3673,7 +3916,7 @@ void KVRequest::InternalSwap(KVRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata KVRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[8]);
+      file_level_metadata_kvstore_2eproto[10]);
 }
 
 // ===================================================================
@@ -3929,7 +4172,7 @@ void KVResponse::InternalSwap(KVResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata KVResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[9]);
+      file_level_metadata_kvstore_2eproto[11]);
 }
 
 // ===================================================================
@@ -4208,7 +4451,7 @@ void FetchNodeRequest::InternalSwap(FetchNodeRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata FetchNodeRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[10]);
+      file_level_metadata_kvstore_2eproto[12]);
 }
 
 // ===================================================================
@@ -4521,7 +4764,7 @@ void FetchNodeResponse::InternalSwap(FetchNodeResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata FetchNodeResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[11]);
+      file_level_metadata_kvstore_2eproto[13]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -4557,6 +4800,14 @@ Arena::CreateMaybeMessage< ::KVRequest_KVDeleteRequest >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::KVRequest_KVSdeleteRequest*
 Arena::CreateMaybeMessage< ::KVRequest_KVSdeleteRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::KVRequest_KVSdeleteRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::KVRequest_KVSuspendRequest*
+Arena::CreateMaybeMessage< ::KVRequest_KVSuspendRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::KVRequest_KVSuspendRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::KVRequest_KVAckrecoverRequest*
+Arena::CreateMaybeMessage< ::KVRequest_KVAckrecoverRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::KVRequest_KVAckrecoverRequest >(arena);
 }
 template<> PROTOBUF_NOINLINE ::KVRequest*
 Arena::CreateMaybeMessage< ::KVRequest >(Arena* arena) {

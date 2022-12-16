@@ -15,17 +15,20 @@ service KVStoreNode {
   rpc Execute(KVRequest) returns (KVResponse){}
 
   // Health Check if the replica node is alive.
-  rpc CheckHealth(google.protobuf.Empty) returns(google.protobuf.Empty){}
+  rpc CheckHealth(google.protobuf.Empty) returns(KVResponse){}
 }
 
 /* Status of rpc response */
 enum KVStatusCode {
   SUCCESS = 0;
   FAILURE = 1;
+  SUSPEND = 2;
+  RECOVERING = 3;
 }
 
 /* General KV request from frontend. */
 message KVRequest {
+
   // KVGetRequest.
   message KVGetRequest {
     optional string row = 1;    // [Required]
@@ -81,6 +84,16 @@ message KVRequest {
     optional string col = 2;    // [Required]
   }
 
+  // KVSuspendRequest (master -> node)
+  message KVSuspendRequest {
+    
+  }
+
+  // KVAckrecoverRequest (primary node -> master, ack recovering is finished)
+  message KVAckrecoverRequest {
+
+  }
+
   // Request can only be one of put/get/cput/delete.
   oneof request {
     KVGetRequest get_request = 1;
@@ -91,6 +104,8 @@ message KVRequest {
     KVScputRequest scput_request = 6;
     KVDeleteRequest delete_request = 7;
     KVSdeleteRequest sdelete_request = 8;
+    KVSuspendRequest suspend_request = 9;
+    KVAckrecoverRequest recoverack_request = 10;
   }
 }
 

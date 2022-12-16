@@ -32,8 +32,9 @@ void* ThreadFunc(void* args) {
       for (const auto& it : cluster.stubs) {
         ClientContext context;
         Empty empty_req;
-        Empty empty_res;
-        Status status = it.second->CheckHealth(&context, empty_req, &empty_res);
+        KVResponse check_health_res;
+        Status status =
+            it.second->CheckHealth(&context, empty_req, &check_health_res);
         if (status.ok()) {
           isAlive[it.first] = true;
           if (verbose_) {

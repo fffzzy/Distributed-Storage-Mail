@@ -23,6 +23,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/arena.h>
 #include <google/protobuf/arenastring.h>
+#include <google/protobuf/generated_message_bases.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/metadata_lite.h>
 #include <google/protobuf/generated_message_reflection.h>
@@ -55,6 +56,9 @@ extern FetchNodeResponseDefaultTypeInternal _FetchNodeResponse_default_instance_
 class KVRequest;
 struct KVRequestDefaultTypeInternal;
 extern KVRequestDefaultTypeInternal _KVRequest_default_instance_;
+class KVRequest_KVAckrecoverRequest;
+struct KVRequest_KVAckrecoverRequestDefaultTypeInternal;
+extern KVRequest_KVAckrecoverRequestDefaultTypeInternal _KVRequest_KVAckrecoverRequest_default_instance_;
 class KVRequest_KVCPutRequest;
 struct KVRequest_KVCPutRequestDefaultTypeInternal;
 extern KVRequest_KVCPutRequestDefaultTypeInternal _KVRequest_KVCPutRequest_default_instance_;
@@ -79,6 +83,9 @@ extern KVRequest_KVSgetRequestDefaultTypeInternal _KVRequest_KVSgetRequest_defau
 class KVRequest_KVSputRequest;
 struct KVRequest_KVSputRequestDefaultTypeInternal;
 extern KVRequest_KVSputRequestDefaultTypeInternal _KVRequest_KVSputRequest_default_instance_;
+class KVRequest_KVSuspendRequest;
+struct KVRequest_KVSuspendRequestDefaultTypeInternal;
+extern KVRequest_KVSuspendRequestDefaultTypeInternal _KVRequest_KVSuspendRequest_default_instance_;
 class KVResponse;
 struct KVResponseDefaultTypeInternal;
 extern KVResponseDefaultTypeInternal _KVResponse_default_instance_;
@@ -86,6 +93,7 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::FetchNodeRequest* Arena::CreateMaybeMessage<::FetchNodeRequest>(Arena*);
 template<> ::FetchNodeResponse* Arena::CreateMaybeMessage<::FetchNodeResponse>(Arena*);
 template<> ::KVRequest* Arena::CreateMaybeMessage<::KVRequest>(Arena*);
+template<> ::KVRequest_KVAckrecoverRequest* Arena::CreateMaybeMessage<::KVRequest_KVAckrecoverRequest>(Arena*);
 template<> ::KVRequest_KVCPutRequest* Arena::CreateMaybeMessage<::KVRequest_KVCPutRequest>(Arena*);
 template<> ::KVRequest_KVDeleteRequest* Arena::CreateMaybeMessage<::KVRequest_KVDeleteRequest>(Arena*);
 template<> ::KVRequest_KVGetRequest* Arena::CreateMaybeMessage<::KVRequest_KVGetRequest>(Arena*);
@@ -94,18 +102,21 @@ template<> ::KVRequest_KVScputRequest* Arena::CreateMaybeMessage<::KVRequest_KVS
 template<> ::KVRequest_KVSdeleteRequest* Arena::CreateMaybeMessage<::KVRequest_KVSdeleteRequest>(Arena*);
 template<> ::KVRequest_KVSgetRequest* Arena::CreateMaybeMessage<::KVRequest_KVSgetRequest>(Arena*);
 template<> ::KVRequest_KVSputRequest* Arena::CreateMaybeMessage<::KVRequest_KVSputRequest>(Arena*);
+template<> ::KVRequest_KVSuspendRequest* Arena::CreateMaybeMessage<::KVRequest_KVSuspendRequest>(Arena*);
 template<> ::KVResponse* Arena::CreateMaybeMessage<::KVResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 enum KVStatusCode : int {
   SUCCESS = 0,
   FAILURE = 1,
+  SUSPEND = 2,
+  RECOVERING = 3,
   KVStatusCode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   KVStatusCode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool KVStatusCode_IsValid(int value);
 constexpr KVStatusCode KVStatusCode_MIN = SUCCESS;
-constexpr KVStatusCode KVStatusCode_MAX = FAILURE;
+constexpr KVStatusCode KVStatusCode_MAX = RECOVERING;
 constexpr int KVStatusCode_ARRAYSIZE = KVStatusCode_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* KVStatusCode_descriptor();
@@ -1668,6 +1679,242 @@ class KVRequest_KVSdeleteRequest final :
 };
 // -------------------------------------------------------------------
 
+class KVRequest_KVSuspendRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:KVRequest.KVSuspendRequest) */ {
+ public:
+  inline KVRequest_KVSuspendRequest() : KVRequest_KVSuspendRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR KVRequest_KVSuspendRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  KVRequest_KVSuspendRequest(const KVRequest_KVSuspendRequest& from);
+  KVRequest_KVSuspendRequest(KVRequest_KVSuspendRequest&& from) noexcept
+    : KVRequest_KVSuspendRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline KVRequest_KVSuspendRequest& operator=(const KVRequest_KVSuspendRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline KVRequest_KVSuspendRequest& operator=(KVRequest_KVSuspendRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const KVRequest_KVSuspendRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const KVRequest_KVSuspendRequest* internal_default_instance() {
+    return reinterpret_cast<const KVRequest_KVSuspendRequest*>(
+               &_KVRequest_KVSuspendRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  friend void swap(KVRequest_KVSuspendRequest& a, KVRequest_KVSuspendRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(KVRequest_KVSuspendRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(KVRequest_KVSuspendRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  KVRequest_KVSuspendRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<KVRequest_KVSuspendRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const KVRequest_KVSuspendRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const KVRequest_KVSuspendRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "KVRequest.KVSuspendRequest";
+  }
+  protected:
+  explicit KVRequest_KVSuspendRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:KVRequest.KVSuspendRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_kvstore_2eproto;
+};
+// -------------------------------------------------------------------
+
+class KVRequest_KVAckrecoverRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:KVRequest.KVAckrecoverRequest) */ {
+ public:
+  inline KVRequest_KVAckrecoverRequest() : KVRequest_KVAckrecoverRequest(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR KVRequest_KVAckrecoverRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  KVRequest_KVAckrecoverRequest(const KVRequest_KVAckrecoverRequest& from);
+  KVRequest_KVAckrecoverRequest(KVRequest_KVAckrecoverRequest&& from) noexcept
+    : KVRequest_KVAckrecoverRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline KVRequest_KVAckrecoverRequest& operator=(const KVRequest_KVAckrecoverRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline KVRequest_KVAckrecoverRequest& operator=(KVRequest_KVAckrecoverRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const KVRequest_KVAckrecoverRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const KVRequest_KVAckrecoverRequest* internal_default_instance() {
+    return reinterpret_cast<const KVRequest_KVAckrecoverRequest*>(
+               &_KVRequest_KVAckrecoverRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(KVRequest_KVAckrecoverRequest& a, KVRequest_KVAckrecoverRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(KVRequest_KVAckrecoverRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(KVRequest_KVAckrecoverRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  KVRequest_KVAckrecoverRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<KVRequest_KVAckrecoverRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const KVRequest_KVAckrecoverRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const KVRequest_KVAckrecoverRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "KVRequest.KVAckrecoverRequest";
+  }
+  protected:
+  explicit KVRequest_KVAckrecoverRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:KVRequest.KVAckrecoverRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_kvstore_2eproto;
+};
+// -------------------------------------------------------------------
+
 class KVRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest) */ {
  public:
@@ -1720,6 +1967,8 @@ class KVRequest final :
     kScputRequest = 6,
     kDeleteRequest = 7,
     kSdeleteRequest = 8,
+    kSuspendRequest = 9,
+    kRecoverackRequest = 10,
     REQUEST_NOT_SET = 0,
   };
 
@@ -1728,7 +1977,7 @@ class KVRequest final :
                &_KVRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(KVRequest& a, KVRequest& b) {
     a.Swap(&b);
@@ -1806,6 +2055,8 @@ class KVRequest final :
   typedef KVRequest_KVScputRequest KVScputRequest;
   typedef KVRequest_KVDeleteRequest KVDeleteRequest;
   typedef KVRequest_KVSdeleteRequest KVSdeleteRequest;
+  typedef KVRequest_KVSuspendRequest KVSuspendRequest;
+  typedef KVRequest_KVAckrecoverRequest KVAckrecoverRequest;
 
   // accessors -------------------------------------------------------
 
@@ -1818,6 +2069,8 @@ class KVRequest final :
     kScputRequestFieldNumber = 6,
     kDeleteRequestFieldNumber = 7,
     kSdeleteRequestFieldNumber = 8,
+    kSuspendRequestFieldNumber = 9,
+    kRecoverackRequestFieldNumber = 10,
   };
   // .KVRequest.KVGetRequest get_request = 1;
   bool has_get_request() const;
@@ -1963,6 +2216,42 @@ class KVRequest final :
       ::KVRequest_KVSdeleteRequest* sdelete_request);
   ::KVRequest_KVSdeleteRequest* unsafe_arena_release_sdelete_request();
 
+  // .KVRequest.KVSuspendRequest suspend_request = 9;
+  bool has_suspend_request() const;
+  private:
+  bool _internal_has_suspend_request() const;
+  public:
+  void clear_suspend_request();
+  const ::KVRequest_KVSuspendRequest& suspend_request() const;
+  PROTOBUF_NODISCARD ::KVRequest_KVSuspendRequest* release_suspend_request();
+  ::KVRequest_KVSuspendRequest* mutable_suspend_request();
+  void set_allocated_suspend_request(::KVRequest_KVSuspendRequest* suspend_request);
+  private:
+  const ::KVRequest_KVSuspendRequest& _internal_suspend_request() const;
+  ::KVRequest_KVSuspendRequest* _internal_mutable_suspend_request();
+  public:
+  void unsafe_arena_set_allocated_suspend_request(
+      ::KVRequest_KVSuspendRequest* suspend_request);
+  ::KVRequest_KVSuspendRequest* unsafe_arena_release_suspend_request();
+
+  // .KVRequest.KVAckrecoverRequest recoverack_request = 10;
+  bool has_recoverack_request() const;
+  private:
+  bool _internal_has_recoverack_request() const;
+  public:
+  void clear_recoverack_request();
+  const ::KVRequest_KVAckrecoverRequest& recoverack_request() const;
+  PROTOBUF_NODISCARD ::KVRequest_KVAckrecoverRequest* release_recoverack_request();
+  ::KVRequest_KVAckrecoverRequest* mutable_recoverack_request();
+  void set_allocated_recoverack_request(::KVRequest_KVAckrecoverRequest* recoverack_request);
+  private:
+  const ::KVRequest_KVAckrecoverRequest& _internal_recoverack_request() const;
+  ::KVRequest_KVAckrecoverRequest* _internal_mutable_recoverack_request();
+  public:
+  void unsafe_arena_set_allocated_recoverack_request(
+      ::KVRequest_KVAckrecoverRequest* recoverack_request);
+  ::KVRequest_KVAckrecoverRequest* unsafe_arena_release_recoverack_request();
+
   void clear_request();
   RequestCase request_case() const;
   // @@protoc_insertion_point(class_scope:KVRequest)
@@ -1976,6 +2265,8 @@ class KVRequest final :
   void set_has_scput_request();
   void set_has_delete_request();
   void set_has_sdelete_request();
+  void set_has_suspend_request();
+  void set_has_recoverack_request();
 
   inline bool has_request() const;
   inline void clear_has_request();
@@ -1995,6 +2286,8 @@ class KVRequest final :
       ::KVRequest_KVScputRequest* scput_request_;
       ::KVRequest_KVDeleteRequest* delete_request_;
       ::KVRequest_KVSdeleteRequest* sdelete_request_;
+      ::KVRequest_KVSuspendRequest* suspend_request_;
+      ::KVRequest_KVAckrecoverRequest* recoverack_request_;
     } request_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint32_t _oneof_case_[1];
@@ -2053,7 +2346,7 @@ class KVResponse final :
                &_KVResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(KVResponse& a, KVResponse& b) {
     a.Swap(&b);
@@ -2226,7 +2519,7 @@ class FetchNodeRequest final :
                &_FetchNodeRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(FetchNodeRequest& a, FetchNodeRequest& b) {
     a.Swap(&b);
@@ -2404,7 +2697,7 @@ class FetchNodeResponse final :
                &_FetchNodeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(FetchNodeResponse& a, FetchNodeResponse& b) {
     a.Swap(&b);
@@ -4084,6 +4377,14 @@ inline void KVRequest_KVSdeleteRequest::set_allocated_col(std::string* col) {
 
 // -------------------------------------------------------------------
 
+// KVRequest_KVSuspendRequest
+
+// -------------------------------------------------------------------
+
+// KVRequest_KVAckrecoverRequest
+
+// -------------------------------------------------------------------
+
 // KVRequest
 
 // .KVRequest.KVGetRequest get_request = 1;
@@ -4678,6 +4979,154 @@ inline ::KVRequest_KVSdeleteRequest* KVRequest::mutable_sdelete_request() {
   return _msg;
 }
 
+// .KVRequest.KVSuspendRequest suspend_request = 9;
+inline bool KVRequest::_internal_has_suspend_request() const {
+  return request_case() == kSuspendRequest;
+}
+inline bool KVRequest::has_suspend_request() const {
+  return _internal_has_suspend_request();
+}
+inline void KVRequest::set_has_suspend_request() {
+  _impl_._oneof_case_[0] = kSuspendRequest;
+}
+inline void KVRequest::clear_suspend_request() {
+  if (_internal_has_suspend_request()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.request_.suspend_request_;
+    }
+    clear_has_request();
+  }
+}
+inline ::KVRequest_KVSuspendRequest* KVRequest::release_suspend_request() {
+  // @@protoc_insertion_point(field_release:KVRequest.suspend_request)
+  if (_internal_has_suspend_request()) {
+    clear_has_request();
+    ::KVRequest_KVSuspendRequest* temp = _impl_.request_.suspend_request_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.request_.suspend_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::KVRequest_KVSuspendRequest& KVRequest::_internal_suspend_request() const {
+  return _internal_has_suspend_request()
+      ? *_impl_.request_.suspend_request_
+      : reinterpret_cast< ::KVRequest_KVSuspendRequest&>(::_KVRequest_KVSuspendRequest_default_instance_);
+}
+inline const ::KVRequest_KVSuspendRequest& KVRequest::suspend_request() const {
+  // @@protoc_insertion_point(field_get:KVRequest.suspend_request)
+  return _internal_suspend_request();
+}
+inline ::KVRequest_KVSuspendRequest* KVRequest::unsafe_arena_release_suspend_request() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.suspend_request)
+  if (_internal_has_suspend_request()) {
+    clear_has_request();
+    ::KVRequest_KVSuspendRequest* temp = _impl_.request_.suspend_request_;
+    _impl_.request_.suspend_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void KVRequest::unsafe_arena_set_allocated_suspend_request(::KVRequest_KVSuspendRequest* suspend_request) {
+  clear_request();
+  if (suspend_request) {
+    set_has_suspend_request();
+    _impl_.request_.suspend_request_ = suspend_request;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.suspend_request)
+}
+inline ::KVRequest_KVSuspendRequest* KVRequest::_internal_mutable_suspend_request() {
+  if (!_internal_has_suspend_request()) {
+    clear_request();
+    set_has_suspend_request();
+    _impl_.request_.suspend_request_ = CreateMaybeMessage< ::KVRequest_KVSuspendRequest >(GetArenaForAllocation());
+  }
+  return _impl_.request_.suspend_request_;
+}
+inline ::KVRequest_KVSuspendRequest* KVRequest::mutable_suspend_request() {
+  ::KVRequest_KVSuspendRequest* _msg = _internal_mutable_suspend_request();
+  // @@protoc_insertion_point(field_mutable:KVRequest.suspend_request)
+  return _msg;
+}
+
+// .KVRequest.KVAckrecoverRequest recoverack_request = 10;
+inline bool KVRequest::_internal_has_recoverack_request() const {
+  return request_case() == kRecoverackRequest;
+}
+inline bool KVRequest::has_recoverack_request() const {
+  return _internal_has_recoverack_request();
+}
+inline void KVRequest::set_has_recoverack_request() {
+  _impl_._oneof_case_[0] = kRecoverackRequest;
+}
+inline void KVRequest::clear_recoverack_request() {
+  if (_internal_has_recoverack_request()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.request_.recoverack_request_;
+    }
+    clear_has_request();
+  }
+}
+inline ::KVRequest_KVAckrecoverRequest* KVRequest::release_recoverack_request() {
+  // @@protoc_insertion_point(field_release:KVRequest.recoverack_request)
+  if (_internal_has_recoverack_request()) {
+    clear_has_request();
+    ::KVRequest_KVAckrecoverRequest* temp = _impl_.request_.recoverack_request_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.request_.recoverack_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::KVRequest_KVAckrecoverRequest& KVRequest::_internal_recoverack_request() const {
+  return _internal_has_recoverack_request()
+      ? *_impl_.request_.recoverack_request_
+      : reinterpret_cast< ::KVRequest_KVAckrecoverRequest&>(::_KVRequest_KVAckrecoverRequest_default_instance_);
+}
+inline const ::KVRequest_KVAckrecoverRequest& KVRequest::recoverack_request() const {
+  // @@protoc_insertion_point(field_get:KVRequest.recoverack_request)
+  return _internal_recoverack_request();
+}
+inline ::KVRequest_KVAckrecoverRequest* KVRequest::unsafe_arena_release_recoverack_request() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.recoverack_request)
+  if (_internal_has_recoverack_request()) {
+    clear_has_request();
+    ::KVRequest_KVAckrecoverRequest* temp = _impl_.request_.recoverack_request_;
+    _impl_.request_.recoverack_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void KVRequest::unsafe_arena_set_allocated_recoverack_request(::KVRequest_KVAckrecoverRequest* recoverack_request) {
+  clear_request();
+  if (recoverack_request) {
+    set_has_recoverack_request();
+    _impl_.request_.recoverack_request_ = recoverack_request;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.recoverack_request)
+}
+inline ::KVRequest_KVAckrecoverRequest* KVRequest::_internal_mutable_recoverack_request() {
+  if (!_internal_has_recoverack_request()) {
+    clear_request();
+    set_has_recoverack_request();
+    _impl_.request_.recoverack_request_ = CreateMaybeMessage< ::KVRequest_KVAckrecoverRequest >(GetArenaForAllocation());
+  }
+  return _impl_.request_.recoverack_request_;
+}
+inline ::KVRequest_KVAckrecoverRequest* KVRequest::mutable_recoverack_request() {
+  ::KVRequest_KVAckrecoverRequest* _msg = _internal_mutable_recoverack_request();
+  // @@protoc_insertion_point(field_mutable:KVRequest.recoverack_request)
+  return _msg;
+}
+
 inline bool KVRequest::has_request() const {
   return request_case() != REQUEST_NOT_SET;
 }
@@ -5098,6 +5547,10 @@ inline void FetchNodeResponse::set_allocated_error_message(std::string* error_me
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
