@@ -26,6 +26,12 @@ enum KVStatusCode {
   RECOVERING = 3;
 }
 
+/* Status of file transfer */
+enum FileType {
+  CHECKPOINT = 0;
+  LOGFILE = 1;
+}
+
 /* General KV request from frontend. */
 message KVRequest {
 
@@ -93,6 +99,17 @@ message KVRequest {
   message KVAckrecoverRequest {
 
   }
+  
+  // KVFiletransferRequest, primary sends checkpoint and log files to secondary for recovery
+  message KVFiletransferRequest {
+    optional FileType file_type = 1;  // [Required]
+    optional string content = 2;      // [Required]
+  }
+
+  // KVReplayRequest, primary acks secondary that file transfer finishes, start to replay to recover
+  message KVReplayRequest {
+    optional string tablet_target = 1;  // [Required]
+  }
 
   // Request can only be one of put/get/cput/delete.
   oneof request {
@@ -106,6 +123,8 @@ message KVRequest {
     KVSdeleteRequest sdelete_request = 8;
     KVSuspendRequest suspend_request = 9;
     KVAckrecoverRequest recoverack_request = 10;
+    KVFiletransferRequest filetransfer_request = 11;
+    KVReplayRequest replay_request = 12;
   }
 }
 

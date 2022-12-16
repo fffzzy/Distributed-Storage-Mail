@@ -194,7 +194,10 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
         KVSdelete(&request->sdelete_request(), response);
         break;
       }
-      default: {
+      // also accepts suspend request from master
+      case KVRequest::RequestCase::kSuspendRequest {
+        // break;
+      } default: {
         response->set_status(KVStatusCode::FAILURE);
         response->set_message("-ERR unsupported mthods when node is alive");
       }
