@@ -51,38 +51,26 @@ target_link_libraries(rg_grpc_proto
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
-# # kvstore_node_helper
-add_library(kvstore_node_utils_helper
-  "kvstore_node_utils.h"
-  "kvstore_node_utils.cc")
-target_link_libraries(kvstore_node_utils_helper
-  rg_grpc_proto
-  ${_REFLECTION}
-  ${_GRPC_GRPCPP}
-  ${_PROTOBUF_LIBPROTOBUF})
-
 # kvstore_client_helper
 add_library(kvstore_client_helper
-  "kvstore_client.h"
-  "kvstore_client.cc")
+  "../KVStore/kvstore_client.h"
+  "../KVStore/kvstore_client.cc")
 target_link_libraries(kvstore_client_helper
   rg_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
-# Targets kvstore_node_(client|server)
-foreach(_target
-  kvstore_master kvstore_node)
-  add_executable(${_target}
-    "${_target}.cc")
-  target_link_libraries(${_target}
-    rg_grpc_proto
-    kvstore_node_utils_helper
-    ${_REFLECTION}
-    ${_GRPC_GRPCPP}
-    ${_PROTOBUF_LIBPROTOBUF})
-endforeach()
+# api_handler_helper
+set(NLOHMANN_DIR ../third_party)
+include_directories(${NLOHMANN_DIR})
 
-add_executable(kvstore_test_client kvstore_test_client.cc)
-target_link_libraries(kvstore_test_client kvstore_client_helper)
+add_library(api_handler_helper
+  "api_handler.cpp"
+  "api_handler.hpp")
+target_link_libraries(api_handler_helper
+  kvstore_client_helper)
+
+# Target server
+add_executable(server server.cpp)
+target_link_libraries(server api_handler_helper)
