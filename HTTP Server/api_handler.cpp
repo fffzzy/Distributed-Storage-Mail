@@ -10,10 +10,6 @@ void APIHandler::parsePost()
     {
         login();
     }
-    else if (header.substr(0, 6) == "logout")
-    {
-        logout();
-    }
     else
     {
     }
@@ -21,34 +17,11 @@ void APIHandler::parsePost()
 
 void APIHandler::parseGet()
 {
-    if (header.substr(0, 6) == "signup")
-    {
-        signup();
-    }
-    else if (header.substr(0, 5) == "login")
-    {
-        login();
-    }
-    else if (header.substr(0, 6) == "logout")
-    {
-        logout();
-    }
-    else
-    {
-    }
 }
 
 void APIHandler::parseDelete()
 {
-    if (header.substr(0, 6) == "signup")
-    {
-        signup();
-    }
-    else if (header.substr(0, 5) == "login")
-    {
-        login();
-    }
-    else if (header.substr(0, 6) == "logout")
+    if (header.substr(0, 6) == "logout")
     {
         logout();
     }
@@ -101,13 +74,15 @@ void APIHandler::login()
         {
             string cookie = username + "=" + urlEncode(username);
             kvstore.Put(username, "cookie", cookie);
-            page = "HTTP/1.1 200 success\r\nSet-Cookie: " + cookie  + "; path=/ \r\n\r\n";
-            if (is_verbose) cout << page << endl;
+            page = "HTTP/1.1 200 success\r\nSet-Cookie: " + cookie + "; path=/ \r\n\r\n";
+            if (is_verbose)
+                cout << page << endl;
         }
         else
         {
             page = "HTTP/1.1 401 unauthorized if pwd incorrect\r\n\r\n";
-            cout << "your pw: " + password << "\n" << "real pw: " + real_pw << endl;
+            cout << "your pw: " + password << "\n"
+                 << "real pw: " + real_pw << endl;
         }
         write(fd, page.c_str(), page.length());
     }
@@ -137,6 +112,11 @@ string APIHandler::checkCookie()
         size_t cookie_end = header.find("\r", cookie_start);
         string cookie_value = header.substr(user_name_end_index + 1, cookie_end - cookie_start - 1);
         string real_cookie = kvstore.Get(username, "cookie");
+        if (is_verbose)
+        {
+            cout << "Cookie in browser: " << cookie_value << endl;
+            cout << "Cookie in database: " << real_cookie << endl;
+        }
         if (real_cookie == cookie_value)
         {
             return username;
