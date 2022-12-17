@@ -26,6 +26,7 @@
 using json = nlohmann::json;
 
 #include "local_kvstore.hpp"
+#include "mail_service.hpp"
 
 using namespace std;
 
@@ -71,7 +72,11 @@ public:
   void signup();
   void login();
   void logout();
+  void sendEmail();
+  void getEmailList();
+  void deleteEmail();
   string checkCookie();
+  void parseEmail(string email, string &user, string &host);
 };
 
 string urlEncode(string str);

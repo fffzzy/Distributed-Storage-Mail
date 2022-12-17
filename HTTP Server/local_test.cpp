@@ -37,17 +37,17 @@ string urlEncode(string str)
 
 int main()
 {
-    std::ifstream f("data.json");
-    json data = json::parse(f);
-    // Access the values existing in JSON data
-    string name = data.value("name", "not found");
-    string grade = data.value("grade", "not found");
-    // Access a value that does not exist in the JSON data
-    string email = data.value("email", "not found");
-    // Print the values
-    cout << "Name: " << name << endl;
-    cout << "Grade: " << grade << endl;
-    cout << "Email: " << email << endl;
+    // std::ifstream f("data.json");
+    // json data = json::parse(f);
+    // // Access the values existing in JSON data
+    // string name = data.value("name", "not found");
+    // string grade = data.value("grade", "not found");
+    // // Access a value that does not exist in the JSON data
+    // string email = data.value("email", "not found");
+    // // Print the values
+    // cout << "Name: " << name << endl;
+    // cout << "Grade: " << grade << endl;
+    // cout << "Email: " << email << endl;
 
     // jdEmployees
     json jdEmployees = {
@@ -61,11 +61,36 @@ int main()
     std::string lName = jdEmployees.value("lastName", "oops");
     int sID = jdEmployees.value("StudentID", 0);
     std::string dept = jdEmployees.value("Department", "oops");
-
+    json mails = {
+        {
+            {"mailId", 7},
+            {"sender", "rjx@localhost"},
+            {"recipients", {"rjx@localhost", "abaaba@localhost"}},
+            {"subject", "This is the mail title"},
+            {"content", "This is the mail content"},
+            {"time", "Time stamp is here"},
+        },
+        {
+            {"mailId", 8},
+            {"sender", "rjx@localhost"},
+            {"recipients", {"rjx@localhost", "abaaba@localhost"}},
+            {"subject", "This is the mail title"},
+            {"content", "This is the mail content"},
+            {"time", "Time stamp is here"},
+        },
+        {
+            {"mailId", 8},
+            {"sender", "rjx@localhost"},
+            {"recipients", {"rjx@localhost", "abaaba@localhost"}},
+            {"subject", "This is the mail title"},
+            {"content", "This is the mail content"},
+            {"time", "Time stamp is here"},
+        }};
     // Print the values
     std::cout << "First Name: " << fName << std::endl;
     std::cout << "Last Name: " << lName << std::endl;
     std::cout << "Student ID: " << sID << std::endl;
     std::cout << "Department: " << dept << std::endl;
+    cout << mails.dump(4) << endl;
     return 0;
 }

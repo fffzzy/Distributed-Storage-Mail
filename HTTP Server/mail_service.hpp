@@ -18,20 +18,21 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-// #include <sys/sendfile.h>
-#include "api_handler.hpp"
+#include <chrono>
+#include <nlohmann/json.hpp>
+
 #include "local_kvstore.hpp"
+
+
+using json = nlohmann::json;
+
+
 using namespace std;
 
-enum ServerType {
-  HTTP_SERVER = 0,
-  BACKEND_COORDINATOR,
-  BACKEND_SERVER,
-  OTHERS,
+class Mail{
+private:
+  json data;
+public:
+  Mail(json data) : data(data) {};
+  void sendOut();
 };
-
-void sigHandler(int num);
-void parseInput(int argc, char *argv[]);
-sockaddr_in parseSockaddr(string s);
-void *messageWorker(void *comm_fd);
-void sendBinary(string file, string image_type, int fd, string page);

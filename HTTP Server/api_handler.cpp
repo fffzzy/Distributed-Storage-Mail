@@ -10,6 +10,10 @@ void APIHandler::parsePost()
     {
         login();
     }
+    else if (header.substr(0, 12) == "mail/compose")
+    {
+        sendEmail();
+    }
     else
     {
     }
@@ -17,6 +21,13 @@ void APIHandler::parsePost()
 
 void APIHandler::parseGet()
 {
+    if (header.substr(0, 4) == "mail")
+    {
+        getEmailList();
+    }
+    else
+    {
+    }
 }
 
 void APIHandler::parseDelete()
@@ -24,6 +35,9 @@ void APIHandler::parseDelete()
     if (header.substr(0, 6) == "logout")
     {
         logout();
+    }
+    else if (header.substr(0, 11) == "mail/delete") {
+        deleteEmail();
     }
     else
     {
@@ -100,6 +114,69 @@ void APIHandler::logout()
     write(fd, page.c_str(), page.length());
 }
 
+void APIHandler::sendEmail() {
+    string username = checkCookie();
+    string name, host;
+    if (is_verbose) cout << data.dump(4) << endl;
+
+    parseEmail(data["sender"], name, host);
+    if (name != username) {
+        cout << "Sender in Email is different from current user!" << endl;
+    }
+
+    time_t t = chrono::system_clock::to_time_t(chrono::system_clock::now());
+    data["time"] = ctime(&t);
+
+    for (const auto &recipient : data["recipients"]) {
+        parseEmail(recipient, name, host);
+
+        if (host == "localhost") {
+            json mailList = json::parse(kvstore.Get(host, "mails"));
+
+            int mailId = mailList[mailList.size() - 1]["mailId"];
+            data["mailId"] = mailId + 1;
+
+            mailList.push_back(data);
+            kvstore.Put(host, "mails", mailList.dump());
+
+        } else {
+            Mail email(data);
+            email.sendOut();
+        }
+    }
+}
+
+void APIHandler::getEmailList() {
+    string username = checkCookie();
+    string mailList = kvstore.Get(username, "mails");
+    
+    string page = "HTTP/1.1 200 success\r\n\r\n" + mailList;
+    write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::deleteEmail() {
+    string username = checkCookie();
+
+    string mail_matcher = "mailId=";
+    size_t index = header.find(mail_matcher);
+    size_t id_end = header.find(" ", index);
+    
+    int mailId = stoi(header.substr(index + mail_matcher.size(), id_end - index - mail_matcher.size()));
+    if (is_verbose) cout << "MailId detected in the header: " + mailId << endl;
+
+    json mailList = json::parse(kvstore.Get(username, "mails"));
+    
+    // find email with that mailId in the email list
+    for (auto it = mailList.begin(); it != mailList.end(); it++) {
+        if ((*it)["mailId"] == mailId) {
+            mailList.erase(it);
+        }
+    }
+
+    kvstore.Put(username, "mails", mailList.dump());
+}
+
+
 string APIHandler::checkCookie()
 {
     string cookie_matcher = "Cookie: ";
@@ -124,13 +201,15 @@ string APIHandler::checkCookie()
         }
         else
         {
-            if (is_verbose) cout << "The cookie sent by browser doesn't exist in database." << endl;
+            if (is_verbose)
+                cout << "The cookie sent by browser doesn't exist in database." << endl;
             return "";
         }
     }
     else
     {
-        if (is_verbose) cout << "No cookie attached in the header." << endl;
+        if (is_verbose)
+            cout << "No cookie attached in the header." << endl;
         return "";
     }
 }
@@ -164,4 +243,14 @@ string urlEncode(string str)
         }
     }
     return new_str;
+}
+
+void APIHandler::parseEmail(string email, string &user, string &host) {
+    auto separator = email.find("@");
+    user = email.substr(0, separator);
+    host = email.substr(separator + 1);
+
+    if (is_verbose) {
+        cout << "Email: " + email + ", User: " + user + ", Host: " + host << endl;
+    }
 }

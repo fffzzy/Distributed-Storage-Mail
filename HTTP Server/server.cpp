@@ -5,12 +5,11 @@ static bool is_shut_down = false;
 static vector<int> fds;
 static vector<pthread_t> threads;
 static int listen_fd;
-static int port = 8018;
+static int port = 8019;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
 static string page_root = "./React/build1";
-static KVStoreClient kvstore("127.0.0.1:8017");
-
+static KVStoreClient kvstore("127.0.0.1:8017", true);
 int main(int argc, char *argv[])
 {
     // signal(SIGINT, sigHandler);
@@ -22,11 +21,10 @@ int main(int argc, char *argv[])
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htons(INADDR_ANY);
     servaddr.sin_port = htons(port);
-    if (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+    while (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
         servaddr.sin_port = htons(--port);
-        bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr));
     }
-    cout << port << endl;
+    cout << "Server start a port at: "<< port << endl;
     listen(listen_fd, 100);
     while (!is_shut_down)
     {
@@ -109,6 +107,28 @@ void parseInput(int argc, char *argv[])
     //         }
     //     }
     // }
+}
+
+void sigHandler(int num)
+{
+    char SHUTDOWN[] = "-ERR Server shutting down\r\n";
+
+    is_shut_down = true;
+    close(listen_fd);
+    for (auto fd : fds)
+    {
+        // write(fd, SHUTDOWN, strlen(SHUTDOWN));
+        close(fd);
+        if (is_verbose)
+        {
+            // fprintf(stderr, "fd: %d\n", fd);
+            fprintf(stderr, "[%d] Connection closed\n", fd);
+        }
+    }
+    for (auto thread : threads)
+    {
+        pthread_kill(thread, 0);
+    }
 }
 
 sockaddr_in parseSockaddr(string s)
