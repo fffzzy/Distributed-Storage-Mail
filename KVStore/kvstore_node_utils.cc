@@ -55,6 +55,7 @@ int WriteTabletToFile(Tablet* tablet) {
       file << col_key << " " << cell.length() << " " << cell << "\n";
     }
   }
+
   // write finishes, close file
   file.close();
 
@@ -101,6 +102,9 @@ Tablet* LoadTabletFromFile(int node_idx, int tablet_idx) {
       tablet->map[row_key][col_key] = cell;
     }
   }
+
+  // read finishes, close file
+  file.close();
 
   return tablet;
 }

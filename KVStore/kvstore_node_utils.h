@@ -12,8 +12,6 @@ struct Tablet {
       map;
 };
 
-std::string GetTabletPath();
-
 std::string GetNodeDirPath(int node_idx);
 
 std::string GetTabletFilePath(int node_idx, int tablet_idx);

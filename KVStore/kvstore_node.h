@@ -14,7 +14,7 @@
 
 namespace KVStore {
 
-enum KVStoreNodeStatus { ALIVE, SUSPEND, RECOVERYING };
+enum KVStoreNodeStatus { ALIVE, SUSPEND, RECOVERING };
 
 class KVStoreNodeImpl final : public KVStoreNode::Service {
  public:
@@ -25,7 +25,6 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   std::vector<std::string> peer_addr_vec;
   KVStoreNodeStatus node_status = KVStoreNodeStatus::ALIVE;
 
- private:
   // Stub communicates to master node.
   std::unique_ptr<KVStoreMaster::Stub> master_stub;
   // Stub communicates to replicas in the same cluster.
@@ -36,7 +35,6 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
  public:
   KVStoreNodeImpl();
 
- private:
   void VerboseLog(char* msg);
 
   void VerboseLog(std::string msg);
@@ -49,7 +47,6 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   // load tablet from file, and insert it to tablet_mem_vec
   Tablet* LoadTablet(int tablet_idx);
 
- public:
   ::grpc::Status CheckHealth(::grpc::ServerContext* context,
                              const ::google::protobuf::Empty* request,
                              ::KVResponse* response) override;
@@ -79,7 +76,30 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
 
   void KVSdelete(const KVRequest_KVSdeleteRequest* request,
                  KVResponse* response);
+
+  void KVSuspend(const KVRequest_KVSuspendRequest* request,
+                 KVResponse* response);
+
+  // when primary node receives recovery request from master
+
+  void KVPrimaryRecovery(const KVRequest_KVRecoveryRequest* request,
+                         KVResponse* response);
+
+  // when secondary node receives recovery request from primary
+  void KVSecondaryRecovery(const KVRequest_KVRecoveryRequest* request,
+                           KVResponse* response);
+
+  // secondary receives file transfer from primary
+  void KVFiletransfer(const KVRequest_KVFiletransferRequest* request,
+                      KVResponse* response);
+
+  Tablet* ReplayTablet(int tablet_idx);
+
+  // secondary receives replay request from primary
+  void KVReplay(const KVRequest_KVReplayRequest* request, KVResponse* response);
 };
+
+void* KVPrimaryRecoveryThreadFunc(void* args);
 
 }  // namespace KVStore
 

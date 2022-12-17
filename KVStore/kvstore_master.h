@@ -33,10 +33,17 @@ class KVStoreMasterImpl final : public KVStoreMaster::Service {
                                const ::FetchNodeRequest* request,
                                ::FetchNodeResponse* response) override;
 
+  ::grpc::Status Execute(::grpc::ServerContext* context,
+                         const ::KVRequest* request,
+                         ::KVResponse* response) override;
+
  public:
   void ReadConfig();
   void CheckReplicaHealth();
   std::string GetAddr();
+
+  void KVRecoveryfinish(const KVRequest_KVRecoveryfinishRequest* request,
+                        KVResponse* response);
 
  public:
   std::string master_addr_;

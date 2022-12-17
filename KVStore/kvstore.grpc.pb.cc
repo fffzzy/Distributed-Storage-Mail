@@ -22,6 +22,7 @@
 
 static const char* KVStoreMaster_method_names[] = {
   "/KVStoreMaster/FetchNodeAddr",
+  "/KVStoreMaster/Execute",
 };
 
 std::unique_ptr< KVStoreMaster::Stub> KVStoreMaster::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -32,6 +33,7 @@ std::unique_ptr< KVStoreMaster::Stub> KVStoreMaster::NewStub(const std::shared_p
 
 KVStoreMaster::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_FetchNodeAddr_(KVStoreMaster_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Execute_(KVStoreMaster_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status KVStoreMaster::Stub::FetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::FetchNodeResponse* response) {
@@ -57,6 +59,29 @@ void KVStoreMaster::Stub::async::FetchNodeAddr(::grpc::ClientContext* context, c
   return result;
 }
 
+::grpc::Status KVStoreMaster::Stub::Execute(::grpc::ClientContext* context, const ::KVRequest& request, ::KVResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::KVRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Execute_, context, request, response);
+}
+
+void KVStoreMaster::Stub::async::Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::KVRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Execute_, context, request, response, std::move(f));
+}
+
+void KVStoreMaster::Stub::async::Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Execute_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::KVResponse, ::KVRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Execute_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::AsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncExecuteRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 KVStoreMaster::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       KVStoreMaster_method_names[0],
@@ -68,12 +93,29 @@ KVStoreMaster::Service::Service() {
              ::FetchNodeResponse* resp) {
                return service->FetchNodeAddr(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      KVStoreMaster_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::KVRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](KVStoreMaster::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::KVRequest* req,
+             ::KVResponse* resp) {
+               return service->Execute(ctx, req, resp);
+             }, this)));
 }
 
 KVStoreMaster::Service::~Service() {
 }
 
 ::grpc::Status KVStoreMaster::Service::FetchNodeAddr(::grpc::ServerContext* context, const ::FetchNodeRequest* request, ::FetchNodeResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status KVStoreMaster::Service::Execute(::grpc::ServerContext* context, const ::KVRequest* request, ::KVResponse* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -42,12 +42,21 @@ class KVStoreMaster final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::FetchNodeResponse>> PrepareAsyncFetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::FetchNodeResponse>>(PrepareAsyncFetchNodeAddrRaw(context, request, cq));
     }
+    virtual ::grpc::Status Execute(::grpc::ClientContext* context, const ::KVRequest& request, ::KVResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> AsyncExecute(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>>(AsyncExecuteRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> PrepareAsyncExecute(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>>(PrepareAsyncExecuteRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
       // Frontend calls FetchNodeAddr to get the address of the primary node.
       virtual void FetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest* request, ::FetchNodeResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void FetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest* request, ::FetchNodeResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -55,6 +64,8 @@ class KVStoreMaster final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::FetchNodeResponse>* AsyncFetchNodeAddrRaw(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::FetchNodeResponse>* PrepareAsyncFetchNodeAddrRaw(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* AsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -66,11 +77,20 @@ class KVStoreMaster final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::FetchNodeResponse>> PrepareAsyncFetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::FetchNodeResponse>>(PrepareAsyncFetchNodeAddrRaw(context, request, cq));
     }
+    ::grpc::Status Execute(::grpc::ClientContext* context, const ::KVRequest& request, ::KVResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>> AsyncExecute(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>>(AsyncExecuteRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>> PrepareAsyncExecute(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>>(PrepareAsyncExecuteRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
       void FetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest* request, ::FetchNodeResponse* response, std::function<void(::grpc::Status)>) override;
       void FetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest* request, ::FetchNodeResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) override;
+      void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -84,7 +104,10 @@ class KVStoreMaster final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::FetchNodeResponse>* AsyncFetchNodeAddrRaw(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::FetchNodeResponse>* PrepareAsyncFetchNodeAddrRaw(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::KVResponse>* AsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::KVResponse>* PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_FetchNodeAddr_;
+    const ::grpc::internal::RpcMethod rpcmethod_Execute_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -94,6 +117,7 @@ class KVStoreMaster final {
     virtual ~Service();
     // Frontend calls FetchNodeAddr to get the address of the primary node.
     virtual ::grpc::Status FetchNodeAddr(::grpc::ServerContext* context, const ::FetchNodeRequest* request, ::FetchNodeResponse* response);
+    virtual ::grpc::Status Execute(::grpc::ServerContext* context, const ::KVRequest* request, ::KVResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_FetchNodeAddr : public BaseClass {
@@ -115,7 +139,27 @@ class KVStoreMaster final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_FetchNodeAddr<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_Execute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Execute() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_Execute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestExecute(::grpc::ServerContext* context, ::KVRequest* request, ::grpc::ServerAsyncResponseWriter< ::KVResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_FetchNodeAddr<WithAsyncMethod_Execute<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_FetchNodeAddr : public BaseClass {
    private:
@@ -143,7 +187,34 @@ class KVStoreMaster final {
     virtual ::grpc::ServerUnaryReactor* FetchNodeAddr(
       ::grpc::CallbackServerContext* /*context*/, const ::FetchNodeRequest* /*request*/, ::FetchNodeResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_FetchNodeAddr<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_Execute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Execute() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::KVRequest, ::KVResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::KVRequest* request, ::KVResponse* response) { return this->Execute(context, request, response); }));}
+    void SetMessageAllocatorFor_Execute(
+        ::grpc::MessageAllocator< ::KVRequest, ::KVResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::KVRequest, ::KVResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Execute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Execute(
+      ::grpc::CallbackServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_FetchNodeAddr<WithCallbackMethod_Execute<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_FetchNodeAddr : public BaseClass {
@@ -158,6 +229,23 @@ class KVStoreMaster final {
     }
     // disable synchronous version of this method
     ::grpc::Status FetchNodeAddr(::grpc::ServerContext* /*context*/, const ::FetchNodeRequest* /*request*/, ::FetchNodeResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Execute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Execute() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_Execute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -183,6 +271,26 @@ class KVStoreMaster final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_Execute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Execute() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_Execute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestExecute(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_FetchNodeAddr : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -202,6 +310,28 @@ class KVStoreMaster final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* FetchNodeAddr(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_Execute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Execute() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Execute(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Execute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Execute(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -231,9 +361,36 @@ class KVStoreMaster final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedFetchNodeAddr(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::FetchNodeRequest,::FetchNodeResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_FetchNodeAddr<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Execute : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Execute() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::KVRequest, ::KVResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::KVRequest, ::KVResponse>* streamer) {
+                       return this->StreamedExecute(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Execute() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::KVRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedExecute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::KVRequest,::KVResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_FetchNodeAddr<WithStreamedUnaryMethod_Execute<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_FetchNodeAddr<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_FetchNodeAddr<WithStreamedUnaryMethod_Execute<Service > > StreamedService;
 };
 
 // Interface exported by the KVStore Service Worker nodes which actually 
@@ -246,7 +403,6 @@ class KVStoreNode final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    // General request containing KVStore operations: Put/Get/CPut/Delete.
     virtual ::grpc::Status Execute(::grpc::ClientContext* context, const ::KVRequest& request, ::KVResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> AsyncExecute(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>>(AsyncExecuteRaw(context, request, cq));
@@ -265,7 +421,6 @@ class KVStoreNode final {
     class async_interface {
      public:
       virtual ~async_interface() {}
-      // General request containing KVStore operations: Put/Get/CPut/Delete.
       virtual void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // Health Check if the replica node is alive.
@@ -329,7 +484,6 @@ class KVStoreNode final {
    public:
     Service();
     virtual ~Service();
-    // General request containing KVStore operations: Put/Get/CPut/Delete.
     virtual ::grpc::Status Execute(::grpc::ServerContext* context, const ::KVRequest* request, ::KVResponse* response);
     // Health Check if the replica node is alive.
     virtual ::grpc::Status CheckHealth(::grpc::ServerContext* context, const ::google::protobuf::Empty* request, ::KVResponse* response);

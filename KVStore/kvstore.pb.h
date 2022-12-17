@@ -23,7 +23,6 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/arena.h>
 #include <google/protobuf/arenastring.h>
-#include <google/protobuf/generated_message_bases.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/metadata_lite.h>
 #include <google/protobuf/generated_message_reflection.h>
@@ -56,9 +55,6 @@ extern FetchNodeResponseDefaultTypeInternal _FetchNodeResponse_default_instance_
 class KVRequest;
 struct KVRequestDefaultTypeInternal;
 extern KVRequestDefaultTypeInternal _KVRequest_default_instance_;
-class KVRequest_KVAckrecoverRequest;
-struct KVRequest_KVAckrecoverRequestDefaultTypeInternal;
-extern KVRequest_KVAckrecoverRequestDefaultTypeInternal _KVRequest_KVAckrecoverRequest_default_instance_;
 class KVRequest_KVCPutRequest;
 struct KVRequest_KVCPutRequestDefaultTypeInternal;
 extern KVRequest_KVCPutRequestDefaultTypeInternal _KVRequest_KVCPutRequest_default_instance_;
@@ -74,6 +70,12 @@ extern KVRequest_KVGetRequestDefaultTypeInternal _KVRequest_KVGetRequest_default
 class KVRequest_KVPutRequest;
 struct KVRequest_KVPutRequestDefaultTypeInternal;
 extern KVRequest_KVPutRequestDefaultTypeInternal _KVRequest_KVPutRequest_default_instance_;
+class KVRequest_KVRecoveryRequest;
+struct KVRequest_KVRecoveryRequestDefaultTypeInternal;
+extern KVRequest_KVRecoveryRequestDefaultTypeInternal _KVRequest_KVRecoveryRequest_default_instance_;
+class KVRequest_KVRecoveryfinishRequest;
+struct KVRequest_KVRecoveryfinishRequestDefaultTypeInternal;
+extern KVRequest_KVRecoveryfinishRequestDefaultTypeInternal _KVRequest_KVRecoveryfinishRequest_default_instance_;
 class KVRequest_KVReplayRequest;
 struct KVRequest_KVReplayRequestDefaultTypeInternal;
 extern KVRequest_KVReplayRequestDefaultTypeInternal _KVRequest_KVReplayRequest_default_instance_;
@@ -99,12 +101,13 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::FetchNodeRequest* Arena::CreateMaybeMessage<::FetchNodeRequest>(Arena*);
 template<> ::FetchNodeResponse* Arena::CreateMaybeMessage<::FetchNodeResponse>(Arena*);
 template<> ::KVRequest* Arena::CreateMaybeMessage<::KVRequest>(Arena*);
-template<> ::KVRequest_KVAckrecoverRequest* Arena::CreateMaybeMessage<::KVRequest_KVAckrecoverRequest>(Arena*);
 template<> ::KVRequest_KVCPutRequest* Arena::CreateMaybeMessage<::KVRequest_KVCPutRequest>(Arena*);
 template<> ::KVRequest_KVDeleteRequest* Arena::CreateMaybeMessage<::KVRequest_KVDeleteRequest>(Arena*);
 template<> ::KVRequest_KVFiletransferRequest* Arena::CreateMaybeMessage<::KVRequest_KVFiletransferRequest>(Arena*);
 template<> ::KVRequest_KVGetRequest* Arena::CreateMaybeMessage<::KVRequest_KVGetRequest>(Arena*);
 template<> ::KVRequest_KVPutRequest* Arena::CreateMaybeMessage<::KVRequest_KVPutRequest>(Arena*);
+template<> ::KVRequest_KVRecoveryRequest* Arena::CreateMaybeMessage<::KVRequest_KVRecoveryRequest>(Arena*);
+template<> ::KVRequest_KVRecoveryfinishRequest* Arena::CreateMaybeMessage<::KVRequest_KVRecoveryfinishRequest>(Arena*);
 template<> ::KVRequest_KVReplayRequest* Arena::CreateMaybeMessage<::KVRequest_KVReplayRequest>(Arena*);
 template<> ::KVRequest_KVScputRequest* Arena::CreateMaybeMessage<::KVRequest_KVScputRequest>(Arena*);
 template<> ::KVRequest_KVSdeleteRequest* Arena::CreateMaybeMessage<::KVRequest_KVSdeleteRequest>(Arena*);
@@ -1713,9 +1716,10 @@ class KVRequest_KVSdeleteRequest final :
 // -------------------------------------------------------------------
 
 class KVRequest_KVSuspendRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:KVRequest.KVSuspendRequest) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVSuspendRequest) */ {
  public:
   inline KVRequest_KVSuspendRequest() : KVRequest_KVSuspendRequest(nullptr) {}
+  ~KVRequest_KVSuspendRequest() override;
   explicit PROTOBUF_CONSTEXPR KVRequest_KVSuspendRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
   KVRequest_KVSuspendRequest(const KVRequest_KVSuspendRequest& from);
@@ -1788,15 +1792,29 @@ class KVRequest_KVSuspendRequest final :
   KVRequest_KVSuspendRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<KVRequest_KVSuspendRequest>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const KVRequest_KVSuspendRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const KVRequest_KVSuspendRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const KVRequest_KVSuspendRequest& from) {
+    KVRequest_KVSuspendRequest::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const KVRequest_KVSuspendRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(KVRequest_KVSuspendRequest* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -1817,6 +1835,27 @@ class KVRequest_KVSuspendRequest final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kTargetAddrFieldNumber = 1,
+  };
+  // optional string target_addr = 1;
+  bool has_target_addr() const;
+  private:
+  bool _internal_has_target_addr() const;
+  public:
+  void clear_target_addr();
+  const std::string& target_addr() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_target_addr(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_target_addr();
+  PROTOBUF_NODISCARD std::string* release_target_addr();
+  void set_allocated_target_addr(std::string* target_addr);
+  private:
+  const std::string& _internal_target_addr() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_target_addr(const std::string& value);
+  std::string* _internal_mutable_target_addr();
+  public:
+
   // @@protoc_insertion_point(class_scope:KVRequest.KVSuspendRequest)
  private:
   class _Internal;
@@ -1825,28 +1864,33 @@ class KVRequest_KVSuspendRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr target_addr_;
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_kvstore_2eproto;
 };
 // -------------------------------------------------------------------
 
-class KVRequest_KVAckrecoverRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:KVRequest.KVAckrecoverRequest) */ {
+class KVRequest_KVRecoveryRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVRecoveryRequest) */ {
  public:
-  inline KVRequest_KVAckrecoverRequest() : KVRequest_KVAckrecoverRequest(nullptr) {}
-  explicit PROTOBUF_CONSTEXPR KVRequest_KVAckrecoverRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline KVRequest_KVRecoveryRequest() : KVRequest_KVRecoveryRequest(nullptr) {}
+  ~KVRequest_KVRecoveryRequest() override;
+  explicit PROTOBUF_CONSTEXPR KVRequest_KVRecoveryRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  KVRequest_KVAckrecoverRequest(const KVRequest_KVAckrecoverRequest& from);
-  KVRequest_KVAckrecoverRequest(KVRequest_KVAckrecoverRequest&& from) noexcept
-    : KVRequest_KVAckrecoverRequest() {
+  KVRequest_KVRecoveryRequest(const KVRequest_KVRecoveryRequest& from);
+  KVRequest_KVRecoveryRequest(KVRequest_KVRecoveryRequest&& from) noexcept
+    : KVRequest_KVRecoveryRequest() {
     *this = ::std::move(from);
   }
 
-  inline KVRequest_KVAckrecoverRequest& operator=(const KVRequest_KVAckrecoverRequest& from) {
+  inline KVRequest_KVRecoveryRequest& operator=(const KVRequest_KVRecoveryRequest& from) {
     CopyFrom(from);
     return *this;
   }
-  inline KVRequest_KVAckrecoverRequest& operator=(KVRequest_KVAckrecoverRequest&& from) noexcept {
+  inline KVRequest_KVRecoveryRequest& operator=(KVRequest_KVRecoveryRequest&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1869,20 +1913,20 @@ class KVRequest_KVAckrecoverRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const KVRequest_KVAckrecoverRequest& default_instance() {
+  static const KVRequest_KVRecoveryRequest& default_instance() {
     return *internal_default_instance();
   }
-  static inline const KVRequest_KVAckrecoverRequest* internal_default_instance() {
-    return reinterpret_cast<const KVRequest_KVAckrecoverRequest*>(
-               &_KVRequest_KVAckrecoverRequest_default_instance_);
+  static inline const KVRequest_KVRecoveryRequest* internal_default_instance() {
+    return reinterpret_cast<const KVRequest_KVRecoveryRequest*>(
+               &_KVRequest_KVRecoveryRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     9;
 
-  friend void swap(KVRequest_KVAckrecoverRequest& a, KVRequest_KVAckrecoverRequest& b) {
+  friend void swap(KVRequest_KVRecoveryRequest& a, KVRequest_KVRecoveryRequest& b) {
     a.Swap(&b);
   }
-  inline void Swap(KVRequest_KVAckrecoverRequest* other) {
+  inline void Swap(KVRequest_KVRecoveryRequest* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1895,7 +1939,7 @@ class KVRequest_KVAckrecoverRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(KVRequest_KVAckrecoverRequest* other) {
+  void UnsafeArenaSwap(KVRequest_KVRecoveryRequest* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1903,26 +1947,40 @@ class KVRequest_KVAckrecoverRequest final :
 
   // implements Message ----------------------------------------------
 
-  KVRequest_KVAckrecoverRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<KVRequest_KVAckrecoverRequest>(arena);
+  KVRequest_KVRecoveryRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<KVRequest_KVRecoveryRequest>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const KVRequest_KVAckrecoverRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const KVRequest_KVRecoveryRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const KVRequest_KVRecoveryRequest& from) {
+    KVRequest_KVRecoveryRequest::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const KVRequest_KVAckrecoverRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(KVRequest_KVRecoveryRequest* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "KVRequest.KVAckrecoverRequest";
+    return "KVRequest.KVRecoveryRequest";
   }
   protected:
-  explicit KVRequest_KVAckrecoverRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit KVRequest_KVRecoveryRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1935,7 +1993,28 @@ class KVRequest_KVAckrecoverRequest final :
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:KVRequest.KVAckrecoverRequest)
+  enum : int {
+    kTargetAddrFieldNumber = 1,
+  };
+  // optional string target_addr = 1;
+  bool has_target_addr() const;
+  private:
+  bool _internal_has_target_addr() const;
+  public:
+  void clear_target_addr();
+  const std::string& target_addr() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_target_addr(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_target_addr();
+  PROTOBUF_NODISCARD std::string* release_target_addr();
+  void set_allocated_target_addr(std::string* target_addr);
+  private:
+  const std::string& _internal_target_addr() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_target_addr(const std::string& value);
+  std::string* _internal_mutable_target_addr();
+  public:
+
+  // @@protoc_insertion_point(class_scope:KVRequest.KVRecoveryRequest)
  private:
   class _Internal;
 
@@ -1943,7 +2022,169 @@ class KVRequest_KVAckrecoverRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr target_addr_;
   };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kvstore_2eproto;
+};
+// -------------------------------------------------------------------
+
+class KVRequest_KVRecoveryfinishRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVRecoveryfinishRequest) */ {
+ public:
+  inline KVRequest_KVRecoveryfinishRequest() : KVRequest_KVRecoveryfinishRequest(nullptr) {}
+  ~KVRequest_KVRecoveryfinishRequest() override;
+  explicit PROTOBUF_CONSTEXPR KVRequest_KVRecoveryfinishRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  KVRequest_KVRecoveryfinishRequest(const KVRequest_KVRecoveryfinishRequest& from);
+  KVRequest_KVRecoveryfinishRequest(KVRequest_KVRecoveryfinishRequest&& from) noexcept
+    : KVRequest_KVRecoveryfinishRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline KVRequest_KVRecoveryfinishRequest& operator=(const KVRequest_KVRecoveryfinishRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline KVRequest_KVRecoveryfinishRequest& operator=(KVRequest_KVRecoveryfinishRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const KVRequest_KVRecoveryfinishRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const KVRequest_KVRecoveryfinishRequest* internal_default_instance() {
+    return reinterpret_cast<const KVRequest_KVRecoveryfinishRequest*>(
+               &_KVRequest_KVRecoveryfinishRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(KVRequest_KVRecoveryfinishRequest& a, KVRequest_KVRecoveryfinishRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(KVRequest_KVRecoveryfinishRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(KVRequest_KVRecoveryfinishRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  KVRequest_KVRecoveryfinishRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<KVRequest_KVRecoveryfinishRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const KVRequest_KVRecoveryfinishRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const KVRequest_KVRecoveryfinishRequest& from) {
+    KVRequest_KVRecoveryfinishRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(KVRequest_KVRecoveryfinishRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "KVRequest.KVRecoveryfinishRequest";
+  }
+  protected:
+  explicit KVRequest_KVRecoveryfinishRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTargetAddrFieldNumber = 1,
+  };
+  // optional string target_addr = 1;
+  bool has_target_addr() const;
+  private:
+  bool _internal_has_target_addr() const;
+  public:
+  void clear_target_addr();
+  const std::string& target_addr() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_target_addr(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_target_addr();
+  PROTOBUF_NODISCARD std::string* release_target_addr();
+  void set_allocated_target_addr(std::string* target_addr);
+  private:
+  const std::string& _internal_target_addr() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_target_addr(const std::string& value);
+  std::string* _internal_mutable_target_addr();
+  public:
+
+  // @@protoc_insertion_point(class_scope:KVRequest.KVRecoveryfinishRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr target_addr_;
+  };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_kvstore_2eproto;
 };
 // -------------------------------------------------------------------
@@ -1996,7 +2237,7 @@ class KVRequest_KVFiletransferRequest final :
                &_KVRequest_KVFiletransferRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(KVRequest_KVFiletransferRequest& a, KVRequest_KVFiletransferRequest& b) {
     a.Swap(&b);
@@ -2069,10 +2310,11 @@ class KVRequest_KVFiletransferRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kContentFieldNumber = 2,
+    kContentFieldNumber = 3,
     kFileTypeFieldNumber = 1,
+    kTabletIdxFieldNumber = 2,
   };
-  // optional string content = 2;
+  // optional string content = 3;
   bool has_content() const;
   private:
   bool _internal_has_content() const;
@@ -2103,6 +2345,19 @@ class KVRequest_KVFiletransferRequest final :
   void _internal_set_file_type(::FileType value);
   public:
 
+  // optional int32 tablet_idx = 2;
+  bool has_tablet_idx() const;
+  private:
+  bool _internal_has_tablet_idx() const;
+  public:
+  void clear_tablet_idx();
+  int32_t tablet_idx() const;
+  void set_tablet_idx(int32_t value);
+  private:
+  int32_t _internal_tablet_idx() const;
+  void _internal_set_tablet_idx(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:KVRequest.KVFiletransferRequest)
  private:
   class _Internal;
@@ -2115,6 +2370,7 @@ class KVRequest_KVFiletransferRequest final :
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr content_;
     int file_type_;
+    int32_t tablet_idx_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_kvstore_2eproto;
@@ -2169,7 +2425,7 @@ class KVRequest_KVReplayRequest final :
                &_KVRequest_KVReplayRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(KVRequest_KVReplayRequest& a, KVRequest_KVReplayRequest& b) {
     a.Swap(&b);
@@ -2242,9 +2498,10 @@ class KVRequest_KVReplayRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTabletTargetFieldNumber = 1,
+    kTabletTargetFieldNumber = 2,
+    kTabletNumFieldNumber = 1,
   };
-  // optional string tablet_target = 1;
+  // optional string tablet_target = 2;
   bool has_tablet_target() const;
   private:
   bool _internal_has_tablet_target() const;
@@ -2262,6 +2519,19 @@ class KVRequest_KVReplayRequest final :
   std::string* _internal_mutable_tablet_target();
   public:
 
+  // optional int32 tablet_num = 1;
+  bool has_tablet_num() const;
+  private:
+  bool _internal_has_tablet_num() const;
+  public:
+  void clear_tablet_num();
+  int32_t tablet_num() const;
+  void set_tablet_num(int32_t value);
+  private:
+  int32_t _internal_tablet_num() const;
+  void _internal_set_tablet_num(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:KVRequest.KVReplayRequest)
  private:
   class _Internal;
@@ -2273,6 +2543,7 @@ class KVRequest_KVReplayRequest final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr tablet_target_;
+    int32_t tablet_num_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_kvstore_2eproto;
@@ -2332,9 +2603,10 @@ class KVRequest final :
     kDeleteRequest = 7,
     kSdeleteRequest = 8,
     kSuspendRequest = 9,
-    kRecoverackRequest = 10,
-    kFiletransferRequest = 11,
-    kReplayRequest = 12,
+    kRecoveryRequest = 10,
+    kRecoveryfinishRequest = 11,
+    kFiletransferRequest = 12,
+    kReplayRequest = 13,
     REQUEST_NOT_SET = 0,
   };
 
@@ -2343,7 +2615,7 @@ class KVRequest final :
                &_KVRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(KVRequest& a, KVRequest& b) {
     a.Swap(&b);
@@ -2422,7 +2694,8 @@ class KVRequest final :
   typedef KVRequest_KVDeleteRequest KVDeleteRequest;
   typedef KVRequest_KVSdeleteRequest KVSdeleteRequest;
   typedef KVRequest_KVSuspendRequest KVSuspendRequest;
-  typedef KVRequest_KVAckrecoverRequest KVAckrecoverRequest;
+  typedef KVRequest_KVRecoveryRequest KVRecoveryRequest;
+  typedef KVRequest_KVRecoveryfinishRequest KVRecoveryfinishRequest;
   typedef KVRequest_KVFiletransferRequest KVFiletransferRequest;
   typedef KVRequest_KVReplayRequest KVReplayRequest;
 
@@ -2438,9 +2711,10 @@ class KVRequest final :
     kDeleteRequestFieldNumber = 7,
     kSdeleteRequestFieldNumber = 8,
     kSuspendRequestFieldNumber = 9,
-    kRecoverackRequestFieldNumber = 10,
-    kFiletransferRequestFieldNumber = 11,
-    kReplayRequestFieldNumber = 12,
+    kRecoveryRequestFieldNumber = 10,
+    kRecoveryfinishRequestFieldNumber = 11,
+    kFiletransferRequestFieldNumber = 12,
+    kReplayRequestFieldNumber = 13,
   };
   // .KVRequest.KVGetRequest get_request = 1;
   bool has_get_request() const;
@@ -2604,25 +2878,43 @@ class KVRequest final :
       ::KVRequest_KVSuspendRequest* suspend_request);
   ::KVRequest_KVSuspendRequest* unsafe_arena_release_suspend_request();
 
-  // .KVRequest.KVAckrecoverRequest recoverack_request = 10;
-  bool has_recoverack_request() const;
+  // .KVRequest.KVRecoveryRequest recovery_request = 10;
+  bool has_recovery_request() const;
   private:
-  bool _internal_has_recoverack_request() const;
+  bool _internal_has_recovery_request() const;
   public:
-  void clear_recoverack_request();
-  const ::KVRequest_KVAckrecoverRequest& recoverack_request() const;
-  PROTOBUF_NODISCARD ::KVRequest_KVAckrecoverRequest* release_recoverack_request();
-  ::KVRequest_KVAckrecoverRequest* mutable_recoverack_request();
-  void set_allocated_recoverack_request(::KVRequest_KVAckrecoverRequest* recoverack_request);
+  void clear_recovery_request();
+  const ::KVRequest_KVRecoveryRequest& recovery_request() const;
+  PROTOBUF_NODISCARD ::KVRequest_KVRecoveryRequest* release_recovery_request();
+  ::KVRequest_KVRecoveryRequest* mutable_recovery_request();
+  void set_allocated_recovery_request(::KVRequest_KVRecoveryRequest* recovery_request);
   private:
-  const ::KVRequest_KVAckrecoverRequest& _internal_recoverack_request() const;
-  ::KVRequest_KVAckrecoverRequest* _internal_mutable_recoverack_request();
+  const ::KVRequest_KVRecoveryRequest& _internal_recovery_request() const;
+  ::KVRequest_KVRecoveryRequest* _internal_mutable_recovery_request();
   public:
-  void unsafe_arena_set_allocated_recoverack_request(
-      ::KVRequest_KVAckrecoverRequest* recoverack_request);
-  ::KVRequest_KVAckrecoverRequest* unsafe_arena_release_recoverack_request();
+  void unsafe_arena_set_allocated_recovery_request(
+      ::KVRequest_KVRecoveryRequest* recovery_request);
+  ::KVRequest_KVRecoveryRequest* unsafe_arena_release_recovery_request();
 
-  // .KVRequest.KVFiletransferRequest filetransfer_request = 11;
+  // .KVRequest.KVRecoveryfinishRequest recoveryfinish_request = 11;
+  bool has_recoveryfinish_request() const;
+  private:
+  bool _internal_has_recoveryfinish_request() const;
+  public:
+  void clear_recoveryfinish_request();
+  const ::KVRequest_KVRecoveryfinishRequest& recoveryfinish_request() const;
+  PROTOBUF_NODISCARD ::KVRequest_KVRecoveryfinishRequest* release_recoveryfinish_request();
+  ::KVRequest_KVRecoveryfinishRequest* mutable_recoveryfinish_request();
+  void set_allocated_recoveryfinish_request(::KVRequest_KVRecoveryfinishRequest* recoveryfinish_request);
+  private:
+  const ::KVRequest_KVRecoveryfinishRequest& _internal_recoveryfinish_request() const;
+  ::KVRequest_KVRecoveryfinishRequest* _internal_mutable_recoveryfinish_request();
+  public:
+  void unsafe_arena_set_allocated_recoveryfinish_request(
+      ::KVRequest_KVRecoveryfinishRequest* recoveryfinish_request);
+  ::KVRequest_KVRecoveryfinishRequest* unsafe_arena_release_recoveryfinish_request();
+
+  // .KVRequest.KVFiletransferRequest filetransfer_request = 12;
   bool has_filetransfer_request() const;
   private:
   bool _internal_has_filetransfer_request() const;
@@ -2640,7 +2932,7 @@ class KVRequest final :
       ::KVRequest_KVFiletransferRequest* filetransfer_request);
   ::KVRequest_KVFiletransferRequest* unsafe_arena_release_filetransfer_request();
 
-  // .KVRequest.KVReplayRequest replay_request = 12;
+  // .KVRequest.KVReplayRequest replay_request = 13;
   bool has_replay_request() const;
   private:
   bool _internal_has_replay_request() const;
@@ -2672,7 +2964,8 @@ class KVRequest final :
   void set_has_delete_request();
   void set_has_sdelete_request();
   void set_has_suspend_request();
-  void set_has_recoverack_request();
+  void set_has_recovery_request();
+  void set_has_recoveryfinish_request();
   void set_has_filetransfer_request();
   void set_has_replay_request();
 
@@ -2695,7 +2988,8 @@ class KVRequest final :
       ::KVRequest_KVDeleteRequest* delete_request_;
       ::KVRequest_KVSdeleteRequest* sdelete_request_;
       ::KVRequest_KVSuspendRequest* suspend_request_;
-      ::KVRequest_KVAckrecoverRequest* recoverack_request_;
+      ::KVRequest_KVRecoveryRequest* recovery_request_;
+      ::KVRequest_KVRecoveryfinishRequest* recoveryfinish_request_;
       ::KVRequest_KVFiletransferRequest* filetransfer_request_;
       ::KVRequest_KVReplayRequest* replay_request_;
     } request_;
@@ -2756,7 +3050,7 @@ class KVResponse final :
                &_KVResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(KVResponse& a, KVResponse& b) {
     a.Swap(&b);
@@ -2929,7 +3223,7 @@ class FetchNodeRequest final :
                &_FetchNodeRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(FetchNodeRequest& a, FetchNodeRequest& b) {
     a.Swap(&b);
@@ -3107,7 +3401,7 @@ class FetchNodeResponse final :
                &_FetchNodeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(FetchNodeResponse& a, FetchNodeResponse& b) {
     a.Swap(&b);
@@ -4789,9 +5083,217 @@ inline void KVRequest_KVSdeleteRequest::set_allocated_col(std::string* col) {
 
 // KVRequest_KVSuspendRequest
 
+// optional string target_addr = 1;
+inline bool KVRequest_KVSuspendRequest::_internal_has_target_addr() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool KVRequest_KVSuspendRequest::has_target_addr() const {
+  return _internal_has_target_addr();
+}
+inline void KVRequest_KVSuspendRequest::clear_target_addr() {
+  _impl_.target_addr_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& KVRequest_KVSuspendRequest::target_addr() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVSuspendRequest.target_addr)
+  return _internal_target_addr();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVSuspendRequest::set_target_addr(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.target_addr_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVSuspendRequest.target_addr)
+}
+inline std::string* KVRequest_KVSuspendRequest::mutable_target_addr() {
+  std::string* _s = _internal_mutable_target_addr();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVSuspendRequest.target_addr)
+  return _s;
+}
+inline const std::string& KVRequest_KVSuspendRequest::_internal_target_addr() const {
+  return _impl_.target_addr_.Get();
+}
+inline void KVRequest_KVSuspendRequest::_internal_set_target_addr(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.target_addr_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVSuspendRequest::_internal_mutable_target_addr() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.target_addr_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVSuspendRequest::release_target_addr() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVSuspendRequest.target_addr)
+  if (!_internal_has_target_addr()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.target_addr_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.target_addr_.IsDefault()) {
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVSuspendRequest::set_allocated_target_addr(std::string* target_addr) {
+  if (target_addr != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.target_addr_.SetAllocated(target_addr, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.target_addr_.IsDefault()) {
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVSuspendRequest.target_addr)
+}
+
 // -------------------------------------------------------------------
 
-// KVRequest_KVAckrecoverRequest
+// KVRequest_KVRecoveryRequest
+
+// optional string target_addr = 1;
+inline bool KVRequest_KVRecoveryRequest::_internal_has_target_addr() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool KVRequest_KVRecoveryRequest::has_target_addr() const {
+  return _internal_has_target_addr();
+}
+inline void KVRequest_KVRecoveryRequest::clear_target_addr() {
+  _impl_.target_addr_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& KVRequest_KVRecoveryRequest::target_addr() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVRecoveryRequest.target_addr)
+  return _internal_target_addr();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVRecoveryRequest::set_target_addr(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.target_addr_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVRecoveryRequest.target_addr)
+}
+inline std::string* KVRequest_KVRecoveryRequest::mutable_target_addr() {
+  std::string* _s = _internal_mutable_target_addr();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVRecoveryRequest.target_addr)
+  return _s;
+}
+inline const std::string& KVRequest_KVRecoveryRequest::_internal_target_addr() const {
+  return _impl_.target_addr_.Get();
+}
+inline void KVRequest_KVRecoveryRequest::_internal_set_target_addr(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.target_addr_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVRecoveryRequest::_internal_mutable_target_addr() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.target_addr_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVRecoveryRequest::release_target_addr() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVRecoveryRequest.target_addr)
+  if (!_internal_has_target_addr()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.target_addr_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.target_addr_.IsDefault()) {
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVRecoveryRequest::set_allocated_target_addr(std::string* target_addr) {
+  if (target_addr != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.target_addr_.SetAllocated(target_addr, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.target_addr_.IsDefault()) {
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVRecoveryRequest.target_addr)
+}
+
+// -------------------------------------------------------------------
+
+// KVRequest_KVRecoveryfinishRequest
+
+// optional string target_addr = 1;
+inline bool KVRequest_KVRecoveryfinishRequest::_internal_has_target_addr() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool KVRequest_KVRecoveryfinishRequest::has_target_addr() const {
+  return _internal_has_target_addr();
+}
+inline void KVRequest_KVRecoveryfinishRequest::clear_target_addr() {
+  _impl_.target_addr_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& KVRequest_KVRecoveryfinishRequest::target_addr() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVRecoveryfinishRequest.target_addr)
+  return _internal_target_addr();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVRecoveryfinishRequest::set_target_addr(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.target_addr_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVRecoveryfinishRequest.target_addr)
+}
+inline std::string* KVRequest_KVRecoveryfinishRequest::mutable_target_addr() {
+  std::string* _s = _internal_mutable_target_addr();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVRecoveryfinishRequest.target_addr)
+  return _s;
+}
+inline const std::string& KVRequest_KVRecoveryfinishRequest::_internal_target_addr() const {
+  return _impl_.target_addr_.Get();
+}
+inline void KVRequest_KVRecoveryfinishRequest::_internal_set_target_addr(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.target_addr_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVRecoveryfinishRequest::_internal_mutable_target_addr() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.target_addr_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVRecoveryfinishRequest::release_target_addr() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVRecoveryfinishRequest.target_addr)
+  if (!_internal_has_target_addr()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.target_addr_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.target_addr_.IsDefault()) {
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVRecoveryfinishRequest::set_allocated_target_addr(std::string* target_addr) {
+  if (target_addr != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.target_addr_.SetAllocated(target_addr, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.target_addr_.IsDefault()) {
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVRecoveryfinishRequest.target_addr)
+}
 
 // -------------------------------------------------------------------
 
@@ -4825,7 +5327,35 @@ inline void KVRequest_KVFiletransferRequest::set_file_type(::FileType value) {
   // @@protoc_insertion_point(field_set:KVRequest.KVFiletransferRequest.file_type)
 }
 
-// optional string content = 2;
+// optional int32 tablet_idx = 2;
+inline bool KVRequest_KVFiletransferRequest::_internal_has_tablet_idx() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool KVRequest_KVFiletransferRequest::has_tablet_idx() const {
+  return _internal_has_tablet_idx();
+}
+inline void KVRequest_KVFiletransferRequest::clear_tablet_idx() {
+  _impl_.tablet_idx_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline int32_t KVRequest_KVFiletransferRequest::_internal_tablet_idx() const {
+  return _impl_.tablet_idx_;
+}
+inline int32_t KVRequest_KVFiletransferRequest::tablet_idx() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVFiletransferRequest.tablet_idx)
+  return _internal_tablet_idx();
+}
+inline void KVRequest_KVFiletransferRequest::_internal_set_tablet_idx(int32_t value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.tablet_idx_ = value;
+}
+inline void KVRequest_KVFiletransferRequest::set_tablet_idx(int32_t value) {
+  _internal_set_tablet_idx(value);
+  // @@protoc_insertion_point(field_set:KVRequest.KVFiletransferRequest.tablet_idx)
+}
+
+// optional string content = 3;
 inline bool KVRequest_KVFiletransferRequest::_internal_has_content() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -4897,7 +5427,35 @@ inline void KVRequest_KVFiletransferRequest::set_allocated_content(std::string* 
 
 // KVRequest_KVReplayRequest
 
-// optional string tablet_target = 1;
+// optional int32 tablet_num = 1;
+inline bool KVRequest_KVReplayRequest::_internal_has_tablet_num() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool KVRequest_KVReplayRequest::has_tablet_num() const {
+  return _internal_has_tablet_num();
+}
+inline void KVRequest_KVReplayRequest::clear_tablet_num() {
+  _impl_.tablet_num_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline int32_t KVRequest_KVReplayRequest::_internal_tablet_num() const {
+  return _impl_.tablet_num_;
+}
+inline int32_t KVRequest_KVReplayRequest::tablet_num() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVReplayRequest.tablet_num)
+  return _internal_tablet_num();
+}
+inline void KVRequest_KVReplayRequest::_internal_set_tablet_num(int32_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.tablet_num_ = value;
+}
+inline void KVRequest_KVReplayRequest::set_tablet_num(int32_t value) {
+  _internal_set_tablet_num(value);
+  // @@protoc_insertion_point(field_set:KVRequest.KVReplayRequest.tablet_num)
+}
+
+// optional string tablet_target = 2;
 inline bool KVRequest_KVReplayRequest::_internal_has_tablet_target() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -5635,81 +6193,155 @@ inline ::KVRequest_KVSuspendRequest* KVRequest::mutable_suspend_request() {
   return _msg;
 }
 
-// .KVRequest.KVAckrecoverRequest recoverack_request = 10;
-inline bool KVRequest::_internal_has_recoverack_request() const {
-  return request_case() == kRecoverackRequest;
+// .KVRequest.KVRecoveryRequest recovery_request = 10;
+inline bool KVRequest::_internal_has_recovery_request() const {
+  return request_case() == kRecoveryRequest;
 }
-inline bool KVRequest::has_recoverack_request() const {
-  return _internal_has_recoverack_request();
+inline bool KVRequest::has_recovery_request() const {
+  return _internal_has_recovery_request();
 }
-inline void KVRequest::set_has_recoverack_request() {
-  _impl_._oneof_case_[0] = kRecoverackRequest;
+inline void KVRequest::set_has_recovery_request() {
+  _impl_._oneof_case_[0] = kRecoveryRequest;
 }
-inline void KVRequest::clear_recoverack_request() {
-  if (_internal_has_recoverack_request()) {
+inline void KVRequest::clear_recovery_request() {
+  if (_internal_has_recovery_request()) {
     if (GetArenaForAllocation() == nullptr) {
-      delete _impl_.request_.recoverack_request_;
+      delete _impl_.request_.recovery_request_;
     }
     clear_has_request();
   }
 }
-inline ::KVRequest_KVAckrecoverRequest* KVRequest::release_recoverack_request() {
-  // @@protoc_insertion_point(field_release:KVRequest.recoverack_request)
-  if (_internal_has_recoverack_request()) {
+inline ::KVRequest_KVRecoveryRequest* KVRequest::release_recovery_request() {
+  // @@protoc_insertion_point(field_release:KVRequest.recovery_request)
+  if (_internal_has_recovery_request()) {
     clear_has_request();
-    ::KVRequest_KVAckrecoverRequest* temp = _impl_.request_.recoverack_request_;
+    ::KVRequest_KVRecoveryRequest* temp = _impl_.request_.recovery_request_;
     if (GetArenaForAllocation() != nullptr) {
       temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
     }
-    _impl_.request_.recoverack_request_ = nullptr;
+    _impl_.request_.recovery_request_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline const ::KVRequest_KVAckrecoverRequest& KVRequest::_internal_recoverack_request() const {
-  return _internal_has_recoverack_request()
-      ? *_impl_.request_.recoverack_request_
-      : reinterpret_cast< ::KVRequest_KVAckrecoverRequest&>(::_KVRequest_KVAckrecoverRequest_default_instance_);
+inline const ::KVRequest_KVRecoveryRequest& KVRequest::_internal_recovery_request() const {
+  return _internal_has_recovery_request()
+      ? *_impl_.request_.recovery_request_
+      : reinterpret_cast< ::KVRequest_KVRecoveryRequest&>(::_KVRequest_KVRecoveryRequest_default_instance_);
 }
-inline const ::KVRequest_KVAckrecoverRequest& KVRequest::recoverack_request() const {
-  // @@protoc_insertion_point(field_get:KVRequest.recoverack_request)
-  return _internal_recoverack_request();
+inline const ::KVRequest_KVRecoveryRequest& KVRequest::recovery_request() const {
+  // @@protoc_insertion_point(field_get:KVRequest.recovery_request)
+  return _internal_recovery_request();
 }
-inline ::KVRequest_KVAckrecoverRequest* KVRequest::unsafe_arena_release_recoverack_request() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.recoverack_request)
-  if (_internal_has_recoverack_request()) {
+inline ::KVRequest_KVRecoveryRequest* KVRequest::unsafe_arena_release_recovery_request() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.recovery_request)
+  if (_internal_has_recovery_request()) {
     clear_has_request();
-    ::KVRequest_KVAckrecoverRequest* temp = _impl_.request_.recoverack_request_;
-    _impl_.request_.recoverack_request_ = nullptr;
+    ::KVRequest_KVRecoveryRequest* temp = _impl_.request_.recovery_request_;
+    _impl_.request_.recovery_request_ = nullptr;
     return temp;
   } else {
     return nullptr;
   }
 }
-inline void KVRequest::unsafe_arena_set_allocated_recoverack_request(::KVRequest_KVAckrecoverRequest* recoverack_request) {
+inline void KVRequest::unsafe_arena_set_allocated_recovery_request(::KVRequest_KVRecoveryRequest* recovery_request) {
   clear_request();
-  if (recoverack_request) {
-    set_has_recoverack_request();
-    _impl_.request_.recoverack_request_ = recoverack_request;
+  if (recovery_request) {
+    set_has_recovery_request();
+    _impl_.request_.recovery_request_ = recovery_request;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.recoverack_request)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.recovery_request)
 }
-inline ::KVRequest_KVAckrecoverRequest* KVRequest::_internal_mutable_recoverack_request() {
-  if (!_internal_has_recoverack_request()) {
+inline ::KVRequest_KVRecoveryRequest* KVRequest::_internal_mutable_recovery_request() {
+  if (!_internal_has_recovery_request()) {
     clear_request();
-    set_has_recoverack_request();
-    _impl_.request_.recoverack_request_ = CreateMaybeMessage< ::KVRequest_KVAckrecoverRequest >(GetArenaForAllocation());
+    set_has_recovery_request();
+    _impl_.request_.recovery_request_ = CreateMaybeMessage< ::KVRequest_KVRecoveryRequest >(GetArenaForAllocation());
   }
-  return _impl_.request_.recoverack_request_;
+  return _impl_.request_.recovery_request_;
 }
-inline ::KVRequest_KVAckrecoverRequest* KVRequest::mutable_recoverack_request() {
-  ::KVRequest_KVAckrecoverRequest* _msg = _internal_mutable_recoverack_request();
-  // @@protoc_insertion_point(field_mutable:KVRequest.recoverack_request)
+inline ::KVRequest_KVRecoveryRequest* KVRequest::mutable_recovery_request() {
+  ::KVRequest_KVRecoveryRequest* _msg = _internal_mutable_recovery_request();
+  // @@protoc_insertion_point(field_mutable:KVRequest.recovery_request)
   return _msg;
 }
 
-// .KVRequest.KVFiletransferRequest filetransfer_request = 11;
+// .KVRequest.KVRecoveryfinishRequest recoveryfinish_request = 11;
+inline bool KVRequest::_internal_has_recoveryfinish_request() const {
+  return request_case() == kRecoveryfinishRequest;
+}
+inline bool KVRequest::has_recoveryfinish_request() const {
+  return _internal_has_recoveryfinish_request();
+}
+inline void KVRequest::set_has_recoveryfinish_request() {
+  _impl_._oneof_case_[0] = kRecoveryfinishRequest;
+}
+inline void KVRequest::clear_recoveryfinish_request() {
+  if (_internal_has_recoveryfinish_request()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.request_.recoveryfinish_request_;
+    }
+    clear_has_request();
+  }
+}
+inline ::KVRequest_KVRecoveryfinishRequest* KVRequest::release_recoveryfinish_request() {
+  // @@protoc_insertion_point(field_release:KVRequest.recoveryfinish_request)
+  if (_internal_has_recoveryfinish_request()) {
+    clear_has_request();
+    ::KVRequest_KVRecoveryfinishRequest* temp = _impl_.request_.recoveryfinish_request_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.request_.recoveryfinish_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::KVRequest_KVRecoveryfinishRequest& KVRequest::_internal_recoveryfinish_request() const {
+  return _internal_has_recoveryfinish_request()
+      ? *_impl_.request_.recoveryfinish_request_
+      : reinterpret_cast< ::KVRequest_KVRecoveryfinishRequest&>(::_KVRequest_KVRecoveryfinishRequest_default_instance_);
+}
+inline const ::KVRequest_KVRecoveryfinishRequest& KVRequest::recoveryfinish_request() const {
+  // @@protoc_insertion_point(field_get:KVRequest.recoveryfinish_request)
+  return _internal_recoveryfinish_request();
+}
+inline ::KVRequest_KVRecoveryfinishRequest* KVRequest::unsafe_arena_release_recoveryfinish_request() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.recoveryfinish_request)
+  if (_internal_has_recoveryfinish_request()) {
+    clear_has_request();
+    ::KVRequest_KVRecoveryfinishRequest* temp = _impl_.request_.recoveryfinish_request_;
+    _impl_.request_.recoveryfinish_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void KVRequest::unsafe_arena_set_allocated_recoveryfinish_request(::KVRequest_KVRecoveryfinishRequest* recoveryfinish_request) {
+  clear_request();
+  if (recoveryfinish_request) {
+    set_has_recoveryfinish_request();
+    _impl_.request_.recoveryfinish_request_ = recoveryfinish_request;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.recoveryfinish_request)
+}
+inline ::KVRequest_KVRecoveryfinishRequest* KVRequest::_internal_mutable_recoveryfinish_request() {
+  if (!_internal_has_recoveryfinish_request()) {
+    clear_request();
+    set_has_recoveryfinish_request();
+    _impl_.request_.recoveryfinish_request_ = CreateMaybeMessage< ::KVRequest_KVRecoveryfinishRequest >(GetArenaForAllocation());
+  }
+  return _impl_.request_.recoveryfinish_request_;
+}
+inline ::KVRequest_KVRecoveryfinishRequest* KVRequest::mutable_recoveryfinish_request() {
+  ::KVRequest_KVRecoveryfinishRequest* _msg = _internal_mutable_recoveryfinish_request();
+  // @@protoc_insertion_point(field_mutable:KVRequest.recoveryfinish_request)
+  return _msg;
+}
+
+// .KVRequest.KVFiletransferRequest filetransfer_request = 12;
 inline bool KVRequest::_internal_has_filetransfer_request() const {
   return request_case() == kFiletransferRequest;
 }
@@ -5783,7 +6415,7 @@ inline ::KVRequest_KVFiletransferRequest* KVRequest::mutable_filetransfer_reques
   return _msg;
 }
 
-// .KVRequest.KVReplayRequest replay_request = 12;
+// .KVRequest.KVReplayRequest replay_request = 13;
 inline bool KVRequest::_internal_has_replay_request() const {
   return request_case() == kReplayRequest;
 }
@@ -6277,6 +6909,8 @@ inline void FetchNodeResponse::set_allocated_error_message(std::string* error_me
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

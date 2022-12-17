@@ -6,12 +6,13 @@ import "google/protobuf/empty.proto";
 service KVStoreMaster {
   // Frontend calls FetchNodeAddr to get the address of the primary node.
   rpc FetchNodeAddr(FetchNodeRequest) returns (FetchNodeResponse){}
+
+  rpc Execute(KVRequest) returns (KVResponse){}
 }
 
 /* Interface exported by the KVStore Service Worker nodes which actually 
  * processes the requests from the front-end. */
 service KVStoreNode {
-  // General request containing KVStore operations: Put/Get/CPut/Delete.
   rpc Execute(KVRequest) returns (KVResponse){}
 
   // Health Check if the replica node is alive.
@@ -92,23 +93,30 @@ message KVRequest {
 
   // KVSuspendRequest (master -> node)
   message KVSuspendRequest {
-    
+    optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be suspended
+  }
+
+  // KVRecoveryRequest, master -> primary(alive), or primary -> secondary(suspend)
+  message KVRecoveryRequest {
+    optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
   }
 
   // KVAckrecoverRequest (primary node -> master, ack recovering is finished)
-  message KVAckrecoverRequest {
-
+  message KVRecoveryfinishRequest {
+    optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
   }
   
   // KVFiletransferRequest, primary sends checkpoint and log files to secondary for recovery
   message KVFiletransferRequest {
     optional FileType file_type = 1;  // [Required]
-    optional string content = 2;      // [Required]
+    optional int32 tablet_idx = 2;             // [Required]
+    optional string content = 3;      // [Required]
   }
 
   // KVReplayRequest, primary acks secondary that file transfer finishes, start to replay to recover
   message KVReplayRequest {
-    optional string tablet_target = 1;  // [Required]
+    optional int32 tablet_num = 1;          // [Required]
+    optional string tablet_target = 2;  // [Required] format <tablet_idx1>,<tablet_idx2>,<tablet_idx3>,
   }
 
   // Request can only be one of put/get/cput/delete.
@@ -122,9 +130,10 @@ message KVRequest {
     KVDeleteRequest delete_request = 7;
     KVSdeleteRequest sdelete_request = 8;
     KVSuspendRequest suspend_request = 9;
-    KVAckrecoverRequest recoverack_request = 10;
-    KVFiletransferRequest filetransfer_request = 11;
-    KVReplayRequest replay_request = 12;
+    KVRecoveryRequest recovery_request = 10;
+    KVRecoveryfinishRequest recoveryfinish_request = 11;
+    KVFiletransferRequest filetransfer_request = 12;
+    KVReplayRequest replay_request = 13;
   }
 }
 

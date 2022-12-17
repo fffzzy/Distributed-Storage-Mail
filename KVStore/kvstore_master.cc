@@ -181,6 +181,27 @@ Status KVStoreMasterImpl::FetchNodeAddr(ServerContext* context,
   return Status::OK;
 }
 
+Status KVStoreMasterImpl::Execute(ServerContext* context,
+                                  const KVRequest* request,
+                                  KVResponse* response) {
+  switch (request->request_case()) {
+    case KVRequest::RequestCase::kRecoveryfinishRequest: {
+      KVRecoveryfinish(&request->recoveryfinish_request(), response);
+      break;
+    }
+    default: {
+      response->set_status(KVStatusCode::FAILURE);
+      response->set_message("-ERR unsupported mthods");
+    }
+  }
+  return Status::OK;
+}
+
+void KVStoreMasterImpl::KVRecoveryfinish(
+    const KVRequest_KVRecoveryfinishRequest* request, KVResponse* response) {
+  // TODO
+}
+
 }  // namespace KVStore
 
 int main(int argc, char** argv) {

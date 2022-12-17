@@ -6,6 +6,11 @@ int num_replicas = 3;
 int num_tablet_total = 5;
 int num_tablet_mem = 3;
 
+std::string kw_put = "put";
+std::string kw_delete = "delete";
+
+pthread_mutex_t execute_lock;
+
 namespace {
 using ::google::protobuf::Empty;
 using grpc::Channel;
@@ -85,7 +90,7 @@ Status KVStoreNodeImpl::CheckHealth(ServerContext* context,
     response->set_status(KVStatusCode::SUCCESS);
   } else if (node_status == KVStoreNodeStatus::SUSPEND) {
     response->set_status(KVStatusCode::SUSPEND);
-  } else if (node_status == KVStoreNodeStatus::RECOVERYING) {
+  } else if (node_status == KVStoreNodeStatus::RECOVERING) {
     response->set_status(KVStatusCode::RECOVERING);
   }
   return Status::OK;
@@ -160,6 +165,7 @@ void KVStoreNodeImpl::InitEnv() {
 Status KVStoreNodeImpl::Execute(ServerContext* context,
                                 const KVRequest* request,
                                 KVResponse* response) {
+  pthread_mutex_lock(&execute_lock);
   if (node_status == KVStoreNodeStatus::ALIVE) {
     switch (request->request_case()) {
       case KVRequest::RequestCase::kGetRequest: {
@@ -194,17 +200,54 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
         KVSdelete(&request->sdelete_request(), response);
         break;
       }
-      // also accepts suspend request from master
-      case KVRequest::RequestCase::kSuspendRequest {
-        // break;
-      } default: {
+      // node can accept suspend request from master
+      case KVRequest::RequestCase::kSuspendRequest: {
+        KVSuspend(&request->suspend_request(), response);
+        break;
+      }
+      // primary can accept recovery request from master (in alive status)
+      case KVRequest::RequestCase::kRecoveryRequest: {
+        KVPrimaryRecovery(&request->recovery_request(), response);
+        break;
+      }
+      default: {
         response->set_status(KVStatusCode::FAILURE);
         response->set_message("-ERR unsupported mthods when node is alive");
       }
     }
   } else if (node_status == KVStoreNodeStatus::SUSPEND) {
-  } else if (node_status == KVStoreNodeStatus::RECOVERYING) {
+    switch (request->request_case()) {
+      // only allow recover request from primary (in suspend status)
+      case KVRequest::RequestCase::kRecoveryRequest: {
+        KVSecondaryRecovery(&request->recovery_request(), response);
+        break;
+      }
+      default: {
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message("-ERR unsupported mthods when node is suspend");
+      }
+    }
+  } else if (node_status == KVStoreNodeStatus::RECOVERING) {
+    // only allow recovery communication request from primary
+    switch (request->request_case()) {
+      // only allow recover request from primary (in suspend status)
+      case KVRequest::RequestCase::kFiletransferRequest: {
+        KVFiletransfer(&request->filetransfer_request(), response);
+        break;
+      }
+      case KVRequest::RequestCase::kReplayRequest: {
+        KVReplay(&request->replay_request(), response);
+        break;
+      }
+      default: {
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message(
+            "-ERR unsupported mthods when node is recovering");
+      }
+    }
   }
+
+  pthread_mutex_unlock(&execute_lock);
   return Status::OK;
 }
 
@@ -377,8 +420,8 @@ void KVStoreNodeImpl::KVPut(const KVRequest_KVPutRequest* request,
   if (!log_file.is_open()) {
     std::cerr << "cannot open " << log_file_path << std::endl;
   } else {
-    log_file << "put " << row << " " << col << " " << value.length() << " "
-             << value << "\n";
+    log_file << kw_put << " " << row << " " << col << " " << value.length()
+             << " " << value << "\n";
   }
   log_file.close();
 
@@ -435,8 +478,8 @@ void KVStoreNodeImpl::KVSput(const KVRequest_KVSputRequest* request,
   if (!log_file.is_open()) {
     std::cerr << "cannot open " << log_file_path << std::endl;
   } else {
-    log_file << "put " << row << " " << col << " " << value.length() << " "
-             << value << "\n";
+    log_file << kw_put << " " << row << " " << col << " " << value.length()
+             << " " << value << "\n";
   }
   log_file.close();
 
@@ -539,8 +582,8 @@ void KVStoreNodeImpl::KVCput(const KVRequest_KVCPutRequest* request,
   if (!log_file.is_open()) {
     std::cerr << "cannot open " << log_file_path << std::endl;
   } else {
-    log_file << "put " << row << " " << col << " " << new_value.length() << " "
-             << new_value << "\n";
+    log_file << kw_put << " " << row << " " << col << " " << new_value.length()
+             << " " << new_value << "\n";
   }
   log_file.close();
 
@@ -611,8 +654,8 @@ void KVStoreNodeImpl::KVScput(const KVRequest_KVScputRequest* request,
   if (!log_file.is_open()) {
     std::cerr << "cannot open " << log_file_path << std::endl;
   } else {
-    log_file << "put " << row << " " << col << " " << new_value.length() << " "
-             << new_value << "\n";
+    log_file << kw_put << " " << row << " " << col << " " << new_value.length()
+             << " " << new_value << "\n";
   }
   log_file.close();
 
@@ -699,7 +742,7 @@ void KVStoreNodeImpl::KVDelete(const KVRequest_KVDeleteRequest* request,
   if (!log_file.is_open()) {
     std::cerr << "cannot open " << log_file_path << std::endl;
   } else {
-    log_file << "delete " << row << " " << col << "\n";
+    log_file << kw_delete << " " << row << " " << col << "\n";
   }
   log_file.close();
 
@@ -763,7 +806,7 @@ void KVStoreNodeImpl::KVSdelete(const KVRequest_KVSdeleteRequest* request,
   if (!log_file.is_open()) {
     std::cerr << "cannot open " << log_file_path << std::endl;
   } else {
-    log_file << "delete " << row << " " << col << "\n";
+    log_file << kw_delete << " " << row << " " << col << "\n";
   }
   log_file.close();
 
@@ -779,6 +822,332 @@ void KVStoreNodeImpl::KVSdelete(const KVRequest_KVSdeleteRequest* request,
              std::to_string(tablet_idx));
 
   // set response
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVSuspend(const KVRequest_KVSuspendRequest* request,
+                                KVResponse* response) {
+  std::string target_addr = request->target_addr();
+  // no actual usage, just to assert addr is correct
+  assert(addr.compare(target_addr) == 0);
+
+  VerboseLog("Receive suspend request for myself");
+
+  // update status to suspend
+  node_status = KVStoreNodeStatus::SUSPEND;
+
+  // status only represents this request is successfully accepted
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void* KVPrimaryRecoveryThreadFunc(void* args) {
+  std::pair<KVStoreNodeImpl*, std::string> pair =
+      *(std::pair<KVStoreNodeImpl*, std::string>*)args;
+  KVStoreNodeImpl* primary_node = pair.first;
+  std::string target_addr = pair.second;
+
+  primary_node->VerboseLog("primary node starts to recover secondary node: " +
+                           target_addr);
+
+  // locate the idx of target secondary node to be recovered
+  int target_idx = -1;
+  for (int i = 0; i < primary_node->peer_addr_vec.size(); i++) {
+    if (primary_node->peer_addr_vec[i].compare(target_addr) == 0) {
+      target_idx = i;
+      break;
+    }
+  }
+  assert(target_idx != 0);
+
+  // primary node send recovery notification to secondary nodes
+  primary_node->VerboseLog("Send recovery notification to secondary node: " +
+                           target_addr);
+  KVRequest secondary_recovery_request;
+  secondary_recovery_request.mutable_recovery_request()->set_target_addr(
+      target_addr);
+  KVResponse secondary_recovery_response;
+  ClientContext secondary_recovery_context;
+  Status secondary_recovery_status =
+      primary_node->peer_stub_vec[target_idx].get()->Execute(
+          &secondary_recovery_context, secondary_recovery_request,
+          &secondary_recovery_response);
+
+  // primary node tranfer files to secondary nodes
+  for (int i = 0; i < num_tablet_total; i++) {
+    // process tablet with idx = i
+
+    /* transfer checkpoint */
+    primary_node->VerboseLog("Sync checkpoint " + std::to_string(i) + " with " +
+                             target_addr);
+    // open checkpoint file and read to string
+    std::ifstream checkpoint_file(GetTabletFilePath(primary_node->node_idx, i));
+    std::stringstream checkpoint_file_buffer;
+    checkpoint_file_buffer << checkpoint_file.rdbuf();
+    checkpoint_file.close();
+
+    // set and send request
+    KVRequest checkpoint_transfer_request;
+    checkpoint_transfer_request.mutable_filetransfer_request()->set_file_type(
+        FileType::CHECKPOINT);
+    checkpoint_transfer_request.mutable_filetransfer_request()->set_tablet_idx(
+        i);
+    checkpoint_transfer_request.mutable_filetransfer_request()->set_content(
+        checkpoint_file_buffer.str());
+    KVResponse checkpoint_transfer_response;
+    ClientContext checkpoint_transfer_context;
+    Status checkpoint_transfer_status =
+        primary_node->peer_stub_vec[target_idx].get()->Execute(
+            &checkpoint_transfer_context, checkpoint_transfer_request,
+            &checkpoint_transfer_response);
+
+    /* transfer log */
+    primary_node->VerboseLog("Sync logfile " + std::to_string(i) + " with " +
+                             target_addr);
+    // open checkpoint file and read to string
+    std::ifstream log_file(GetLogFilePath(primary_node->node_idx, i));
+    std::stringstream log_file_buffer;
+    log_file_buffer << log_file.rdbuf();
+    log_file.close();
+
+    // set and send request
+    KVRequest log_transfer_request;
+    log_transfer_request.mutable_filetransfer_request()->set_file_type(
+        FileType::LOGFILE);
+    log_transfer_request.mutable_filetransfer_request()->set_tablet_idx(i);
+    log_transfer_request.mutable_filetransfer_request()->set_content(
+        log_file_buffer.str());
+    KVResponse log_transfer_response;
+    ClientContext log_transfer_context;
+    Status log_transfer_status =
+        primary_node->peer_stub_vec[target_idx].get()->Execute(
+            &log_transfer_context, log_transfer_request,
+            &log_transfer_response);
+  }
+
+  /* send replay request */
+  std::string tablet_target;
+  for (int i = 0; i < primary_node->tablet_mem_vec.size(); i++) {
+    tablet_target =
+        tablet_target +
+        std::to_string(primary_node->tablet_mem_vec[i]->tablet_idx) + ",";
+  }
+
+  primary_node->VerboseLog("Send replay request to secondary node: " +
+                           target_addr);
+  KVRequest replay_request;
+  replay_request.mutable_replay_request()->set_tablet_num(
+      primary_node->tablet_mem_vec.size());
+  replay_request.mutable_replay_request()->set_tablet_target(tablet_target);
+  KVResponse replay_response;
+  ClientContext replay_context;
+  Status replay_status = primary_node->peer_stub_vec[target_idx].get()->Execute(
+      &replay_context, replay_request, &replay_response);
+
+  // replay finishes, recovery finishes, set primary node status to ALIVE
+  primary_node->node_status = KVStoreNodeStatus::ALIVE;
+
+  // reply to master that recovery is finished
+  KVRequest recovery_finish_request;
+  recovery_finish_request.mutable_recoveryfinish_request()->set_target_addr(
+      target_addr);
+  KVResponse recovery_finish_response;
+  ClientContext recovery_finish_context;
+  Status recovery_finish_status = primary_node->master_stub.get()->Execute(
+      &recovery_finish_context, recovery_finish_request,
+      &recovery_finish_response);
+
+  return NULL;
+}
+
+void KVStoreNodeImpl::KVPrimaryRecovery(
+    const KVRequest_KVRecoveryRequest* request, KVResponse* response) {
+  std::string target_addr = request->target_addr();
+  // this node is primary, target_addr is the addr of the secondary node to be
+  // revived
+  assert(addr.compare(target_addr) != 0);
+
+  VerboseLog("Receive recovery request for secondary node: " + target_addr);
+
+  // set primary status to RECOVERING
+  node_status = KVStoreNodeStatus::RECOVERING;
+
+  // activate the recovery thread to execute
+  pthread_t recovery_thread;
+  // pass self and target_addr as arguments
+  std::pair<KVStoreNodeImpl*, std::string> pair(this, target_addr);
+  if (pthread_create(&recovery_thread, NULL, KVPrimaryRecoveryThreadFunc,
+                     &pair) < 0) {
+    fprintf(stderr,
+            "Failed to create a pthread to execute primary node's recovery "
+            "work.\n");
+    exit(-1);
+  };
+
+  // set response, status only represents this request is successfully
+  // accepted
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVSecondaryRecovery(
+    const KVRequest_KVRecoveryRequest* request, KVResponse* response) {
+  std::string target_addr = request->target_addr();
+  // no actual usage, just to assert addr is correct
+  assert(addr.compare(target_addr) == 0);
+
+  VerboseLog("Receive recovery request for myself");
+
+  // update status to suspend
+  node_status = KVStoreNodeStatus::RECOVERING;
+
+  // status only represents this request is successfully accepted
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVFiletransfer(
+    const KVRequest_KVFiletransferRequest* request, KVResponse* response) {
+  FileType file_type = request->file_type();
+  int tablet_idx = request->tablet_idx();
+  std::string content = request->content();
+
+  std::string file_path;
+  if (file_type == FileType::CHECKPOINT) {
+    file_path = GetTabletFilePath(node_idx, tablet_idx);
+  } else if (file_type == FileType::LOGFILE) {
+    file_path = GetLogFilePath(node_idx, tablet_idx);
+  }
+
+  // overwrite file
+  std::fstream file_open;
+  file_open.open(file_path,
+                 std::fstream::in | std::fstream::out | std::fstream::trunc);
+  file_open.close();
+
+  std::ofstream file(file_path);
+  if (!file.is_open()) {
+    std::cerr << "cannot open " << file_path << std::endl;
+    exit(-1);
+  }
+  file << content;
+  file.close();
+
+  if (file_type == FileType::CHECKPOINT) {
+    VerboseLog("Sync checkpoint " + std::to_string(tablet_idx) +
+               " with primary node");
+  } else if (file_type == FileType::LOGFILE) {
+    VerboseLog("Sync logfile " + std::to_string(tablet_idx) +
+               " with primary node");
+  }
+
+  // status only represents this request is successfully accepted
+  response->set_status(KVStatusCode::SUCCESS);
+
+  return;
+}
+
+Tablet* KVStoreNodeImpl::ReplayTablet(int tablet_idx) {
+  // load tablet from checkpoint
+  Tablet* tablet = LoadTabletFromFile(node_idx, tablet_idx);
+  assert(tablet != NULL);
+
+  /* replay from log file */
+  // read from log file
+  std::string log_file_path = GetLogFilePath(node_idx, tablet_idx);
+  std::ifstream log_file(log_file_path);
+  if (!log_file.is_open()) {
+    std::cerr << "cannot open " << log_file_path << std::endl;
+    exit(-1);
+  }
+
+  std::string command;
+  while (log_file >> command) {
+    if (command.compare(kw_put) == 0) {
+      std::string row;
+      std::string col;
+      int value_length;
+      log_file >> row >> col >> value_length;
+
+      // skip a whitespace
+      char ignorebuffer[10];
+      log_file.read(ignorebuffer, 1);
+      char buffer[value_length];
+      log_file.read(buffer, value_length);
+      std::string value = std::string(buffer, value_length);
+
+      // put <row> <col> <value>
+      if (tablet->map.find(row) == tablet->map.end()) {
+        tablet->map[row] = std::unordered_map<std::string, std::string>();
+      }
+      tablet->map[row][col] = value;
+
+    } else if (command.compare(kw_delete) == 0) {
+      std::string row;
+      std::string col;
+      log_file >> row >> col;
+
+      // assert cell exists
+      assert(tablet->map.find(row) != tablet->map.end() &&
+             tablet->map[row].find(col) != tablet->map[row].end());
+
+      // delete <row> <col>
+      tablet->map[row].erase(col);
+      // check if row is empty, if empty, delete row
+      if (tablet->map[row].size() == 0) {
+        tablet->map.erase(row);
+      }
+
+    } else {
+      std::cerr << "[replay] command " << command << " not recongnized!"
+                << std::endl;
+      exit(-1);
+    }
+  }
+
+  return tablet;
+}
+
+void KVStoreNodeImpl::KVReplay(const KVRequest_KVReplayRequest* request,
+                               KVResponse* response) {
+  int tablet_num = request->tablet_num();
+  std::string tablet_target = request->tablet_target();
+  VerboseLog("Receive replay request for tablet " + tablet_target);
+
+  // parse tablet target
+  char* tablet_target_char = strdup(tablet_target.c_str());
+  std::vector<int> tablet_idx_vec;
+  if (tablet_num >= 1) {
+    char* tablet_idx_char = strtok(tablet_target_char, ",");
+    tablet_idx_vec.push_back(atoi(tablet_idx_char));
+  }
+  if (tablet_num >= 2) {
+    for (int i = 1; i < tablet_num; i++) {
+      char* tablet_idx_char = strtok(NULL, ",");
+      tablet_idx_vec.push_back(atoi(tablet_idx_char));
+    }
+  }
+  free(tablet_target_char);
+
+  // clear deprecated tablet_mem_vec
+  tablet_mem_vec.clear();
+
+  // replay each tablet in mem from corresponding checkpoint and logfile
+  for (int i = 0; i < tablet_idx_vec.size(); i++) {
+    Tablet* tablet = ReplayTablet(tablet_idx_vec[i]);
+    // push tablet to tablet_mem_vec
+    tablet_mem_vec.push_back(tablet);
+  }
+
+  // replay finishes, recovery finishes, set secondary node status to ALIVE
+  node_status = KVStoreNodeStatus::ALIVE;
+
+  // respond
   response->set_status(KVStatusCode::SUCCESS);
 
   return;
