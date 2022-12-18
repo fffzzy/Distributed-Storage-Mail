@@ -90,6 +90,11 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   void KVSecondaryRecovery(const KVRequest_KVSrecoveryRequest* request,
                            KVResponse* response);
 
+  // secondary compares checksum for file to transfer, respond SUCCESS
+  // represents checksum is different, need file transfer
+  void KVChecksum(const KVRequest_KVChecksumRequest* request,
+                  KVResponse* response);
+
   // secondary receives file transfer from primary
   void KVFiletransfer(const KVRequest_KVFiletransferRequest* request,
                       KVResponse* response);
@@ -101,6 +106,11 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
 };
 
 void* KVPrimaryRecoveryThreadFunc(void* args);
+
+void computeDigest(char* data, int dataLengthBytes,
+                   unsigned char* digestBuffer);
+
+std::string getDigestStr(std::string target);
 
 }  // namespace KVStore
 

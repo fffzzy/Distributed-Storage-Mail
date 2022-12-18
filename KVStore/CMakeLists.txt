@@ -39,6 +39,7 @@ add_custom_command(
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+include_directories("/opt/homebrew/opt/openssl/include")
 
 # rg_grpc_proto
 add_library(rg_grpc_proto
