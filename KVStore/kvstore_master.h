@@ -16,11 +16,14 @@ const char* kServerlistPath = "../../Config/serverlist.txt";
 const int kNumOfReplicas = 3;
 
 struct Cluster {
+  // cluster id
   int id;
+  // Acquire lock to access cluster info.
+  pthread_mutex_t lock;
   // Addr of primary node.
   std::string primary;
   // [addr(str), alive(bool)]
-  std::unordered_map<std::string, bool> isAlive;
+  std::unordered_map<std::string, KVStoreNodeStatus> status;
   // [addr(str), stub]
   std::unordered_map<std::string, std::unique_ptr<KVStoreNode::Stub>> stubs;
 };
@@ -33,17 +36,27 @@ class KVStoreMasterImpl final : public KVStoreMaster::Service {
                                const ::FetchNodeRequest* request,
                                ::FetchNodeResponse* response) override;
 
-  ::grpc::Status Execute(::grpc::ServerContext* context,
-                         const ::KVRequest* request,
+  ::grpc::Status PollStatus(::grpc::ServerContext* context,
+                            const ::PollStatusRequest* request,
+                            ::PollStatusResponse* response) override;
+
+  ::grpc::Status Suspend(::grpc::ServerContext* context,
+                         const ::SuspendRequest* request,
                          ::KVResponse* response) override;
+
+  ::grpc::Status Revive(::grpc::ServerContext* context,
+                        const ::ReviveRequest* request,
+                        ::KVResponse* response) override;
+
+  ::grpc::Status NotifyRecoveryFinished(
+      ::grpc::ServerContext* context,
+      const ::NotifyRecoveryFinishedRequest* request,
+      ::KVResponse* response) override;
 
  public:
   void ReadConfig();
   void CheckReplicaHealth();
   std::string GetAddr();
-
-  void KVRecoveryfinish(const KVRequest_KVRecoveryfinishRequest* request,
-                        KVResponse* response);
 
  public:
   std::string master_addr_;

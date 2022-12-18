@@ -7,7 +7,17 @@ service KVStoreMaster {
   // Frontend calls FetchNodeAddr to get the address of the primary node.
   rpc FetchNodeAddr(FetchNodeRequest) returns (FetchNodeResponse){}
 
-  rpc Execute(KVRequest) returns (KVResponse){}
+  // Console -> Master poll states
+  rpc PollStatus(PollStatusRequest) returns (PollStatusResponse) {}
+
+  // Console -> Master suspends specific nodes.
+  rpc Suspend(SuspendRequest) returns (KVResponse) {}
+
+  // Console -> Master revives specific nodes.
+  rpc Revive(ReviveRequest) returns (KVResponse) {}
+
+  // Node -> Master notify that recovery is finished.
+  rpc NotifyRecoveryFinished(NotifyRecoveryFinishedRequest) returns (KVResponse) {}
 }
 
 /* Interface exported by the KVStore Service Worker nodes which actually 
@@ -23,7 +33,7 @@ service KVStoreNode {
 enum KVStatusCode {
   SUCCESS = 0;
   FAILURE = 1;
-  SUSPEND = 2;
+  SUSPENDED = 2;
   RECOVERING = 3;
 }
 
@@ -100,11 +110,6 @@ message KVRequest {
   message KVRecoveryRequest {
     optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
   }
-
-  // KVAckrecoverRequest (primary node -> master, ack recovering is finished)
-  message KVRecoveryfinishRequest {
-    optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
-  }
   
   // KVFiletransferRequest, primary sends checkpoint and log files to secondary for recovery
   message KVFiletransferRequest {
@@ -131,7 +136,6 @@ message KVRequest {
     KVSdeleteRequest sdelete_request = 8;
     KVSuspendRequest suspend_request = 9;
     KVRecoveryRequest recovery_request = 10;
-    KVRecoveryfinishRequest recoveryfinish_request = 11;
     KVFiletransferRequest filetransfer_request = 12;
     KVReplayRequest replay_request = 13;
   }
@@ -159,4 +163,44 @@ message FetchNodeResponse {
   optional KVStatusCode status = 1; // [Required]
   optional string addr = 2;
   optional string error_message = 3;
+}
+
+
+message PollStatusRequest {  
+}
+
+/* Contains information of all clusters */
+message PollStatusResponse {
+  // Cluster contains a list of nodes.  
+  message Cluster {
+    // Node information.
+    message Node {
+      // Indicate if the node is a primary node or secondary node.
+      optional bool is_primary = 1;
+      // Indicate the address of node. 
+      optional string address = 2;
+      // Each node could be "Running", "Suspended", "Recovering" and "Crashed".
+      optional string state = 3;
+    }
+
+    repeated Node nodes = 1;
+  }
+
+  // Response contains a list of clusters.
+  repeated Cluster clusters = 1;
+}
+
+message SuspendRequest {
+  optional int32 cluster_id = 1;
+  optional string node_addr = 2;
+}
+
+message ReviveRequest {
+  optional int32 cluster_id = 1;
+  optional string node_addr = 2;
+}
+
+// KVAckrecoverRequest (primary node -> master, ack recovering is finished)
+message NotifyRecoveryFinishedRequest {
+  optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
 }

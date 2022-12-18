@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include <utility>
 
+namespace KVStore {
 // it's a deterministic hash function, whether the node recovers from a crash or
 // not.
 inline unsigned long GetDigest(const std::string row, const std::string col) {
@@ -42,4 +43,12 @@ inline unsigned long GetDigest(const std::string row, const std::string col) {
   return digest;
 }
 
+enum KVStoreNodeStatus {
+  RUNNING,     // Node is running normally.
+  SUSPENDED,   // Node is suspended and rejects all requests.
+  RECOVERING,  // Node is recoverying and rejects all requests.
+  CRASHED      // Node is crashed, all rpc failed.
+};
+
+}  // namespace KVStore
 #endif

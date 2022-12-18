@@ -71,6 +71,16 @@ target_link_libraries(kvstore_client_helper
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
+# kvstore_console_helper
+add_library(console_helper
+  "kvstore_console.h"
+  "kvstore_console.cc")
+target_link_libraries(console_helper
+  rg_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF})
+
 # Targets kvstore_node_(client|server)
 foreach(_target
   kvstore_master kvstore_node)
@@ -86,3 +96,6 @@ endforeach()
 
 add_executable(kvstore_test_client kvstore_test_client.cc)
 target_link_libraries(kvstore_test_client kvstore_client_helper)
+
+add_executable(console console.cc)
+target_link_libraries(console console_helper)

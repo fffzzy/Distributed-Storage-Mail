@@ -86,10 +86,10 @@ Tablet* KVStoreNodeImpl::LoadTablet(int tablet_idx) {
 Status KVStoreNodeImpl::CheckHealth(ServerContext* context,
                                     const Empty* request,
                                     KVResponse* response) {
-  if (node_status == KVStoreNodeStatus::ALIVE) {
+  if (node_status == KVStoreNodeStatus::RUNNING) {
     response->set_status(KVStatusCode::SUCCESS);
-  } else if (node_status == KVStoreNodeStatus::SUSPEND) {
-    response->set_status(KVStatusCode::SUSPEND);
+  } else if (node_status == KVStoreNodeStatus::SUSPENDED) {
+    response->set_status(KVStatusCode::SUSPENDED);
   } else if (node_status == KVStoreNodeStatus::RECOVERING) {
     response->set_status(KVStatusCode::RECOVERING);
   }
@@ -166,7 +166,7 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
                                 const KVRequest* request,
                                 KVResponse* response) {
   pthread_mutex_lock(&execute_lock);
-  if (node_status == KVStoreNodeStatus::ALIVE) {
+  if (node_status == KVStoreNodeStatus::RUNNING) {
     switch (request->request_case()) {
       case KVRequest::RequestCase::kGetRequest: {
         KVGet(&request->get_request(), response);
@@ -215,7 +215,7 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
         response->set_message("-ERR unsupported mthods when node is alive");
       }
     }
-  } else if (node_status == KVStoreNodeStatus::SUSPEND) {
+  } else if (node_status == KVStoreNodeStatus::SUSPENDED) {
     switch (request->request_case()) {
       // only allow recover request from primary (in suspend status)
       case KVRequest::RequestCase::kRecoveryRequest: {
@@ -836,7 +836,7 @@ void KVStoreNodeImpl::KVSuspend(const KVRequest_KVSuspendRequest* request,
   VerboseLog("Receive suspend request for myself");
 
   // update status to suspend
-  node_status = KVStoreNodeStatus::SUSPEND;
+  node_status = KVStoreNodeStatus::SUSPENDED;
 
   // status only represents this request is successfully accepted
   response->set_status(KVStatusCode::SUCCESS);
@@ -948,17 +948,17 @@ void* KVPrimaryRecoveryThreadFunc(void* args) {
       &replay_context, replay_request, &replay_response);
 
   // replay finishes, recovery finishes, set primary node status to ALIVE
-  primary_node->node_status = KVStoreNodeStatus::ALIVE;
+  primary_node->node_status = KVStoreNodeStatus::RUNNING;
 
   // reply to master that recovery is finished
-  KVRequest recovery_finish_request;
-  recovery_finish_request.mutable_recoveryfinish_request()->set_target_addr(
-      target_addr);
+  NotifyRecoveryFinishedRequest recovery_finish_request;
+  recovery_finish_request.set_target_addr(target_addr);
   KVResponse recovery_finish_response;
   ClientContext recovery_finish_context;
-  Status recovery_finish_status = primary_node->master_stub.get()->Execute(
-      &recovery_finish_context, recovery_finish_request,
-      &recovery_finish_response);
+  Status recovery_finish_status =
+      primary_node->master_stub.get()->NotifyRecoveryFinished(
+          &recovery_finish_context, recovery_finish_request,
+          &recovery_finish_response);
 
   return NULL;
 }
@@ -1145,7 +1145,7 @@ void KVStoreNodeImpl::KVReplay(const KVRequest_KVReplayRequest* request,
   }
 
   // replay finishes, recovery finishes, set secondary node status to ALIVE
-  node_status = KVStoreNodeStatus::ALIVE;
+  node_status = KVStoreNodeStatus::RUNNING;
 
   // respond
   response->set_status(KVStatusCode::SUCCESS);

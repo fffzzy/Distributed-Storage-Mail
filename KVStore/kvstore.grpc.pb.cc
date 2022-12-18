@@ -22,7 +22,10 @@
 
 static const char* KVStoreMaster_method_names[] = {
   "/KVStoreMaster/FetchNodeAddr",
-  "/KVStoreMaster/Execute",
+  "/KVStoreMaster/PollStatus",
+  "/KVStoreMaster/Suspend",
+  "/KVStoreMaster/Revive",
+  "/KVStoreMaster/NotifyRecoveryFinished",
 };
 
 std::unique_ptr< KVStoreMaster::Stub> KVStoreMaster::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -33,7 +36,10 @@ std::unique_ptr< KVStoreMaster::Stub> KVStoreMaster::NewStub(const std::shared_p
 
 KVStoreMaster::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_FetchNodeAddr_(KVStoreMaster_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Execute_(KVStoreMaster_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_PollStatus_(KVStoreMaster_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Suspend_(KVStoreMaster_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Revive_(KVStoreMaster_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_NotifyRecoveryFinished_(KVStoreMaster_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status KVStoreMaster::Stub::FetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::FetchNodeResponse* response) {
@@ -59,25 +65,94 @@ void KVStoreMaster::Stub::async::FetchNodeAddr(::grpc::ClientContext* context, c
   return result;
 }
 
-::grpc::Status KVStoreMaster::Stub::Execute(::grpc::ClientContext* context, const ::KVRequest& request, ::KVResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::KVRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Execute_, context, request, response);
+::grpc::Status KVStoreMaster::Stub::PollStatus(::grpc::ClientContext* context, const ::PollStatusRequest& request, ::PollStatusResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::PollStatusRequest, ::PollStatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_PollStatus_, context, request, response);
 }
 
-void KVStoreMaster::Stub::async::Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::KVRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Execute_, context, request, response, std::move(f));
+void KVStoreMaster::Stub::async::PollStatus(::grpc::ClientContext* context, const ::PollStatusRequest* request, ::PollStatusResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::PollStatusRequest, ::PollStatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PollStatus_, context, request, response, std::move(f));
 }
 
-void KVStoreMaster::Stub::async::Execute(::grpc::ClientContext* context, const ::KVRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Execute_, context, request, response, reactor);
+void KVStoreMaster::Stub::async::PollStatus(::grpc::ClientContext* context, const ::PollStatusRequest* request, ::PollStatusResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PollStatus_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::KVResponse, ::KVRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Execute_, context, request);
+::grpc::ClientAsyncResponseReader< ::PollStatusResponse>* KVStoreMaster::Stub::PrepareAsyncPollStatusRaw(::grpc::ClientContext* context, const ::PollStatusRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::PollStatusResponse, ::PollStatusRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_PollStatus_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::AsyncExecuteRaw(::grpc::ClientContext* context, const ::KVRequest& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::PollStatusResponse>* KVStoreMaster::Stub::AsyncPollStatusRaw(::grpc::ClientContext* context, const ::PollStatusRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncExecuteRaw(context, request, cq);
+    this->PrepareAsyncPollStatusRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status KVStoreMaster::Stub::Suspend(::grpc::ClientContext* context, const ::SuspendRequest& request, ::KVResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::SuspendRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Suspend_, context, request, response);
+}
+
+void KVStoreMaster::Stub::async::Suspend(::grpc::ClientContext* context, const ::SuspendRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::SuspendRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Suspend_, context, request, response, std::move(f));
+}
+
+void KVStoreMaster::Stub::async::Suspend(::grpc::ClientContext* context, const ::SuspendRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Suspend_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::PrepareAsyncSuspendRaw(::grpc::ClientContext* context, const ::SuspendRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::KVResponse, ::SuspendRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Suspend_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::AsyncSuspendRaw(::grpc::ClientContext* context, const ::SuspendRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSuspendRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status KVStoreMaster::Stub::Revive(::grpc::ClientContext* context, const ::ReviveRequest& request, ::KVResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::ReviveRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Revive_, context, request, response);
+}
+
+void KVStoreMaster::Stub::async::Revive(::grpc::ClientContext* context, const ::ReviveRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::ReviveRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Revive_, context, request, response, std::move(f));
+}
+
+void KVStoreMaster::Stub::async::Revive(::grpc::ClientContext* context, const ::ReviveRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Revive_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::PrepareAsyncReviveRaw(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::KVResponse, ::ReviveRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Revive_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::AsyncReviveRaw(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncReviveRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status KVStoreMaster::Stub::NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::KVResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::NotifyRecoveryFinishedRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_NotifyRecoveryFinished_, context, request, response);
+}
+
+void KVStoreMaster::Stub::async::NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::NotifyRecoveryFinishedRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NotifyRecoveryFinished_, context, request, response, std::move(f));
+}
+
+void KVStoreMaster::Stub::async::NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_NotifyRecoveryFinished_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::PrepareAsyncNotifyRecoveryFinishedRaw(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::KVResponse, ::NotifyRecoveryFinishedRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_NotifyRecoveryFinished_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::AsyncNotifyRecoveryFinishedRaw(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncNotifyRecoveryFinishedRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -96,12 +171,42 @@ KVStoreMaster::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       KVStoreMaster_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::KVRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::PollStatusRequest, ::PollStatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KVStoreMaster::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::KVRequest* req,
+             const ::PollStatusRequest* req,
+             ::PollStatusResponse* resp) {
+               return service->PollStatus(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      KVStoreMaster_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::SuspendRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](KVStoreMaster::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::SuspendRequest* req,
              ::KVResponse* resp) {
-               return service->Execute(ctx, req, resp);
+               return service->Suspend(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      KVStoreMaster_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::ReviveRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](KVStoreMaster::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::ReviveRequest* req,
+             ::KVResponse* resp) {
+               return service->Revive(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      KVStoreMaster_method_names[4],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::NotifyRecoveryFinishedRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](KVStoreMaster::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::NotifyRecoveryFinishedRequest* req,
+             ::KVResponse* resp) {
+               return service->NotifyRecoveryFinished(ctx, req, resp);
              }, this)));
 }
 
@@ -115,7 +220,28 @@ KVStoreMaster::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status KVStoreMaster::Service::Execute(::grpc::ServerContext* context, const ::KVRequest* request, ::KVResponse* response) {
+::grpc::Status KVStoreMaster::Service::PollStatus(::grpc::ServerContext* context, const ::PollStatusRequest* request, ::PollStatusResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status KVStoreMaster::Service::Suspend(::grpc::ServerContext* context, const ::SuspendRequest* request, ::KVResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status KVStoreMaster::Service::Revive(::grpc::ServerContext* context, const ::ReviveRequest* request, ::KVResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status KVStoreMaster::Service::NotifyRecoveryFinished(::grpc::ServerContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response) {
   (void) context;
   (void) request;
   (void) response;
