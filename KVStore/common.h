@@ -11,6 +11,7 @@
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
+#include <openssl/md5.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>

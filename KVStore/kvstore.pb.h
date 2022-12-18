@@ -59,6 +59,9 @@ extern KVRequestDefaultTypeInternal _KVRequest_default_instance_;
 class KVRequest_KVCPutRequest;
 struct KVRequest_KVCPutRequestDefaultTypeInternal;
 extern KVRequest_KVCPutRequestDefaultTypeInternal _KVRequest_KVCPutRequest_default_instance_;
+class KVRequest_KVChecksumRequest;
+struct KVRequest_KVChecksumRequestDefaultTypeInternal;
+extern KVRequest_KVChecksumRequestDefaultTypeInternal _KVRequest_KVChecksumRequest_default_instance_;
 class KVRequest_KVDeleteRequest;
 struct KVRequest_KVDeleteRequestDefaultTypeInternal;
 extern KVRequest_KVDeleteRequestDefaultTypeInternal _KVRequest_KVDeleteRequest_default_instance_;
@@ -124,6 +127,7 @@ template<> ::FetchNodeRequest* Arena::CreateMaybeMessage<::FetchNodeRequest>(Are
 template<> ::FetchNodeResponse* Arena::CreateMaybeMessage<::FetchNodeResponse>(Arena*);
 template<> ::KVRequest* Arena::CreateMaybeMessage<::KVRequest>(Arena*);
 template<> ::KVRequest_KVCPutRequest* Arena::CreateMaybeMessage<::KVRequest_KVCPutRequest>(Arena*);
+template<> ::KVRequest_KVChecksumRequest* Arena::CreateMaybeMessage<::KVRequest_KVChecksumRequest>(Arena*);
 template<> ::KVRequest_KVDeleteRequest* Arena::CreateMaybeMessage<::KVRequest_KVDeleteRequest>(Arena*);
 template<> ::KVRequest_KVFiletransferRequest* Arena::CreateMaybeMessage<::KVRequest_KVFiletransferRequest>(Arena*);
 template<> ::KVRequest_KVGetRequest* Arena::CreateMaybeMessage<::KVRequest_KVGetRequest>(Arena*);
@@ -2218,6 +2222,194 @@ class KVRequest_KVSrecoveryRequest final :
 };
 // -------------------------------------------------------------------
 
+class KVRequest_KVChecksumRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVChecksumRequest) */ {
+ public:
+  inline KVRequest_KVChecksumRequest() : KVRequest_KVChecksumRequest(nullptr) {}
+  ~KVRequest_KVChecksumRequest() override;
+  explicit PROTOBUF_CONSTEXPR KVRequest_KVChecksumRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  KVRequest_KVChecksumRequest(const KVRequest_KVChecksumRequest& from);
+  KVRequest_KVChecksumRequest(KVRequest_KVChecksumRequest&& from) noexcept
+    : KVRequest_KVChecksumRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline KVRequest_KVChecksumRequest& operator=(const KVRequest_KVChecksumRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline KVRequest_KVChecksumRequest& operator=(KVRequest_KVChecksumRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const KVRequest_KVChecksumRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const KVRequest_KVChecksumRequest* internal_default_instance() {
+    return reinterpret_cast<const KVRequest_KVChecksumRequest*>(
+               &_KVRequest_KVChecksumRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  friend void swap(KVRequest_KVChecksumRequest& a, KVRequest_KVChecksumRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(KVRequest_KVChecksumRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(KVRequest_KVChecksumRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  KVRequest_KVChecksumRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<KVRequest_KVChecksumRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const KVRequest_KVChecksumRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const KVRequest_KVChecksumRequest& from) {
+    KVRequest_KVChecksumRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(KVRequest_KVChecksumRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "KVRequest.KVChecksumRequest";
+  }
+  protected:
+  explicit KVRequest_KVChecksumRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kChecksumFieldNumber = 3,
+    kFileTypeFieldNumber = 1,
+    kTabletIdxFieldNumber = 2,
+  };
+  // optional string checksum = 3;
+  bool has_checksum() const;
+  private:
+  bool _internal_has_checksum() const;
+  public:
+  void clear_checksum();
+  const std::string& checksum() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_checksum(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_checksum();
+  PROTOBUF_NODISCARD std::string* release_checksum();
+  void set_allocated_checksum(std::string* checksum);
+  private:
+  const std::string& _internal_checksum() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_checksum(const std::string& value);
+  std::string* _internal_mutable_checksum();
+  public:
+
+  // optional .FileType file_type = 1;
+  bool has_file_type() const;
+  private:
+  bool _internal_has_file_type() const;
+  public:
+  void clear_file_type();
+  ::FileType file_type() const;
+  void set_file_type(::FileType value);
+  private:
+  ::FileType _internal_file_type() const;
+  void _internal_set_file_type(::FileType value);
+  public:
+
+  // optional int32 tablet_idx = 2;
+  bool has_tablet_idx() const;
+  private:
+  bool _internal_has_tablet_idx() const;
+  public:
+  void clear_tablet_idx();
+  int32_t tablet_idx() const;
+  void set_tablet_idx(int32_t value);
+  private:
+  int32_t _internal_tablet_idx() const;
+  void _internal_set_tablet_idx(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:KVRequest.KVChecksumRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr checksum_;
+    int file_type_;
+    int32_t tablet_idx_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_kvstore_2eproto;
+};
+// -------------------------------------------------------------------
+
 class KVRequest_KVFiletransferRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:KVRequest.KVFiletransferRequest) */ {
  public:
@@ -2266,7 +2458,7 @@ class KVRequest_KVFiletransferRequest final :
                &_KVRequest_KVFiletransferRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(KVRequest_KVFiletransferRequest& a, KVRequest_KVFiletransferRequest& b) {
     a.Swap(&b);
@@ -2454,7 +2646,7 @@ class KVRequest_KVReplayRequest final :
                &_KVRequest_KVReplayRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(KVRequest_KVReplayRequest& a, KVRequest_KVReplayRequest& b) {
     a.Swap(&b);
@@ -2632,10 +2824,11 @@ class KVRequest final :
     kDeleteRequest = 7,
     kSdeleteRequest = 8,
     kSuspendRequest = 9,
-    kRecoveryRequest = 10,
-    kSrecoveryRequest = 11,
-    kFiletransferRequest = 12,
-    kReplayRequest = 13,
+    kChecksumRequest = 10,
+    kRecoveryRequest = 11,
+    kSrecoveryRequest = 12,
+    kFiletransferRequest = 13,
+    kReplayRequest = 14,
     REQUEST_NOT_SET = 0,
   };
 
@@ -2644,7 +2837,7 @@ class KVRequest final :
                &_KVRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(KVRequest& a, KVRequest& b) {
     a.Swap(&b);
@@ -2725,6 +2918,7 @@ class KVRequest final :
   typedef KVRequest_KVSuspendRequest KVSuspendRequest;
   typedef KVRequest_KVRecoveryRequest KVRecoveryRequest;
   typedef KVRequest_KVSrecoveryRequest KVSrecoveryRequest;
+  typedef KVRequest_KVChecksumRequest KVChecksumRequest;
   typedef KVRequest_KVFiletransferRequest KVFiletransferRequest;
   typedef KVRequest_KVReplayRequest KVReplayRequest;
 
@@ -2740,10 +2934,11 @@ class KVRequest final :
     kDeleteRequestFieldNumber = 7,
     kSdeleteRequestFieldNumber = 8,
     kSuspendRequestFieldNumber = 9,
-    kRecoveryRequestFieldNumber = 10,
-    kSrecoveryRequestFieldNumber = 11,
-    kFiletransferRequestFieldNumber = 12,
-    kReplayRequestFieldNumber = 13,
+    kChecksumRequestFieldNumber = 10,
+    kRecoveryRequestFieldNumber = 11,
+    kSrecoveryRequestFieldNumber = 12,
+    kFiletransferRequestFieldNumber = 13,
+    kReplayRequestFieldNumber = 14,
   };
   // .KVRequest.KVGetRequest get_request = 1;
   bool has_get_request() const;
@@ -2907,7 +3102,25 @@ class KVRequest final :
       ::KVRequest_KVSuspendRequest* suspend_request);
   ::KVRequest_KVSuspendRequest* unsafe_arena_release_suspend_request();
 
-  // .KVRequest.KVRecoveryRequest recovery_request = 10;
+  // .KVRequest.KVChecksumRequest checksum_request = 10;
+  bool has_checksum_request() const;
+  private:
+  bool _internal_has_checksum_request() const;
+  public:
+  void clear_checksum_request();
+  const ::KVRequest_KVChecksumRequest& checksum_request() const;
+  PROTOBUF_NODISCARD ::KVRequest_KVChecksumRequest* release_checksum_request();
+  ::KVRequest_KVChecksumRequest* mutable_checksum_request();
+  void set_allocated_checksum_request(::KVRequest_KVChecksumRequest* checksum_request);
+  private:
+  const ::KVRequest_KVChecksumRequest& _internal_checksum_request() const;
+  ::KVRequest_KVChecksumRequest* _internal_mutable_checksum_request();
+  public:
+  void unsafe_arena_set_allocated_checksum_request(
+      ::KVRequest_KVChecksumRequest* checksum_request);
+  ::KVRequest_KVChecksumRequest* unsafe_arena_release_checksum_request();
+
+  // .KVRequest.KVRecoveryRequest recovery_request = 11;
   bool has_recovery_request() const;
   private:
   bool _internal_has_recovery_request() const;
@@ -2925,7 +3138,7 @@ class KVRequest final :
       ::KVRequest_KVRecoveryRequest* recovery_request);
   ::KVRequest_KVRecoveryRequest* unsafe_arena_release_recovery_request();
 
-  // .KVRequest.KVSrecoveryRequest srecovery_request = 11;
+  // .KVRequest.KVSrecoveryRequest srecovery_request = 12;
   bool has_srecovery_request() const;
   private:
   bool _internal_has_srecovery_request() const;
@@ -2943,7 +3156,7 @@ class KVRequest final :
       ::KVRequest_KVSrecoveryRequest* srecovery_request);
   ::KVRequest_KVSrecoveryRequest* unsafe_arena_release_srecovery_request();
 
-  // .KVRequest.KVFiletransferRequest filetransfer_request = 12;
+  // .KVRequest.KVFiletransferRequest filetransfer_request = 13;
   bool has_filetransfer_request() const;
   private:
   bool _internal_has_filetransfer_request() const;
@@ -2961,7 +3174,7 @@ class KVRequest final :
       ::KVRequest_KVFiletransferRequest* filetransfer_request);
   ::KVRequest_KVFiletransferRequest* unsafe_arena_release_filetransfer_request();
 
-  // .KVRequest.KVReplayRequest replay_request = 13;
+  // .KVRequest.KVReplayRequest replay_request = 14;
   bool has_replay_request() const;
   private:
   bool _internal_has_replay_request() const;
@@ -2993,6 +3206,7 @@ class KVRequest final :
   void set_has_delete_request();
   void set_has_sdelete_request();
   void set_has_suspend_request();
+  void set_has_checksum_request();
   void set_has_recovery_request();
   void set_has_srecovery_request();
   void set_has_filetransfer_request();
@@ -3017,6 +3231,7 @@ class KVRequest final :
       ::KVRequest_KVDeleteRequest* delete_request_;
       ::KVRequest_KVSdeleteRequest* sdelete_request_;
       ::KVRequest_KVSuspendRequest* suspend_request_;
+      ::KVRequest_KVChecksumRequest* checksum_request_;
       ::KVRequest_KVRecoveryRequest* recovery_request_;
       ::KVRequest_KVSrecoveryRequest* srecovery_request_;
       ::KVRequest_KVFiletransferRequest* filetransfer_request_;
@@ -3079,7 +3294,7 @@ class KVResponse final :
                &_KVResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(KVResponse& a, KVResponse& b) {
     a.Swap(&b);
@@ -3252,7 +3467,7 @@ class FetchNodeRequest final :
                &_FetchNodeRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(FetchNodeRequest& a, FetchNodeRequest& b) {
     a.Swap(&b);
@@ -3430,7 +3645,7 @@ class FetchNodeResponse final :
                &_FetchNodeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(FetchNodeResponse& a, FetchNodeResponse& b) {
     a.Swap(&b);
@@ -3622,7 +3837,7 @@ class PollStatusRequest final :
                &_PollStatusRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(PollStatusRequest& a, PollStatusRequest& b) {
     a.Swap(&b);
@@ -3741,7 +3956,7 @@ class PollStatusResponse_Cluster_Node final :
                &_PollStatusResponse_Cluster_Node_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(PollStatusResponse_Cluster_Node& a, PollStatusResponse_Cluster_Node& b) {
     a.Swap(&b);
@@ -3934,7 +4149,7 @@ class PollStatusResponse_Cluster final :
                &_PollStatusResponse_Cluster_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(PollStatusResponse_Cluster& a, PollStatusResponse_Cluster& b) {
     a.Swap(&b);
@@ -4093,7 +4308,7 @@ class PollStatusResponse final :
                &_PollStatusResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(PollStatusResponse& a, PollStatusResponse& b) {
     a.Swap(&b);
@@ -4252,7 +4467,7 @@ class SuspendRequest final :
                &_SuspendRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(SuspendRequest& a, SuspendRequest& b) {
     a.Swap(&b);
@@ -4425,7 +4640,7 @@ class ReviveRequest final :
                &_ReviveRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    23;
 
   friend void swap(ReviveRequest& a, ReviveRequest& b) {
     a.Swap(&b);
@@ -4598,7 +4813,7 @@ class NotifyRecoveryFinishedRequest final :
                &_NotifyRecoveryFinishedRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    24;
 
   friend void swap(NotifyRecoveryFinishedRequest& a, NotifyRecoveryFinishedRequest& b) {
     a.Swap(&b);
@@ -6459,6 +6674,134 @@ inline void KVRequest_KVSrecoveryRequest::set_allocated_target_addr(std::string*
 
 // -------------------------------------------------------------------
 
+// KVRequest_KVChecksumRequest
+
+// optional .FileType file_type = 1;
+inline bool KVRequest_KVChecksumRequest::_internal_has_file_type() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool KVRequest_KVChecksumRequest::has_file_type() const {
+  return _internal_has_file_type();
+}
+inline void KVRequest_KVChecksumRequest::clear_file_type() {
+  _impl_.file_type_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline ::FileType KVRequest_KVChecksumRequest::_internal_file_type() const {
+  return static_cast< ::FileType >(_impl_.file_type_);
+}
+inline ::FileType KVRequest_KVChecksumRequest::file_type() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVChecksumRequest.file_type)
+  return _internal_file_type();
+}
+inline void KVRequest_KVChecksumRequest::_internal_set_file_type(::FileType value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.file_type_ = value;
+}
+inline void KVRequest_KVChecksumRequest::set_file_type(::FileType value) {
+  _internal_set_file_type(value);
+  // @@protoc_insertion_point(field_set:KVRequest.KVChecksumRequest.file_type)
+}
+
+// optional int32 tablet_idx = 2;
+inline bool KVRequest_KVChecksumRequest::_internal_has_tablet_idx() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool KVRequest_KVChecksumRequest::has_tablet_idx() const {
+  return _internal_has_tablet_idx();
+}
+inline void KVRequest_KVChecksumRequest::clear_tablet_idx() {
+  _impl_.tablet_idx_ = 0;
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline int32_t KVRequest_KVChecksumRequest::_internal_tablet_idx() const {
+  return _impl_.tablet_idx_;
+}
+inline int32_t KVRequest_KVChecksumRequest::tablet_idx() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVChecksumRequest.tablet_idx)
+  return _internal_tablet_idx();
+}
+inline void KVRequest_KVChecksumRequest::_internal_set_tablet_idx(int32_t value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.tablet_idx_ = value;
+}
+inline void KVRequest_KVChecksumRequest::set_tablet_idx(int32_t value) {
+  _internal_set_tablet_idx(value);
+  // @@protoc_insertion_point(field_set:KVRequest.KVChecksumRequest.tablet_idx)
+}
+
+// optional string checksum = 3;
+inline bool KVRequest_KVChecksumRequest::_internal_has_checksum() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool KVRequest_KVChecksumRequest::has_checksum() const {
+  return _internal_has_checksum();
+}
+inline void KVRequest_KVChecksumRequest::clear_checksum() {
+  _impl_.checksum_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& KVRequest_KVChecksumRequest::checksum() const {
+  // @@protoc_insertion_point(field_get:KVRequest.KVChecksumRequest.checksum)
+  return _internal_checksum();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void KVRequest_KVChecksumRequest::set_checksum(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.checksum_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:KVRequest.KVChecksumRequest.checksum)
+}
+inline std::string* KVRequest_KVChecksumRequest::mutable_checksum() {
+  std::string* _s = _internal_mutable_checksum();
+  // @@protoc_insertion_point(field_mutable:KVRequest.KVChecksumRequest.checksum)
+  return _s;
+}
+inline const std::string& KVRequest_KVChecksumRequest::_internal_checksum() const {
+  return _impl_.checksum_.Get();
+}
+inline void KVRequest_KVChecksumRequest::_internal_set_checksum(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.checksum_.Set(value, GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVChecksumRequest::_internal_mutable_checksum() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.checksum_.Mutable(GetArenaForAllocation());
+}
+inline std::string* KVRequest_KVChecksumRequest::release_checksum() {
+  // @@protoc_insertion_point(field_release:KVRequest.KVChecksumRequest.checksum)
+  if (!_internal_has_checksum()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.checksum_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.checksum_.IsDefault()) {
+    _impl_.checksum_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void KVRequest_KVChecksumRequest::set_allocated_checksum(std::string* checksum) {
+  if (checksum != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.checksum_.SetAllocated(checksum, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.checksum_.IsDefault()) {
+    _impl_.checksum_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.KVChecksumRequest.checksum)
+}
+
+// -------------------------------------------------------------------
+
 // KVRequest_KVFiletransferRequest
 
 // optional .FileType file_type = 1;
@@ -7355,7 +7698,81 @@ inline ::KVRequest_KVSuspendRequest* KVRequest::mutable_suspend_request() {
   return _msg;
 }
 
-// .KVRequest.KVRecoveryRequest recovery_request = 10;
+// .KVRequest.KVChecksumRequest checksum_request = 10;
+inline bool KVRequest::_internal_has_checksum_request() const {
+  return request_case() == kChecksumRequest;
+}
+inline bool KVRequest::has_checksum_request() const {
+  return _internal_has_checksum_request();
+}
+inline void KVRequest::set_has_checksum_request() {
+  _impl_._oneof_case_[0] = kChecksumRequest;
+}
+inline void KVRequest::clear_checksum_request() {
+  if (_internal_has_checksum_request()) {
+    if (GetArenaForAllocation() == nullptr) {
+      delete _impl_.request_.checksum_request_;
+    }
+    clear_has_request();
+  }
+}
+inline ::KVRequest_KVChecksumRequest* KVRequest::release_checksum_request() {
+  // @@protoc_insertion_point(field_release:KVRequest.checksum_request)
+  if (_internal_has_checksum_request()) {
+    clear_has_request();
+    ::KVRequest_KVChecksumRequest* temp = _impl_.request_.checksum_request_;
+    if (GetArenaForAllocation() != nullptr) {
+      temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.request_.checksum_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::KVRequest_KVChecksumRequest& KVRequest::_internal_checksum_request() const {
+  return _internal_has_checksum_request()
+      ? *_impl_.request_.checksum_request_
+      : reinterpret_cast< ::KVRequest_KVChecksumRequest&>(::_KVRequest_KVChecksumRequest_default_instance_);
+}
+inline const ::KVRequest_KVChecksumRequest& KVRequest::checksum_request() const {
+  // @@protoc_insertion_point(field_get:KVRequest.checksum_request)
+  return _internal_checksum_request();
+}
+inline ::KVRequest_KVChecksumRequest* KVRequest::unsafe_arena_release_checksum_request() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:KVRequest.checksum_request)
+  if (_internal_has_checksum_request()) {
+    clear_has_request();
+    ::KVRequest_KVChecksumRequest* temp = _impl_.request_.checksum_request_;
+    _impl_.request_.checksum_request_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void KVRequest::unsafe_arena_set_allocated_checksum_request(::KVRequest_KVChecksumRequest* checksum_request) {
+  clear_request();
+  if (checksum_request) {
+    set_has_checksum_request();
+    _impl_.request_.checksum_request_ = checksum_request;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:KVRequest.checksum_request)
+}
+inline ::KVRequest_KVChecksumRequest* KVRequest::_internal_mutable_checksum_request() {
+  if (!_internal_has_checksum_request()) {
+    clear_request();
+    set_has_checksum_request();
+    _impl_.request_.checksum_request_ = CreateMaybeMessage< ::KVRequest_KVChecksumRequest >(GetArenaForAllocation());
+  }
+  return _impl_.request_.checksum_request_;
+}
+inline ::KVRequest_KVChecksumRequest* KVRequest::mutable_checksum_request() {
+  ::KVRequest_KVChecksumRequest* _msg = _internal_mutable_checksum_request();
+  // @@protoc_insertion_point(field_mutable:KVRequest.checksum_request)
+  return _msg;
+}
+
+// .KVRequest.KVRecoveryRequest recovery_request = 11;
 inline bool KVRequest::_internal_has_recovery_request() const {
   return request_case() == kRecoveryRequest;
 }
@@ -7429,7 +7846,7 @@ inline ::KVRequest_KVRecoveryRequest* KVRequest::mutable_recovery_request() {
   return _msg;
 }
 
-// .KVRequest.KVSrecoveryRequest srecovery_request = 11;
+// .KVRequest.KVSrecoveryRequest srecovery_request = 12;
 inline bool KVRequest::_internal_has_srecovery_request() const {
   return request_case() == kSrecoveryRequest;
 }
@@ -7503,7 +7920,7 @@ inline ::KVRequest_KVSrecoveryRequest* KVRequest::mutable_srecovery_request() {
   return _msg;
 }
 
-// .KVRequest.KVFiletransferRequest filetransfer_request = 12;
+// .KVRequest.KVFiletransferRequest filetransfer_request = 13;
 inline bool KVRequest::_internal_has_filetransfer_request() const {
   return request_case() == kFiletransferRequest;
 }
@@ -7577,7 +7994,7 @@ inline ::KVRequest_KVFiletransferRequest* KVRequest::mutable_filetransfer_reques
   return _msg;
 }
 
-// .KVRequest.KVReplayRequest replay_request = 13;
+// .KVRequest.KVReplayRequest replay_request = 14;
 inline bool KVRequest::_internal_has_replay_request() const {
   return request_case() == kReplayRequest;
 }
@@ -8603,6 +9020,8 @@ inline void NotifyRecoveryFinishedRequest::set_allocated_target_addr(std::string
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -246,6 +246,10 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
     // only allow recovery communication request from primary
     switch (request->request_case()) {
       // only allow recover request from primary (in suspend status)
+      case KVRequest::RequestCase::kChecksumRequest: {
+        KVChecksum(&request->checksum_request(), response);
+        break;
+      }
       case KVRequest::RequestCase::kFiletransferRequest: {
         KVFiletransfer(&request->filetransfer_request(), response);
         break;
@@ -909,66 +913,108 @@ void* KVStoreNodeImpl::KVPrimaryRecoveryThreadFunc(void* args) {
     // process tablet with idx = i
 
     /* transfer checkpoint */
-    primary_node->VerboseLog("Sync checkpoint " + std::to_string(i) + " with " +
-                             target_addr);
     // open checkpoint file and read to string
     std::ifstream checkpoint_file(GetTabletFilePath(primary_node->node_idx, i));
     std::stringstream checkpoint_file_buffer;
     checkpoint_file_buffer << checkpoint_file.rdbuf();
     checkpoint_file.close();
 
-    // set and send request
-    KVRequest checkpoint_transfer_request;
-    checkpoint_transfer_request.mutable_filetransfer_request()->set_file_type(
+    // checkpoint checksum
+    KVRequest checkpoint_checksum_request;
+    checkpoint_checksum_request.mutable_checksum_request()->set_file_type(
         FileType::CHECKPOINT);
-    checkpoint_transfer_request.mutable_filetransfer_request()->set_tablet_idx(
-        i);
-    checkpoint_transfer_request.mutable_filetransfer_request()->set_content(
-        checkpoint_file_buffer.str());
-    KVResponse checkpoint_transfer_response;
-    ClientContext checkpoint_transfer_context;
-    Status checkpoint_transfer_status =
+    checkpoint_checksum_request.mutable_checksum_request()->set_tablet_idx(i);
+    checkpoint_checksum_request.mutable_checksum_request()->set_checksum(
+        getDigestStr(checkpoint_file_buffer.str()));
+    KVResponse checkpoint_checksum_response;
+    ClientContext checkpoint_checksum_context;
+    Status checkpoint_checksum_status =
         primary_node->peer_stub_vec[target_idx].get()->Execute(
-            &checkpoint_transfer_context, checkpoint_transfer_request,
-            &checkpoint_transfer_response);
-
-    if (!checkpoint_transfer_status.ok()) {
-      std::cerr << "-ERR checkpoint " << i << " transfer fails, grpc fails"
+            &checkpoint_checksum_context, checkpoint_checksum_request,
+            &checkpoint_checksum_response);
+    if (!checkpoint_checksum_status.ok()) {
+      std::cerr << "-ERR checksum for checkpoint " << i << " fails, grpc fails"
                 << std::endl;
-    } else if (checkpoint_transfer_response.status() != KVStatusCode::SUCCESS) {
-      std::cerr << "-ERR checkpoint " << i
-                << " transfer fails, request rejected " << std::endl;
+    } else if (checkpoint_checksum_response.status() != KVStatusCode::SUCCESS) {
+      primary_node->VerboseLog(checkpoint_checksum_response.message());
+    } else {
+      primary_node->VerboseLog("Sync checkpoint " + std::to_string(i) +
+                               " with " + target_addr);
+      // set and send file transfer request
+      KVRequest checkpoint_transfer_request;
+      checkpoint_transfer_request.mutable_filetransfer_request()->set_file_type(
+          FileType::CHECKPOINT);
+      checkpoint_transfer_request.mutable_filetransfer_request()
+          ->set_tablet_idx(i);
+      checkpoint_transfer_request.mutable_filetransfer_request()->set_content(
+          checkpoint_file_buffer.str());
+      KVResponse checkpoint_transfer_response;
+      ClientContext checkpoint_transfer_context;
+      Status checkpoint_transfer_status =
+          primary_node->peer_stub_vec[target_idx].get()->Execute(
+              &checkpoint_transfer_context, checkpoint_transfer_request,
+              &checkpoint_transfer_response);
+
+      if (!checkpoint_transfer_status.ok()) {
+        std::cerr << "-ERR checkpoint " << i << " transfer fails, grpc fails"
+                  << std::endl;
+      } else if (checkpoint_transfer_response.status() !=
+                 KVStatusCode::SUCCESS) {
+        std::cerr << "-ERR checkpoint " << i
+                  << " transfer fails, request rejected " << std::endl;
+      }
     }
 
     /* transfer log */
-    primary_node->VerboseLog("Sync logfile " + std::to_string(i) + " with " +
-                             target_addr);
-    // open checkpoint file and read to string
+    // open log file and read to string
     std::ifstream log_file(GetLogFilePath(primary_node->node_idx, i));
     std::stringstream log_file_buffer;
     log_file_buffer << log_file.rdbuf();
     log_file.close();
 
-    // set and send request
-    KVRequest log_transfer_request;
-    log_transfer_request.mutable_filetransfer_request()->set_file_type(
+    // logfile checksum
+    KVRequest log_checksum_request;
+    log_checksum_request.mutable_checksum_request()->set_file_type(
         FileType::LOGFILE);
-    log_transfer_request.mutable_filetransfer_request()->set_tablet_idx(i);
-    log_transfer_request.mutable_filetransfer_request()->set_content(
-        log_file_buffer.str());
-    KVResponse log_transfer_response;
-    ClientContext log_transfer_context;
-    Status log_transfer_status =
+    log_checksum_request.mutable_checksum_request()->set_tablet_idx(i);
+    log_checksum_request.mutable_checksum_request()->set_checksum(
+        getDigestStr(log_file_buffer.str()));
+    KVResponse log_checksum_response;
+    ClientContext log_checksum_context;
+    Status log_checksum_status =
         primary_node->peer_stub_vec[target_idx].get()->Execute(
-            &log_transfer_context, log_transfer_request,
-            &log_transfer_response);
+            &log_checksum_context, log_checksum_request,
+            &log_checksum_response);
 
-    if (!log_transfer_status.ok()) {
-      std::cerr << "-ERR logfile " << i << " transfer fails, grpc fails"
+    if (!log_checksum_status.ok()) {
+      std::cerr << "-ERR checksum for logfile " << i << " fails, grpc fails"
                 << std::endl;
-    } else if (log_transfer_response.status() != KVStatusCode::SUCCESS) {
-      std::cerr << "-ERR logfile " << i << " transfer fails, request rejected "
-                << std::endl;
+    } else if (log_checksum_response.status() != KVStatusCode::SUCCESS) {
+      primary_node->VerboseLog(log_checksum_response.message());
+    } else {
+      primary_node->VerboseLog("Sync logfile " + std::to_string(i) + " with " +
+                               target_addr);
+      // set and send request
+      KVRequest log_transfer_request;
+      log_transfer_request.mutable_filetransfer_request()->set_file_type(
+          FileType::LOGFILE);
+      log_transfer_request.mutable_filetransfer_request()->set_tablet_idx(i);
+      log_transfer_request.mutable_filetransfer_request()->set_content(
+          log_file_buffer.str());
+      KVResponse log_transfer_response;
+      ClientContext log_transfer_context;
+      Status log_transfer_status =
+          primary_node->peer_stub_vec[target_idx].get()->Execute(
+              &log_transfer_context, log_transfer_request,
+              &log_transfer_response);
+
+      if (!log_transfer_status.ok()) {
+        std::cerr << "-ERR logfile " << i << " transfer fails, grpc fails"
+                  << std::endl;
+      } else if (log_transfer_response.status() != KVStatusCode::SUCCESS) {
+        std::cerr << "-ERR logfile " << i
+                  << " transfer fails, request rejected " << std::endl;
+      }
     }
   }
 
@@ -1067,6 +1113,85 @@ void KVStoreNodeImpl::KVSecondaryRecovery(
   response->set_status(KVStatusCode::SUCCESS);
 
   return;
+}
+
+/* auxiliary functions */
+void computeDigest(char* data, int dataLengthBytes,
+                   unsigned char* digestBuffer) {
+  /* The digest will be written to digestBuffer, which must be at least
+   * MD5_DIGEST_LENGTH bytes long */
+
+  MD5_CTX c;
+  MD5_Init(&c);
+  MD5_Update(&c, data, dataLengthBytes);
+  MD5_Final(digestBuffer, &c);
+}
+
+std::string getDigestStr(std::string target) {
+  std::string digestStr;
+  // compute digest
+  unsigned char digestBuffer[MD5_DIGEST_LENGTH];
+  computeDigest(const_cast<char*>(target.c_str()), target.length(),
+                digestBuffer);
+  digestStr.reserve(32);
+  for (std::size_t i = 0; i != 16; ++i) {
+    digestStr += "0123456789ABCDEF"[digestBuffer[i] / 16];
+    digestStr += "0123456789ABCDEF"[digestBuffer[i] % 16];
+  }
+
+  return digestStr;
+}
+
+void KVStoreNodeImpl::KVChecksum(const KVRequest_KVChecksumRequest* request,
+                                 KVResponse* response) {
+  FileType file_type = request->file_type();
+  int tablet_idx = request->tablet_idx();
+  std::string checksum_primary = request->checksum();
+
+  std::string file_path;
+  if (file_type == FileType::CHECKPOINT) {
+    file_path = GetTabletFilePath(node_idx, tablet_idx);
+  } else if (file_type == FileType::LOGFILE) {
+    file_path = GetLogFilePath(node_idx, tablet_idx);
+  }
+
+  std::ifstream file(file_path);
+  if (!file.is_open()) {
+    std::cerr << "cannot open " << file_path << ", need file transfer"
+              << std::endl;
+    response->set_status(KVStatusCode::FAILURE);
+
+    return;
+  }
+  std::stringstream file_buffer;
+  file_buffer << file.rdbuf();
+  file.close();
+
+  std::string target_file;
+  if (file_type == FileType::CHECKPOINT) {
+    target_file = "checkpoint " + std::to_string(tablet_idx);
+  } else if (file_type == FileType::LOGFILE) {
+    target_file = "logfile " + std::to_string(tablet_idx);
+  }
+
+  std::string checksum_local = getDigestStr(file_buffer.str());
+  if (checksum_local.compare(checksum_primary) == 0) {
+    VerboseLog("Checksum for " + target_file +
+               " is the same, no need to transfer");
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("Checksum for " + target_file +
+                          " is the same, no need to transfer");
+
+    return;
+  } else {
+    VerboseLog("Checksum for " + target_file +
+               " is different, await to transfer");
+    response->set_status(KVStatusCode::SUCCESS);
+    response->set_message("Checksum for " + target_file +
+                          " is different, await to transfer");
+
+    return;
+  }
 }
 
 void KVStoreNodeImpl::KVFiletransfer(
