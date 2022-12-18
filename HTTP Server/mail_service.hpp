@@ -19,20 +19,36 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <chrono>
+#include <ext/stdio_filebuf.h>
+#include <sys/file.h>
 #include <nlohmann/json.hpp>
 
 #include "local_kvstore.hpp"
 
-
 using json = nlohmann::json;
-
 
 using namespace std;
 
-class Mail{
-private:
-  json data;
-public:
-  Mail(json data) : data(data) {};
-  void sendOut();
+enum Status
+{
+    Begin = 0,
+    Helo,
+    Mail,
+    Rcpt,
+    Data,
+    Done,
 };
+
+class MailService
+{
+private:
+
+public:
+    MailService() {};
+
+    void sendOut(json data) {};
+
+    void startAccepting();
+};
+
+void *messageWorker(void *);

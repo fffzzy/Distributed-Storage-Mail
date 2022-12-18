@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include "nlohmann/json.hpp"
+#include <chrono>
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -92,5 +94,7 @@ int main()
     std::cout << "Student ID: " << sID << std::endl;
     std::cout << "Department: " << dept << std::endl;
     cout << mails.dump(4) << endl;
+    time_t t = chrono::system_clock::to_time_t(chrono::system_clock::now());
+    cout << ctime(&t) << endl;
     return 0;
 }

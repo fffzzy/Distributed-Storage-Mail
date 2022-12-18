@@ -131,7 +131,11 @@ void APIHandler::sendEmail() {
         parseEmail(recipient, name, host);
 
         if (host == "localhost") {
-            json mailList = json::parse(kvstore.Get(host, "mails"));
+            string mail_string = kvstore.Get(host, "mails");
+            if (mail_string.empty()){
+                mail_string = "[]";
+            }
+            json mailList = json::parse(mail_string);
 
             int mailId = mailList[mailList.size() - 1]["mailId"];
             data["mailId"] = mailId + 1;
@@ -140,8 +144,8 @@ void APIHandler::sendEmail() {
             kvstore.Put(host, "mails", mailList.dump());
 
         } else {
-            Mail email(data);
-            email.sendOut();
+            MailService email;
+            email.sendOut(data);
         }
     }
 }
@@ -149,8 +153,8 @@ void APIHandler::sendEmail() {
 void APIHandler::getEmailList() {
     string username = checkCookie();
     string mailList = kvstore.Get(username, "mails");
-    
     string page = "HTTP/1.1 200 success\r\n\r\n" + mailList;
+    cout << page << endl;
     write(fd, page.c_str(), page.length());
 }
 

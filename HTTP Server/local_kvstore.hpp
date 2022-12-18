@@ -27,7 +27,7 @@ public:
                 {"recipients", {"rjx@localhost", "123@localhost"}},
                 {"subject", "This is the mail title"},
                 {"content", "This is the mail content"},
-                {"time", "Time stamp is here"},
+                {"time", "Sun Dec 18 19:32:05 2022"},
             },
             {
                 {"mailId", 8},
@@ -35,7 +35,7 @@ public:
                 {"recipients", {"123@localhost", "abaaba@localhost"}},
                 {"subject", "This is the mail title"},
                 {"content", "This is the mail content"},
-                {"time", "Time stamp is here"},
+                {"time", "Sun Dec 18 19:32:06 2022"},
             },
             {
                 {"mailId", 9},
@@ -43,10 +43,10 @@ public:
                 {"recipients", {"123@localhost", "abaaba@localhost"}},
                 {"subject", "This is the mail title"},
                 {"content", "This is the mail content"},
-                {"time", "Time stamp is here"},
+                {"time", "Sun Dec 18 19:32:04 2022"},
             }};
 
-        table["123"]["mail"] = mails.dump();
+        table["123"]["mails"] = mails.dump();
     };
 
     // Read commands from STDIN.
