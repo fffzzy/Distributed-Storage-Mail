@@ -35,3 +35,4 @@ void parseInput(int argc, char *argv[]);
 sockaddr_in parseSockaddr(string s);
 void *messageWorker(void *comm_fd);
 void sendBinary(string file, string image_type, int fd, string page);
+void homepage(int fd);

@@ -8,7 +8,7 @@ static int listen_fd;
 static int port = 8019;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
-static string page_root = "./React/build1";
+static string page_root = "./React/build";
 static KVStoreClient kvstore("127.0.0.1:8017", true);
 int main(int argc, char *argv[])
 {
@@ -21,10 +21,11 @@ int main(int argc, char *argv[])
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htons(INADDR_ANY);
     servaddr.sin_port = htons(port);
-    while (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+    while (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+    {
         servaddr.sin_port = htons(--port);
     }
-    cout << "Server start a port at: "<< port << endl;
+    cout << "Server start a port at: " << port << endl;
     listen(listen_fd, 100);
     while (!is_shut_down)
     {
@@ -136,7 +137,8 @@ sockaddr_in parseSockaddr(string s)
     int idx = s.find(":");
     string ip = s.substr(0, idx);
     int port = stoi(s.substr(idx + 1));
-    if (is_verbose) cout << port << endl;
+    if (is_verbose)
+        cout << port << endl;
     struct sockaddr_in addr;
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -156,15 +158,7 @@ void *messageWorker(void *comm_fd)
 
     if (!strncmp(buffer, "GET / ", 6))
     {
-        string page = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-
-        ifstream infile(page_root + "/index.html");
-        string line;
-        while (getline(infile, line))
-        {
-            page += line;
-        }
-        write(fd, page.c_str(), page.length());
+        homepage(fd);
     }
     else if (!strncmp(buffer, "GET /api/", 9))
     {
@@ -199,20 +193,28 @@ void *messageWorker(void *comm_fd)
         string path = page_root + file;
         ios_base::openmode mode = ios_base::in;
 
-        if (file_type == "jpg" | file_type == "png")
+        ifstream checkExists(path);
+        if (!checkExists)
         {
-            sendBinary(path, file_type, fd, page);
+            homepage(fd);
         }
         else
         {
-            page += "\r\n";
-            ifstream infile(path, mode);
-            string line;
-            while (getline(infile, line))
+            if (file_type == "jpg" | file_type == "png")
             {
-                page += line;
+                sendBinary(path, file_type, fd, page);
             }
-            write(fd, page.c_str(), page.length());
+            else
+            {
+                page += "\r\n";
+                ifstream infile(path, mode);
+                string line;
+                while (getline(infile, line))
+                {
+                    page += line;
+                }
+                write(fd, page.c_str(), page.length());
+            }
         }
     }
 
@@ -239,4 +241,17 @@ void sendBinary(string file, string image_type, int fd, string page)
     }
     FILE *fp = fdopen(fd, "wb");
     fwrite(buffer.data(), 1, buffer.size(), fp);
+}
+
+void homepage(int fd)
+{
+    string page = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+
+    ifstream infile(page_root + "/index.html");
+    string line;
+    while (getline(infile, line))
+    {
+        page += line;
+    }
+    write(fd, page.c_str(), page.length());
 }
