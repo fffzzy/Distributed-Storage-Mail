@@ -1076,6 +1076,29 @@ void KVStoreNodeImpl::KVPrimaryRecovery(
   VerboseLog("Primary receives recovery request for secondary node: " +
              target_addr);
 
+  // locate the idx of target secondary node to be recovered
+  int target_idx = -1;
+  for (int i = 0; i < peer_addr_vec.size(); i++) {
+    if (peer_addr_vec[i].compare(target_addr) == 0) {
+      target_idx = i;
+      break;
+    }
+  }
+  assert(target_idx != -1);
+
+  ClientContext shealth_check_context;
+  KVResponse shealth_check_response;
+  Status shealth_check_status = peer_stub_vec[target_idx]->CheckHealth(
+      &shealth_check_context, Empty(), &shealth_check_response);
+  if (!shealth_check_status.ok()) {
+    VerboseLog("Primary fails to reconnect secondary " + target_addr +
+               " do not recover");
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("Primary fails to reconnect secondary " +
+                          target_addr);
+    return;
+  }
+
   // set primary status to RECOVERING
   node_status = KVStoreNodeStatus::RECOVERING;
 
