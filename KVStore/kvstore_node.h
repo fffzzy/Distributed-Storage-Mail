@@ -30,6 +30,8 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
   // tablet mem vector
   std::vector<Tablet*> tablet_mem_vec;
 
+  std::string target_addr_to_recover;
+
  public:
   KVStoreNodeImpl();
 
@@ -79,12 +81,13 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
                  KVResponse* response);
 
   // when primary node receives recovery request from master
+  static void* KVPrimaryRecoveryThreadFunc(void* args);
 
   void KVPrimaryRecovery(const KVRequest_KVRecoveryRequest* request,
                          KVResponse* response);
 
   // when secondary node receives recovery request from primary
-  void KVSecondaryRecovery(const KVRequest_KVRecoveryRequest* request,
+  void KVSecondaryRecovery(const KVRequest_KVSrecoveryRequest* request,
                            KVResponse* response);
 
   // secondary receives file transfer from primary

@@ -110,6 +110,11 @@ message KVRequest {
   message KVRecoveryRequest {
     optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
   }
+
+  // KVRecoveryRequest, primary -> secondary(running or suspend)
+  message KVSrecoveryRequest {
+    optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
+  }
   
   // KVFiletransferRequest, primary sends checkpoint and log files to secondary for recovery
   message KVFiletransferRequest {
@@ -136,6 +141,7 @@ message KVRequest {
     KVSdeleteRequest sdelete_request = 8;
     KVSuspendRequest suspend_request = 9;
     KVRecoveryRequest recovery_request = 10;
+    KVSrecoveryRequest srecovery_request = 11;
     KVFiletransferRequest filetransfer_request = 12;
     KVReplayRequest replay_request = 13;
   }

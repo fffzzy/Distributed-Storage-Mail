@@ -51,13 +51,9 @@ void* ThreadFunc(void* args) {
                   it.first.c_str(), cluster.id);
               abort();
             } else if (curr_status == RECOVERING) {
-              // Impossible.
-              fprintf(stderr,
-                      "[Health Check] node %s in Cluster-%d was recovering "
-                      "before. Impossible to become RUNNING without receiving "
-                      "'recovering-finished' notification.\n",
-                      it.first.c_str(), cluster.id);
-              abort();
+              cluster.status[it.first] = RUNNING;
+              VerboseLog("[Health Check] node " + it.first + " in Cluster-" +
+                         std::to_string(cluster.id) + " is RUNNING ... ");
             } else if (curr_status == CRASHED) {
               if (cluster.primary.empty()) {
                 // Consider first node as init node.
@@ -123,13 +119,9 @@ void* ThreadFunc(void* args) {
           } else if (check_health_res.status() == KVStatusCode::RECOVERING) {
             auto curr_status = cluster.status[it.first];
             if (curr_status == RUNNING) {
-              // Impossible.
-              fprintf(stderr,
-                      "[Health Check] node %s in Cluster-%d next status is "
-                      "RECOVERING but current status is RUNNING. Impossible "
-                      "case.\n",
-                      it.first.c_str(), cluster.id);
-              abort();
+              cluster.status[it.first] = RECOVERING;
+              VerboseLog("[Health Check] node " + it.first + " in Cluster-" +
+                         std::to_string(cluster.id) + " is RECOVERING ... ");
             } else if (curr_status == SUSPENDED) {
               // Impossible.
               fprintf(stderr,
@@ -140,7 +132,7 @@ void* ThreadFunc(void* args) {
               abort();
             } else if (curr_status == RECOVERING) {
               VerboseLog("[Health Check] node " + it.first + " in Cluster-" +
-                         std::to_string(cluster.id) + " is RECOVERING ... \n");
+                         std::to_string(cluster.id) + " is RECOVERING ... ");
             } else if (curr_status == CRASHED) {
               // Impossible.
               fprintf(stderr,
@@ -359,17 +351,25 @@ Status KVStoreMasterImpl::Suspend(ServerContext* context,
     if (it.first.compare(node_addr) == 0) {
       found = true;
       ClientContext context;
-      KVRequest request;
-      KVResponse response;
-      request.mutable_suspend_request()->set_target_addr(node_addr);
-      Status grpc_status = clusters_[cluster_id].stubs[node_addr]->Execute(
-          &context, request, &response);
+      KVRequest req;
+      KVResponse res;
+      req.mutable_suspend_request()->set_target_addr(node_addr);
+      Status grpc_status =
+          clusters_[cluster_id].stubs[node_addr]->Execute(&context, req, &res);
       if (grpc_status.ok()) {
         it.second = SUSPENDED;
-        response.set_status(KVStatusCode::SUCCESS);
+        response->set_status(KVStatusCode::SUCCESS);
+        if (clusters_[cluster_id].primary.compare(node_addr) == 0) {
+          for (auto& entry : clusters_[cluster_id].status) {
+            if (entry.second == RUNNING) {
+              clusters_[cluster_id].primary = entry.first;
+              break;
+            }
+          }
+        }
       } else {
-        response.set_status(KVStatusCode::FAILURE);
-        response.set_message("Node " + node_addr + " isn't responding ...");
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message(res.message());
       }
       break;
     }
@@ -397,7 +397,18 @@ Status KVStoreMasterImpl::Revive(ServerContext* context,
       found = true;
       if (primary_node.compare(it.first) == 0) {
         fprintf(stderr, "Impossible to revive primary node.\n");
-        abort();
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message("Impossible to revive primary node.");
+        return Status::OK;
+      }
+
+      if (it.second != SUSPENDED) {
+        fprintf(stderr,
+                "cannot revivie a node which is not in SUSPENDED status.\n");
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message(
+            "cannot revivie a node which is not in SUSPENDED status.");
+        return Status::OK;
       }
 
       ClientContext context;
@@ -408,10 +419,15 @@ Status KVStoreMasterImpl::Revive(ServerContext* context,
       Status grpc_status = clusters_[cluster_id].stubs[primary_node]->Execute(
           &context, req, &res);
       if (grpc_status.ok()) {
-        it.second = RECOVERING;
-        response->set_status(KVStatusCode::SUCCESS);
-        VerboseLog("[Revive] reviving node " + node_addr + " in Cluster-" +
-                   std::to_string(cluster_id));
+        if (res.status() == KVStatusCode::SUCCESS) {
+          it.second = RECOVERING;
+          response->set_status(KVStatusCode::SUCCESS);
+          VerboseLog("[Revive] reviving node " + node_addr + " in Cluster-" +
+                     std::to_string(cluster_id));
+        } else {
+          response->set_status(KVStatusCode::FAILURE);
+          response->set_message(res.message());
+        }
       } else {
         response->set_status(KVStatusCode::FAILURE);
         response->set_message("Primary node " + primary_node +

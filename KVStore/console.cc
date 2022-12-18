@@ -49,9 +49,9 @@ void KVStoreTestConsole::Run() {
     } else if (std::regex_match(line, sm, regex_revive)) {
       auto res = Revive(sm[1].str());
       if (res.ok()) {
-        std::cout << "[Suspend] succeed: " << std::endl;
+        std::cout << "[Revive] succeed: " << std::endl;
       } else {
-        std::cout << "[Suspend] failed: " << res.ToString() << std::endl;
+        std::cout << "[Revive] failed: " << res.ToString() << std::endl;
       }
     } else {
       fprintf(stderr, "Unpported commands: %s\n", line.c_str());

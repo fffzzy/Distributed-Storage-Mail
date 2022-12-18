@@ -210,7 +210,12 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
         KVPrimaryRecovery(&request->recovery_request(), response);
         break;
       }
+      case KVRequest::RequestCase::kSrecoveryRequest: {
+        KVSecondaryRecovery(&request->srecovery_request(), response);
+        break;
+      }
       default: {
+        VerboseLog("-ERR unsupported mthods when node is alive");
         response->set_status(KVStatusCode::FAILURE);
         response->set_message("-ERR unsupported mthods when node is alive");
       }
@@ -218,11 +223,12 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
   } else if (node_status == KVStoreNodeStatus::SUSPENDED) {
     switch (request->request_case()) {
       // only allow recover request from primary (in suspend status)
-      case KVRequest::RequestCase::kRecoveryRequest: {
-        KVSecondaryRecovery(&request->recovery_request(), response);
+      case KVRequest::RequestCase::kSrecoveryRequest: {
+        KVSecondaryRecovery(&request->srecovery_request(), response);
         break;
       }
       default: {
+        VerboseLog("-ERR unsupported mthods when node is suspend");
         response->set_status(KVStatusCode::FAILURE);
         response->set_message("-ERR unsupported mthods when node is suspend");
       }
@@ -239,7 +245,14 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
         KVReplay(&request->replay_request(), response);
         break;
       }
+      case KVRequest::RequestCase::kRecoveryRequest: {
+        VerboseLog("-ERR Primary is busy with recovering other nodes");
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message("Primary is busy with recovering other nodes");
+        break;
+      }
       default: {
+        VerboseLog("-ERR unsupported mthods when node is recovering");
         response->set_status(KVStatusCode::FAILURE);
         response->set_message(
             "-ERR unsupported mthods when node is recovering");
@@ -844,11 +857,9 @@ void KVStoreNodeImpl::KVSuspend(const KVRequest_KVSuspendRequest* request,
   return;
 }
 
-void* KVPrimaryRecoveryThreadFunc(void* args) {
-  std::pair<KVStoreNodeImpl*, std::string> pair =
-      *(std::pair<KVStoreNodeImpl*, std::string>*)args;
-  KVStoreNodeImpl* primary_node = pair.first;
-  std::string target_addr = pair.second;
+void* KVStoreNodeImpl::KVPrimaryRecoveryThreadFunc(void* args) {
+  KVStoreNodeImpl* primary_node = (KVStoreNodeImpl*)args;
+  std::string target_addr = primary_node->target_addr_to_recover;
 
   primary_node->VerboseLog("primary node starts to recover secondary node: " +
                            target_addr);
@@ -861,13 +872,13 @@ void* KVPrimaryRecoveryThreadFunc(void* args) {
       break;
     }
   }
-  assert(target_idx != 0);
+  assert(target_idx != -1);
 
-  // primary node send recovery notification to secondary nodes
+  // primary node send srecovery notification to secondary nodes
   primary_node->VerboseLog("Send recovery notification to secondary node: " +
                            target_addr);
   KVRequest secondary_recovery_request;
-  secondary_recovery_request.mutable_recovery_request()->set_target_addr(
+  secondary_recovery_request.mutable_srecovery_request()->set_target_addr(
       target_addr);
   KVResponse secondary_recovery_response;
   ClientContext secondary_recovery_context;
@@ -875,6 +886,14 @@ void* KVPrimaryRecoveryThreadFunc(void* args) {
       primary_node->peer_stub_vec[target_idx].get()->Execute(
           &secondary_recovery_context, secondary_recovery_request,
           &secondary_recovery_response);
+
+  if (!secondary_recovery_status.ok()) {
+    std::cerr << "-ERR secondary recovery request to " << target_addr
+              << " fails, grpc fails" << std::endl;
+  } else if (secondary_recovery_response.status() != KVStatusCode::SUCCESS) {
+    std::cerr << "-ERR secondary recovery request to " << target_addr
+              << " fails, request rejected" << std::endl;
+  }
 
   // primary node tranfer files to secondary nodes
   for (int i = 0; i < num_tablet_total; i++) {
@@ -904,6 +923,14 @@ void* KVPrimaryRecoveryThreadFunc(void* args) {
             &checkpoint_transfer_context, checkpoint_transfer_request,
             &checkpoint_transfer_response);
 
+    if (!checkpoint_transfer_status.ok()) {
+      std::cerr << "-ERR checkpoint " << i << " transfer fails, grpc fails"
+                << std::endl;
+    } else if (checkpoint_transfer_response.status() != KVStatusCode::SUCCESS) {
+      std::cerr << "-ERR checkpoint " << i
+                << " transfer fails, request rejected " << std::endl;
+    }
+
     /* transfer log */
     primary_node->VerboseLog("Sync logfile " + std::to_string(i) + " with " +
                              target_addr);
@@ -926,6 +953,14 @@ void* KVPrimaryRecoveryThreadFunc(void* args) {
         primary_node->peer_stub_vec[target_idx].get()->Execute(
             &log_transfer_context, log_transfer_request,
             &log_transfer_response);
+
+    if (!log_transfer_status.ok()) {
+      std::cerr << "-ERR logfile " << i << " transfer fails, grpc fails"
+                << std::endl;
+    } else if (log_transfer_response.status() != KVStatusCode::SUCCESS) {
+      std::cerr << "-ERR logfile " << i << " transfer fails, request rejected "
+                << std::endl;
+    }
   }
 
   /* send replay request */
@@ -947,10 +982,20 @@ void* KVPrimaryRecoveryThreadFunc(void* args) {
   Status replay_status = primary_node->peer_stub_vec[target_idx].get()->Execute(
       &replay_context, replay_request, &replay_response);
 
+  if (!replay_status.ok()) {
+    std::cerr << "-ERR replay " << tablet_target << " fails, grpc fails"
+              << std::endl;
+  } else if (replay_response.status() != KVStatusCode::SUCCESS) {
+    std::cerr << "-ERR replay " << tablet_target << " fails, request rejected "
+              << std::endl;
+  }
+
   // replay finishes, recovery finishes, set primary node status to ALIVE
   primary_node->node_status = KVStoreNodeStatus::RUNNING;
 
   // reply to master that recovery is finished
+  primary_node->VerboseLog("Acknowledge master recovery to " + target_addr +
+                           " is finished");
   NotifyRecoveryFinishedRequest recovery_finish_request;
   recovery_finish_request.set_target_addr(target_addr);
   KVResponse recovery_finish_response;
@@ -959,6 +1004,9 @@ void* KVPrimaryRecoveryThreadFunc(void* args) {
       primary_node->master_stub.get()->NotifyRecoveryFinished(
           &recovery_finish_context, recovery_finish_request,
           &recovery_finish_response);
+
+  // reset target_addr_to_recover
+  primary_node->target_addr_to_recover.clear();
 
   return NULL;
 }
@@ -970,7 +1018,8 @@ void KVStoreNodeImpl::KVPrimaryRecovery(
   // revived
   assert(addr.compare(target_addr) != 0);
 
-  VerboseLog("Receive recovery request for secondary node: " + target_addr);
+  VerboseLog("Primary receives recovery request for secondary node: " +
+             target_addr);
 
   // set primary status to RECOVERING
   node_status = KVStoreNodeStatus::RECOVERING;
@@ -978,9 +1027,9 @@ void KVStoreNodeImpl::KVPrimaryRecovery(
   // activate the recovery thread to execute
   pthread_t recovery_thread;
   // pass self and target_addr as arguments
-  std::pair<KVStoreNodeImpl*, std::string> pair(this, target_addr);
-  if (pthread_create(&recovery_thread, NULL, KVPrimaryRecoveryThreadFunc,
-                     &pair) < 0) {
+  target_addr_to_recover = target_addr;
+  if (pthread_create(&recovery_thread, NULL, &KVPrimaryRecoveryThreadFunc,
+                     this) < 0) {
     fprintf(stderr,
             "Failed to create a pthread to execute primary node's recovery "
             "work.\n");
@@ -995,12 +1044,12 @@ void KVStoreNodeImpl::KVPrimaryRecovery(
 }
 
 void KVStoreNodeImpl::KVSecondaryRecovery(
-    const KVRequest_KVRecoveryRequest* request, KVResponse* response) {
+    const KVRequest_KVSrecoveryRequest* request, KVResponse* response) {
   std::string target_addr = request->target_addr();
   // no actual usage, just to assert addr is correct
   assert(addr.compare(target_addr) == 0);
 
-  VerboseLog("Receive recovery request for myself");
+  VerboseLog("Secondary receive recovery request for myself");
 
   // update status to suspend
   node_status = KVStoreNodeStatus::RECOVERING;
@@ -1149,6 +1198,8 @@ void KVStoreNodeImpl::KVReplay(const KVRequest_KVReplayRequest* request,
 
   // respond
   response->set_status(KVStatusCode::SUCCESS);
+
+  VerboseLog("Secondary finishes recovery");
 
   return;
 }
