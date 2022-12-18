@@ -117,6 +117,12 @@ message KVRequest {
   }
   
   // KVFiletransferRequest, primary sends checkpoint and log files to secondary for recovery
+  message KVChecksumRequest {
+    optional FileType file_type = 1;  // [Required]
+    optional int32 tablet_idx = 2;             // [Required]
+    optional string checksum = 3;      // [Required]
+  }
+
   message KVFiletransferRequest {
     optional FileType file_type = 1;  // [Required]
     optional int32 tablet_idx = 2;             // [Required]
@@ -140,10 +146,11 @@ message KVRequest {
     KVDeleteRequest delete_request = 7;
     KVSdeleteRequest sdelete_request = 8;
     KVSuspendRequest suspend_request = 9;
-    KVRecoveryRequest recovery_request = 10;
-    KVSrecoveryRequest srecovery_request = 11;
-    KVFiletransferRequest filetransfer_request = 12;
-    KVReplayRequest replay_request = 13;
+    KVChecksumRequest checksum_request = 10;
+    KVRecoveryRequest recovery_request = 11;
+    KVSrecoveryRequest srecovery_request = 12;
+    KVFiletransferRequest filetransfer_request = 13;
+    KVReplayRequest replay_request = 14;
   }
 }
 
