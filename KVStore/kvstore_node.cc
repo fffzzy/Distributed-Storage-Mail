@@ -1091,8 +1091,8 @@ void KVStoreNodeImpl::KVPrimaryRecovery(
   Status shealth_check_status = peer_stub_vec[target_idx]->CheckHealth(
       &shealth_check_context, Empty(), &shealth_check_response);
   if (!shealth_check_status.ok()) {
-    VerboseLog("Primary fails to reconnect secondary " + target_addr +
-               " do not recover");
+    VerboseLog("-------------------Primary fails to reconnect secondary " +
+               target_addr + " do not recover");
     response->set_status(KVStatusCode::FAILURE);
     response->set_message("Primary fails to reconnect secondary " +
                           target_addr);
