@@ -4,11 +4,16 @@ namespace KVStore {
 namespace {
 using ::google::protobuf::Empty;
 using grpc::Channel;
+using grpc::ChannelArguments;
 using grpc::ClientContext;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
+
+const int kMessageSizeLimit = 1024 * 1024 * 1024;
+
+unsigned long long click = 0;
 
 // Verbose mode.
 bool verbose_ = false;
@@ -24,7 +29,8 @@ void* ThreadFunc(void* args) {
   std::vector<Cluster>* clusters = (std::vector<Cluster>*)args;
 
   while (true) {
-    VerboseLog("[Health Check] start checking ... ... ");
+    VerboseLog("[Health Check] start checking " + std::to_string(click++) +
+               " ... ... ");
 
     for (auto& cluster : (*clusters)) {
       // Check health of each replica node within a cluster.
@@ -208,6 +214,13 @@ void KVStoreMasterImpl::ReadConfig() {
       clusters_[cluster_id].status[addr_str] = CRASHED;
       clusters_[cluster_id].stubs[addr_str] = KVStoreNode::NewStub(
           grpc::CreateChannel(addr_str, grpc::InsecureChannelCredentials()));
+
+      ChannelArguments args;
+      // 5GB incoming message size.
+      args.SetMaxReceiveMessageSize(kMessageSizeLimit);
+      clusters_[cluster_id].stubs[addr_str] =
+          KVStoreNode::NewStub(grpc::CreateCustomChannel(
+              addr_str, grpc::InsecureChannelCredentials(), args));
     }
     count++;
   }
@@ -468,6 +481,9 @@ int main(int argc, char** argv) {
   master.CheckReplicaHealth();
 
   ::grpc::ServerBuilder builder;
+  // 1 GB incoming message size.
+  builder.SetMaxReceiveMessageSize(KVStore::kMessageSizeLimit);
+
   // Listen on the given address without any authentication mechanism.
   builder.AddListeningPort(master.GetAddr(), grpc::InsecureServerCredentials());
   // Register "service" as the instance through which we'll communicate with

@@ -14,13 +14,14 @@ pthread_mutex_t execute_lock;
 namespace {
 using ::google::protobuf::Empty;
 using grpc::Channel;
+using grpc::ChannelArguments;
 using grpc::ClientContext;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 
-// Request Queue
+const int kMessageSizeLimit = 1024 * 1024 * 1024;
 
 }  // namespace
 
@@ -154,11 +155,19 @@ void KVStoreNodeImpl::InitEnv() {
   }
 
   // create stub for master and peers
-  master_stub = KVStoreMaster::NewStub(
-      grpc::CreateChannel(master_addr, grpc::InsecureChannelCredentials()));
+  // master_stub = KVStoreMaster::NewStub(
+  //     grpc::CreateChannel(master_addr, grpc::InsecureChannelCredentials()));
+  ChannelArguments master_arg;  // 1GB incoming message size.
+  master_arg.SetMaxReceiveMessageSize(kMessageSizeLimit);
+  master_stub = KVStoreMaster::NewStub(grpc::CreateCustomChannel(
+      master_addr, grpc::InsecureChannelCredentials(), master_arg));
   for (int i = 0; i < peer_addr_vec.size(); i++) {
-    peer_stub_vec.push_back(KVStoreNode::NewStub(grpc::CreateChannel(
-        peer_addr_vec[i], grpc::InsecureChannelCredentials())));
+    // peer_stub_vec.push_back(KVStoreNode::NewStub(grpc::CreateChannel(
+    //     peer_addr_vec[i], grpc::InsecureChannelCredentials())));
+    ChannelArguments peer_arg;  // 1GB incoming message size.
+    peer_arg.SetMaxReceiveMessageSize(kMessageSizeLimit);
+    peer_stub_vec.push_back(KVStoreNode::NewStub(grpc::CreateCustomChannel(
+        peer_addr_vec[i], grpc::InsecureChannelCredentials(), peer_arg)));
   }
 }
 
@@ -1247,6 +1256,8 @@ int main(int argc, char** argv) {
   std::string server_address(node.addr);
 
   ::grpc::ServerBuilder builder;
+  // 1GB incoming message size,
+  builder.SetMaxReceiveMessageSize(KVStore::kMessageSizeLimit);
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
   builder.RegisterService(&node);
   std::unique_ptr<::grpc::Server> server(builder.BuildAndStart());

@@ -15,6 +15,8 @@ const std::regex regex_get("get (.+) (.+)");
 const std::regex regex_put("put (.+) (.+) (.+)");
 const std::regex regex_cput("cput (.+) (.+) (.+) (.+)");
 const std::regex regex_delete("delete (.+) (.+)");
+const std::regex regex_gfile("gfile (.+) (.+)");
+const std::regex regex_pfile("pfile (.+) (.+) (.+)");
 
 class KVStoreTestClient : public KVStore::KVStoreClient {
  public:
@@ -66,6 +68,25 @@ void KVStoreTestClient::Run() {
       } else {
         std::cout << "[Delete] failed: " << res.ToString() << std::endl;
       }
+    } else if (std::regex_match(line, sm, regex_pfile)) {
+      std::string row = sm[1].str();
+      std::string col = sm[2].str();
+      std::string path = sm[3].str();
+      std::ifstream file(path);
+      if (file.good()) {
+        std::string content((std::istreambuf_iterator<char>(file)),
+                            (std::istreambuf_iterator<char>()));
+        std::cout << "reading finished " << std::endl;
+        auto res = Put(row, col, content);
+        if (res.ok()) {
+          std::cout << "[PFile] succeeded." << std::endl;
+        } else {
+          std::cout << "[PFile] failed: " << res.ToString() << std::endl;
+        }
+      } else {
+        fprintf(stderr, "no such file: %s\n", path.c_str());
+      }
+
     } else {
       fprintf(stderr, "Unpported commands: %s\n", line.c_str());
     }

@@ -3,12 +3,14 @@
 namespace KVStore {
 namespace {
 using grpc::Channel;
+using grpc::ChannelArguments;
 using grpc::ClientContext;
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
 
+const int kMessageSizeLimit = 1024 * 1024 * 1024;
 const char* kServerListPath = "../../Config/serverlist.txt";
 
 absl::StatusOr<std::string> GetMasterAddrFromConfig() {
@@ -67,8 +69,14 @@ absl::StatusOr<std::string> KVStoreClient::Get(const std::string& row,
   ClientContext context;
   KVRequest req;
   KVResponse res;
-  auto stub = KVStoreNode::NewStub(
-      grpc::CreateChannel(addr->data(), grpc::InsecureChannelCredentials()));
+  ChannelArguments args;
+  // 5GB incoming message size.
+  args.SetMaxReceiveMessageSize(kMessageSizeLimit);
+  auto stub = KVStoreNode::NewStub(grpc::CreateCustomChannel(
+      *addr, grpc::InsecureChannelCredentials(), args));
+
+  // auto stub = KVStoreNode::NewStub(
+  //     grpc::CreateChannel(*addr, grpc::InsecureChannelCredentials()));
 
   req.mutable_get_request()->set_row(row);
   req.mutable_get_request()->set_col(col);
@@ -96,7 +104,7 @@ absl::Status KVStoreClient::Put(const std::string& row, const std::string& col,
   KVRequest req;
   KVResponse res;
   auto stub = KVStoreNode::NewStub(
-      grpc::CreateChannel(addr->data(), grpc::InsecureChannelCredentials()));
+      grpc::CreateChannel(*addr, grpc::InsecureChannelCredentials()));
 
   req.mutable_put_request()->set_row(row);
   req.mutable_put_request()->set_col(col);
@@ -126,7 +134,7 @@ absl::Status KVStoreClient::CPut(const std::string& row, const std::string& col,
   KVRequest req;
   KVResponse res;
   auto stub = KVStoreNode::NewStub(
-      grpc::CreateChannel(addr->data(), grpc::InsecureChannelCredentials()));
+      grpc::CreateChannel(*addr, grpc::InsecureChannelCredentials()));
 
   req.mutable_cput_request()->set_row(row);
   req.mutable_cput_request()->set_col(col);
@@ -156,7 +164,7 @@ absl::Status KVStoreClient::Delete(const std::string& row,
   KVRequest req;
   KVResponse res;
   auto stub = KVStoreNode::NewStub(
-      grpc::CreateChannel(addr->data(), grpc::InsecureChannelCredentials()));
+      grpc::CreateChannel(*addr, grpc::InsecureChannelCredentials()));
 
   req.mutable_delete_request()->set_row(row);
   req.mutable_delete_request()->set_col(col);
