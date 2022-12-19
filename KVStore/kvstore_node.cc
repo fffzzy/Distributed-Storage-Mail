@@ -1,5 +1,7 @@
 #include "kvstore_node.h"
 
+::grpc::Server* global_server;
+
 namespace KVStore {
 const char* serverlist_path = "../../Config/serverlist.txt";
 int num_replicas = 3;
@@ -1364,11 +1366,18 @@ void KVStoreNodeImpl::KVReplay(const KVRequest_KVReplayRequest* request,
 
 }  // namespace KVStore
 
+void signalHandler(int signum) {
+  std::cout << "Shutdown server" << std::endl;
+  global_server->Shutdown();
+}
+
 int main(int argc, char** argv) {
   if (argc == 1) {
     fprintf(stderr, "[Command Line Format] ./kvstore_node <num> [-v]\n");
     exit(-1);
   }
+
+  signal(SIGINT, signalHandler);
 
   /* declare a node class */
   KVStore::KVStoreNodeImpl node;
@@ -1410,6 +1419,7 @@ int main(int argc, char** argv) {
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
   builder.RegisterService(&node);
   std::unique_ptr<::grpc::Server> server(builder.BuildAndStart());
+  global_server = server.get();
   std::cout << "Server listening on " << server_address << std::endl;
   server->Wait();
 }
