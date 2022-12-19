@@ -24,6 +24,8 @@ void APIHandler::parsePost() {
     sendEmail();
   } else if (header.substr(0, 12) == "drive/upload") {
     uploadFile();
+  } else if (header.substr(0, 5) == "drive") {
+    changeFiles();
   } else if (header.substr(0, 7) == "suspend") {
     suspendNode();
   } else if (header.substr(0, 6) == "revive") {
@@ -235,6 +237,12 @@ void APIHandler::getFiles() {
     page = "HTTP/1.1 200 success\r\n\r\n";
 
     auto res = kvstore_.Get(username, "files");
+    if (res.ok()) {
+      std::cout << *res << std::endl;
+    } else {
+      std::cout << " ----- " << std::endl;
+      std::cout << res.status().ToString() << std::endl;
+    }
     string files = res.ok() ? *res : "";
 
     if (files.empty()) {
@@ -255,7 +263,6 @@ void APIHandler::changeFiles() {
     page = "HTTP/1.1 401 not logged in\r\n\r\n";
   } else {
     page = "HTTP/1.1 200 success\r\n\r\n";
-
     auto res = kvstore_.Put(username, "files", data.dump());
     if (!res.ok()) {
       fprintf(stderr, "failed to put username & files into kvstore: %s\n",

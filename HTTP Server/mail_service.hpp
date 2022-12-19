@@ -24,8 +24,6 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 
-#include "local_kvstore.hpp"
-
 using json = nlohmann::json;
 
 using namespace std;
