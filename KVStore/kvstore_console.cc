@@ -54,9 +54,10 @@ KVStoreConsole::PollStatus() {
     for (int i = 0; i < res.clusters_size(); i++) {
       std::vector<NodeInfo> cluster;
       for (int j = 0; j < res.clusters(i).nodes_size(); j++) {
-        NodeInfo node_info{.addr = res.clusters(i).nodes(j).address(),
-                           .is_primary = res.clusters(i).nodes(j).is_primary(),
-                           .status = res.clusters(i).nodes(j).state()};
+        NodeInfo node_info;
+        node_info.addr = res.clusters(i).nodes(j).address();
+        node_info.is_primary = res.clusters(i).nodes(j).is_primary();
+        node_info.status = res.clusters(i).nodes(j).state();
         cluster.push_back(node_info);
       }
       status.push_back(cluster);
