@@ -47,6 +47,7 @@ public:
             }};
 
         table["123"]["mails"] = mails.dump();
+        table["1"]["cookie"] = "2";
     };
 
     // Read commands from STDIN.
@@ -74,8 +75,17 @@ public:
              const std::string &value)
     {
         table[row][col] = value;
-        if (is_verbose) {
-            cout << "Local kvstore just added a value: " + value + " at row: " + row + " at column: " + col << endl;
+        if (is_verbose)
+        {
+            if (value.size() > 1000)
+            {
+                cout << "The item size is: " << value.size() << " Store at row: " + row + " at column: " + col << endl;
+            }
+            else
+            {
+
+                cout << "Local kvstore just added a value: " + value + " at row: " + row + " at column: " + col << endl;
+            }
         }
     };
     void CPut(const std::string &row, const std::string &col,

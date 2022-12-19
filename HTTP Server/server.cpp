@@ -8,7 +8,7 @@ static int listen_fd;
 static int port = 8019;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
-static string page_root = "./React/build";
+static string page_root = "./build";
 static KVStoreClient kvstore("127.0.0.1:8017", true);
 int main(int argc, char *argv[])
 {
@@ -149,12 +149,34 @@ sockaddr_in parseSockaddr(string s)
 
 void *messageWorker(void *comm_fd)
 {
-    char buffer[128000] = {};
+    // while (true)
+    // {
+    //     vector<char> buffer(BUFF_SIZE);
+
+    //     int read_len = recvfrom(sock, buffer.data(), BUFF_SIZE, 0,
+    //                             (struct sockaddr *)&source_address,
+    //                             &source_address_len);
+    //     string str;
+    //     str.append(buffer.begin(), buffer.begin() + read_len);
+    // }
+    size_t buffer_size = 5000000;
+    char buffer[buffer_size] = {};
 
     int fd = *(int *)comm_fd;
-    read(fd, buffer, 127999);
+    read(fd, buffer, buffer_size - 1);
+    // if (strlen(buffer) != buffer_size - 1)
+    size_t len = strlen(buffer);
     if (is_verbose)
-        printf("%s\n", buffer);
+    {
+        if (len > 1000)
+        {
+            cout << "Http request size: " << len << endl;
+        }
+        else
+        {
+            printf("%s\n", buffer);
+        }
+    }
 
     if (!strncmp(buffer, "GET / ", 6))
     {

@@ -2,6 +2,7 @@
 #include <fstream>
 #include "nlohmann/json.hpp"
 #include <chrono>
+#include <string>
 
 using namespace std;
 using json = nlohmann::json;
@@ -96,5 +97,8 @@ int main()
     cout << mails.dump(4) << endl;
     time_t t = chrono::system_clock::to_time_t(chrono::system_clock::now());
     cout << ctime(&t) << endl;
+
+    string s;
+    cout << s.max_size() << endl;
     return 0;
 }

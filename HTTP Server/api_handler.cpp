@@ -18,10 +18,6 @@ void APIHandler::parsePost()
     {
         uploadFile();
     }
-    else if (header.substr(0, 14) == "drive/download")
-    {
-        downloadFile();
-    }
     else if (header.substr(0, 5) == "drive")
     {
         changeFiles();
@@ -36,6 +32,10 @@ void APIHandler::parseGet()
     if (header.substr(0, 4) == "mail")
     {
         getEmailList();
+    }
+    else if (header.substr(0, 14) == "drive/download")
+    {
+        downloadFile();
     }
     else if (header.substr(0, 5) == "drive")
     {
@@ -323,9 +323,18 @@ void APIHandler::uploadFile()
     }
     else
     {
+        string file_matcher = "fileId=";
+        size_t index = header.find(file_matcher);
+        size_t id_end = header.find(" ", index);
+
+        bool matched = false;
+
+        string fileId = header.substr(index + file_matcher.size(), id_end - index - file_matcher.size());
+        if (is_verbose)
+            cout << "fileId detected in the header: " + fileId << endl;
         page = "HTTP/1.1 200 success\r\n\r\n";
-        string fileId = data["fileId"];
-        kvstore.Put(username, fileId, data.dump());
+        // string fileId = data["fileId"];
+        kvstore.Put(username, fileId, chunk);
     }
     write(fd, page.c_str(), page.length());
 }
@@ -354,6 +363,8 @@ void APIHandler::downloadFile()
         string file = kvstore.Get(username, fileId);
 
         page += file;
+
+        cout << "Current response size: " << page.size() << endl;
     }
     write(fd, page.c_str(), page.length());
 }

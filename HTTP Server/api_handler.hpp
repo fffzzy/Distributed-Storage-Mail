@@ -50,6 +50,7 @@ public:
     int fd;
     bool is_verbose;
     KVStoreClient &kvstore;
+    string chunk;
 
     APIHandler(string buf, int f, bool is_verb, KVStoreClient &kvstore) : fd(f), is_verbose(is_verb), kvstore(kvstore)
     {
@@ -59,16 +60,21 @@ public:
         if (body.find("{") == string::npos)
         {
             data = nullptr;
+            chunk = body;
         }
-        else
+        else if (body.size() < 10000)
         {
             data = json::parse(body);
+            chunk = body;
+        } else {
+            data = nullptr;
+            chunk = body;
         }
-        if (is_verbose)
-        {
-            cout << buf << endl;
-            cout << data << endl;
-        }
+        // if (is_verbose)
+        // {
+        //     cout << buf << endl;
+        //     cout << data << endl;
+        // }
     };
     void parsePost();
     void parseGet();
