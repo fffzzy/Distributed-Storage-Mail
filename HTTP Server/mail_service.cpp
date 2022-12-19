@@ -8,6 +8,7 @@ static int port = 2500;
 static string path;
 static vector<string> users;
 pthread_mutex_t lock;
+static KVStoreClient kvstore("127.0.0.1:8017", true);
 
 void MailService::startAccepting()
 {
@@ -31,11 +32,13 @@ void MailService::startAccepting()
             fprintf(stderr, "[%d] New connection\n", comm_fd);
         pthread_t p;
         threads.push_back(p);
-        pthread_create(&threads.back(), NULL, messageWorker, (void *)&comm_fd);
+        // Pram pra = {comm_fd, kvstore};
+        // pthread_create(&threads.back(), NULL, mailWorker, (void *)&pra);
+        pthread_create(&threads.back(), NULL, mailWorker, (void *)&comm_fd);
     }
 }
 
-void *messageWorker(void *comm_fd)
+void *mailWorker(void *comm_fd)
 {
     char buffer[1020] = {};
     char *head = buffer;
@@ -63,6 +66,10 @@ void *messageWorker(void *comm_fd)
     const char *HELO = "250 localhost\r\n";
     const char *MAILBOX_ERR = "550 Requested action not taken: mailbox unavailable [E.g., mailbox not found, no access]\r\n";
     const char *INPUT = "354 Start mail input; end with <CRLF>.<CRLF>\r\n";
+
+    // Pram *pr = (Pram *)p;
+    // int fd = pr->fd;
+    // KVStoreClient kvstore = pr->kvstore;
 
     int fd = *(int *)comm_fd;
     write(fd, READY, strlen(READY));
@@ -115,6 +122,7 @@ void *messageWorker(void *comm_fd)
                             memcpy(tmp, text_head, int(text_tail - text_head));
                             tmp[int(text_tail - text_head)] = '\0';
                             from = string(tmp);
+                            from = from.substr(1, from.size() - 2);
                             stage = Mail;
                         }
                         else
@@ -158,19 +166,14 @@ void *messageWorker(void *comm_fd)
                             {
                                 // get receiver's name
                                 text_head = strstr(buffer, "<");
-                                text_tail = strstr(buffer, "@");
+                                text_tail = strstr(buffer, ">");
                                 text_head++;
                                 memcpy(tmp, text_head, int(text_tail - text_head));
                                 tmp[int(text_tail - text_head)] = '\0';
                                 to = string(tmp);
-                                if (find(users.begin(), users.end(), to) == users.end())
-                                    memcpy(message, MAILBOX_ERR, strlen(MAILBOX_ERR) + 1);
-                                else
-                                {
-                                    tos.push_back(to);
-                                    stage = Rcpt;
-                                    memcpy(message, OK, strlen(OK) + 1);
-                                }
+                                tos.push_back(to);
+                                stage = Rcpt;
+                                memcpy(message, OK, strlen(OK) + 1);
                             }
                             // reject emails to other locations
                             else
@@ -216,15 +219,47 @@ void *messageWorker(void *comm_fd)
                         // grab mutexes to control thread access first
                         pthread_mutex_lock(&lock);
                         time_t t = chrono::system_clock::to_time_t(chrono::system_clock::now());
-                        fstream fs;
-                        fs.open(path + "/" + r + ".mbox", fstream::out | fstream::app);
-                        int fsfd = static_cast<__gnu_cxx::stdio_filebuf<char> *const>(fs.rdbuf())->fd();
 
-                        // since flock() is tied to the file descriptor, it gets released when the file is closed
-                        flock(fsfd, LOCK_EX);
 
-                        // append contents with the sender and time
-                        fs << "From " << from << " " << ctime(&t) << mail;
+                        string username = r.substr(0, r.find("@"));
+                        json new_mail;
+
+                        new_mail["sender"] = from;
+                        for (auto sender : tos)
+                        {
+
+                            new_mail["recipients"].push_back(sender);
+                        }
+                        string matcher = "Subject: ";
+                        size_t title_begin = mail.find(matcher);
+                        size_t sep = mail.find("\r\n", title_begin);
+                        new_mail["subject"] = mail.substr(title_begin + matcher.size(), sep - title_begin - matcher.size());
+                        new_mail["content"] = mail.substr(sep + 2);
+                        string time = ctime(&t);
+                        new_mail["time"] = time.substr(0, time.size() - 1);
+
+                        cout << "To save the new email to mailbox" << endl;
+                        string mail_string = kvstore.Get(username, "mails");
+                        if (mail_string.empty())
+                        {
+                            cout << username << " has no email in the mailbox currently!" << endl;
+                            mail_string = "[]";
+                        }
+                        json mailList = json::parse(mail_string);
+
+                        if (mailList.empty())
+                        {
+                            new_mail["mailId"] = 1;
+                        }
+                        else
+                        {
+                            int mailId = mailList[mailList.size() - 1]["mailId"];
+                            new_mail["mailId"] = mailId + 1;
+                        }
+
+                        mailList.push_back(new_mail);
+                        kvstore.Put(username, "mails", mailList.dump());
+
                         pthread_mutex_unlock(&lock);
                     }
                     memcpy(message, OK, strlen(OK) + 1);
@@ -297,4 +332,9 @@ void *messageWorker(void *comm_fd)
         // fprintf(stderr, "%d\n", *head);
     }
     return NULL;
+}
+
+int main(int argc, char *argv[]) {
+    MailService mail_service;
+    mail_service.startAccepting();
 }

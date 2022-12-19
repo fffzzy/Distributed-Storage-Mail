@@ -29,6 +29,11 @@ using json = nlohmann::json;
 
 using namespace std;
 
+struct Pram {
+    int fd;
+    KVStoreClient &kvstore;
+};
+
 enum Status
 {
     Begin = 0,
@@ -42,7 +47,6 @@ enum Status
 class MailService
 {
 private:
-
 public:
     MailService() {};
 
@@ -51,4 +55,4 @@ public:
     void startAccepting();
 };
 
-void *messageWorker(void *);
+void *mailWorker(void *);
