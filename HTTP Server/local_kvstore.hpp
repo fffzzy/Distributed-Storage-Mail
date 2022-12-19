@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <unordered_map>
 // #include "../KVStore/kvstore.grpc.pb.h"
 #include <nlohmann/json.hpp>
@@ -94,6 +95,30 @@ public:
     {
         table[row].erase(col);
     };
+};
+
+struct NodeInfo {
+    bool is_primary;
+    string addr;
+    string status;
+};
+
+class KVStoreConsole {
+public:
+    vector<vector<NodeInfo>> PollStatus() {
+        NodeInfo node1 = {true, "127.0.0.0:11000", "Running"};
+        NodeInfo node2 = {false, "127.0.0.0:11001", "Closed"};
+        NodeInfo node3 = {false, "127.0.0.0:11000", "Running"};
+        NodeInfo node4 = {false, "127.0.0.0:11001", "Closed"};
+        NodeInfo node5 = {true, "127.0.0.0:11000", "Running"};
+        NodeInfo node6 = {false, "127.0.0.0:11001", "Running"};
+
+        vector<NodeInfo> v1 = {node1, node2, node3};
+        vector<NodeInfo> v2 = {node4, node5, node6};
+        return {v1, v2};
+    };
+    void Suspend(const string &node_addr) {};
+    void Revive(const string &node_addr) {};
 };
 
 // string KVStoreClient::Get(const std::string &row, const std::string &col)

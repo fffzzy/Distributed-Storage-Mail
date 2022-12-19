@@ -159,7 +159,7 @@ void *messageWorker(void *comm_fd)
     //     string str;
     //     str.append(buffer.begin(), buffer.begin() + read_len);
     // }
-    size_t buffer_size = 5000000;
+    size_t buffer_size = 500000;
     char buffer[buffer_size] = {};
 
     int fd = *(int *)comm_fd;
