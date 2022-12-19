@@ -1283,9 +1283,10 @@ Tablet* KVStoreNodeImpl::ReplayTablet(int tablet_idx) {
       // skip a whitespace
       char ignorebuffer[10];
       log_file.read(ignorebuffer, 1);
-      char buffer[value_length];
+      char* buffer = new char[value_length];
       log_file.read(buffer, value_length);
       std::string value = std::string(buffer, value_length);
+      delete[] buffer;
 
       // put <row> <col> <value>
       if (tablet->map.find(row) == tablet->map.end()) {

@@ -94,9 +94,10 @@ Tablet* LoadTabletFromFile(int node_idx, int tablet_idx) {
       // skip a whitespace
       char ignorebuffer[10];
       file.read(ignorebuffer, 1);
-      char buffer[cell_size];
+      char* buffer = new char[cell_size];
       file.read(buffer, cell_size);
       std::string cell = std::string(buffer, cell_size);
+      delete[] buffer;
 
       // insert to map
       tablet->map[row_key][col_key] = cell;
