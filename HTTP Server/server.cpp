@@ -10,6 +10,17 @@ static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
 static string page_root = "./build";
 static KVStoreClient kvstore("127.0.0.1:8017", true);
+
+// log a message
+void log(string message)
+{
+    if (!is_verbose)
+    {
+        return;
+    }
+    cout << message << endl;
+}
+
 int main(int argc, char *argv[])
 {
     // signal(SIGINT, sigHandler);
@@ -21,10 +32,23 @@ int main(int argc, char *argv[])
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htons(INADDR_ANY);
     servaddr.sin_port = htons(port);
-    while (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+    const int REUSE = 1;
+    int setsockoptret = setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &REUSE, sizeof(REUSE));
+    if (setsockoptret < 0)
     {
-        servaddr.sin_port = htons(--port);
+        cerr << "Error setting socket\r\n";
+        exit(2);
     }
+    int bindret = bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+    if (bindret < 0)
+    {
+        cerr << "Error setting socket\r\n";
+        exit(2);
+    }
+    // while (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+    // {
+    //     servaddr.sin_port = htons(--port);
+    // }
     cout << "Server start a port at: " << port << endl;
     listen(listen_fd, 100);
     while (!is_shut_down)
@@ -159,13 +183,32 @@ void *messageWorker(void *comm_fd)
     //     string str;
     //     str.append(buffer.begin(), buffer.begin() + read_len);
     // }
-    size_t buffer_size = 500000;
-    char buffer[buffer_size] = {};
+    int buffer_size = 8192;
+    // char buffer[buffer_size] = {};
 
     int fd = *(int *)comm_fd;
-    read(fd, buffer, buffer_size - 1);
-    // if (strlen(buffer) != buffer_size - 1)
-    size_t len = strlen(buffer);
+    int read_len;
+    string buffer;
+    while (true)
+    {
+        vector<char> buff_vec(buffer_size);
+        // log("reading");
+        read_len = read(fd, buff_vec.data(), buffer_size);
+        log("read: " + to_string(read_len));
+        if (read_len < 1)
+        {
+            break;
+        }
+
+        buffer.append(buff_vec.begin(), buff_vec.begin() + read_len);
+        buff_vec.clear();
+        if (read_len < buffer_size)
+        {
+            break;
+        }
+    }
+    int len = buffer.length();
+
     if (is_verbose)
     {
         if (len > 1000)
@@ -174,36 +217,38 @@ void *messageWorker(void *comm_fd)
         }
         else
         {
-            printf("%s\n", buffer);
+            // printf("%s\n", buffer);
+            cout << buffer << endl;
         }
     }
 
-    if (!strncmp(buffer, "GET / ", 6))
+    if (!strncmp(buffer.c_str(), "GET / ", 6))
     {
+        cout << "get home page" << endl;
         homepage(fd);
     }
-    else if (!strncmp(buffer, "GET /api/", 9))
+    else if (!strncmp(buffer.c_str(), "GET /api/", 9))
     {
         string buf(buffer);
         buf = buf.substr(9);
         APIHandler handler(buf, fd, is_verbose, kvstore);
         handler.parseGet();
     }
-    else if (!strncmp(buffer, "POST /api/", 10))
+    else if (!strncmp(buffer.c_str(), "POST /api/", 10))
     {
         string buf(buffer);
         buf = buf.substr(10);
         APIHandler handler(buf, fd, is_verbose, kvstore);
         handler.parsePost();
     }
-    else if (!strncmp(buffer, "DELETE /api/", 12))
+    else if (!strncmp(buffer.c_str(), "DELETE /api/", 12))
     {
         string buf(buffer);
         buf = buf.substr(12);
         APIHandler handler(buf, fd, is_verbose, kvstore);
         handler.parseDelete();
     }
-    else if (!strncmp(buffer, "GET", 3))
+    else if (!strncmp(buffer.c_str(), "GET", 3))
     {
         string buf(buffer);
         int head = buf.find(" ");
@@ -218,6 +263,7 @@ void *messageWorker(void *comm_fd)
         ifstream checkExists(path);
         if (!checkExists)
         {
+            cout << "go to homepage" << endl;
             homepage(fd);
         }
         else

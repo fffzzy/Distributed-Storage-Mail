@@ -10,3 +10,6 @@ mail: mail_service.cpp
 
 clean::
 	rm -fv $(TARGETS) *~
+
+runserver: server
+	./server -v
