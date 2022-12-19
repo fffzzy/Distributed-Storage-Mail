@@ -8,6 +8,12 @@ using json = nlohmann::json;
 
 using namespace std;
 
+struct NodeInfo {
+    bool is_primary;
+    string addr;
+    string status;
+};
+
 class KVStoreClient
 {
 private:
@@ -95,16 +101,7 @@ public:
     {
         table[row].erase(col);
     };
-};
 
-struct NodeInfo {
-    bool is_primary;
-    string addr;
-    string status;
-};
-
-class KVStoreConsole {
-public:
     vector<vector<NodeInfo>> PollStatus() {
         NodeInfo node1 = {true, "127.0.0.0:11000", "Running"};
         NodeInfo node2 = {false, "127.0.0.0:11001", "Closed"};
