@@ -14,6 +14,18 @@ void APIHandler::parsePost()
     {
         sendEmail();
     }
+    else if (header.substr(0, 12) == "drive/upload")
+    {
+        uploadFile();
+    }
+    else if (header.substr(0, 14) == "drive/download")
+    {
+        downloadFile();
+    }
+    else if (header.substr(0, 5) == "drive")
+    {
+        changeFiles();
+    }
     else
     {
     }
@@ -24,6 +36,10 @@ void APIHandler::parseGet()
     if (header.substr(0, 4) == "mail")
     {
         getEmailList();
+    }
+    else if (header.substr(0, 5) == "drive")
+    {
+        getFiles();
     }
     else
     {
@@ -39,6 +55,10 @@ void APIHandler::parseDelete()
     else if (header.substr(0, 11) == "mail/delete")
     {
         deleteEmail();
+    }
+    else if (header.substr(0, 12) == "drive/delete")
+    {
+        deleteFile();
     }
     else
     {
@@ -246,6 +266,121 @@ void APIHandler::deleteEmail()
         {
             page = "HTTP/1.1 404 not found\r\n\r\n";
         }
+    }
+    write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::getFiles()
+{
+    string username = checkCookie();
+    string page;
+    if (username.empty())
+    {
+        page = "HTTP/1.1 401 not logged in\r\n\r\n";
+    }
+    else
+    {
+        page = "HTTP/1.1 200 success\r\n\r\n";
+
+        string files = kvstore.Get(username, "files");
+
+        if (files.empty())
+        {
+            page += "{\"field\":\"0\",\"filename\":\"/\",\"filetype\":\"directory\",\"children\":[]}";
+        }
+        else
+        {
+            page += files;
+        }
+    }
+    write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::changeFiles()
+{
+    string username = checkCookie();
+    string page;
+    if (username.empty())
+    {
+        page = "HTTP/1.1 401 not logged in\r\n\r\n";
+    }
+    else
+    {
+        page = "HTTP/1.1 200 success\r\n\r\n";
+
+        kvstore.Put(username, "files", data.dump());
+    }
+    write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::uploadFile()
+{
+    string username = checkCookie();
+    string page;
+    if (username.empty())
+    {
+        page = "HTTP/1.1 401 not logged in\r\n\r\n";
+    }
+    else
+    {
+        page = "HTTP/1.1 200 success\r\n\r\n";
+        string fileId = data["fileId"];
+        kvstore.Put(username, fileId, data.dump());
+    }
+    write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::downloadFile()
+{
+    string username = checkCookie();
+    string page;
+    if (username.empty())
+    {
+        page = "HTTP/1.1 401 not logged in\r\n\r\n";
+    }
+    else
+    {
+        page = "HTTP/1.1 200 success\r\n\r\n";
+        string file_matcher = "fileId=";
+        size_t index = header.find(file_matcher);
+        size_t id_end = header.find(" ", index);
+
+        bool matched = false;
+
+        string fileId = header.substr(index + file_matcher.size(), id_end - index - file_matcher.size());
+        if (is_verbose)
+            cout << "fileId detected in the header: " + fileId << endl;
+        
+        string file = kvstore.Get(username, fileId);
+
+        page += file;
+    }
+    write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::deleteFile()
+{
+
+    string username = checkCookie();
+    string page;
+    if (username.empty())
+    {
+        page = "HTTP/1.1 401 not logged in\r\n\r\n";
+    }
+    else
+    {
+        page = "HTTP/1.1 200 success\r\n\r\n";
+        string file_matcher = "fileId=";
+        size_t index = header.find(file_matcher);
+        size_t id_end = header.find(" ", index);
+
+        bool matched = false;
+
+        string fileId = header.substr(index + file_matcher.size(), id_end - index - file_matcher.size());
+        if (is_verbose)
+            cout << "fileId detected in the header: " + fileId << endl;
+
+        kvstore.Delete(username, fileId);
     }
     write(fd, page.c_str(), page.length());
 }

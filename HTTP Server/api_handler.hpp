@@ -21,8 +21,6 @@
 #include <chrono>
 #include <nlohmann/json.hpp>
 
-
-
 using json = nlohmann::json;
 
 #include "local_kvstore.hpp"
@@ -44,39 +42,55 @@ enum CookieType
     CORRECT
 };
 
-class APIHandler{
+class APIHandler
+{
 public:
-  string header;
-  json data;
-  int fd;
-  bool is_verbose;
-  KVStoreClient& kvstore;
+    string header;
+    json data;
+    int fd;
+    bool is_verbose;
+    KVStoreClient &kvstore;
 
-  APIHandler(string buf, int f, bool is_verb, KVStoreClient& kvstore) : fd(f), is_verbose(is_verb), kvstore(kvstore) {
-    size_t division = buf.find("\r\n\r\n");
-    header = buf.substr(0, division + 2);
-    string body = buf.substr(division + 4);
-    if (body.find("{") == string::npos) {
-      data = nullptr;
-    } else {
-      data = json::parse(body);
-    }
-    if (is_verbose) {
-      cout << buf << endl;
-      cout << data << endl;
-    }
-  };
-  void parsePost();
-  void parseGet();
-  void parseDelete();
-  void signup();
-  void login();
-  void logout();
-  void sendEmail();
-  void getEmailList();
-  void deleteEmail();
-  string checkCookie();
-  void parseEmail(string email, string &user, string &host);
+    APIHandler(string buf, int f, bool is_verb, KVStoreClient &kvstore) : fd(f), is_verbose(is_verb), kvstore(kvstore)
+    {
+        size_t division = buf.find("\r\n\r\n");
+        header = buf.substr(0, division + 2);
+        string body = buf.substr(division + 4);
+        if (body.find("{") == string::npos)
+        {
+            data = nullptr;
+        }
+        else
+        {
+            data = json::parse(body);
+        }
+        if (is_verbose)
+        {
+            cout << buf << endl;
+            cout << data << endl;
+        }
+    };
+    void parsePost();
+    void parseGet();
+    void parseDelete();
+
+    void signup();
+    void login();
+    void logout();
+    
+    void sendEmail();
+    void getEmailList();
+    void deleteEmail();
+
+    void getFiles();
+    void changeFiles();
+
+    void uploadFile();
+    void downloadFile();
+    void deleteFile();
+
+    string checkCookie();
+    void parseEmail(string email, string &user, string &host);
 };
 
 string urlEncode(string str);
