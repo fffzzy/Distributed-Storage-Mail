@@ -8,7 +8,7 @@ static int listen_fd;
 static int port = 8019;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
-static string page_root = "./react";
+static string page_root = "../react";
 int main(int argc, char *argv[]) {
   // signal(SIGINT, sigHandler);
   parseInput(argc, argv);

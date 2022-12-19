@@ -31,7 +31,7 @@ KVStoreClient::KVStoreClient() {
   absl::StatusOr<std::string> addr = GetMasterAddrFromConfig();
   if (addr.ok()) {
     kvstore_master_ = KVStoreMaster::NewStub(
-        grpc::CreateChannel(addr->data(), grpc::InsecureChannelCredentials()));
+        grpc::CreateChannel(*addr, grpc::InsecureChannelCredentials()));
   } else {
     std::cout << addr.status().ToString().c_str() << std::endl;
     exit(-1);

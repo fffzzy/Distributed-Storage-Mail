@@ -11,8 +11,6 @@ static string path;
 static vector<string> users;
 pthread_mutex_t lock_;
 
-static KVStore::KVStoreClient kvstore_;
-
 void MailService::startAccepting() {
   listen_fd = socket(PF_INET, SOCK_STREAM, 0);
   struct sockaddr_in servaddr;
@@ -78,7 +76,7 @@ void *mailWorker(void *comm_fd) {
 
   int fd = *(int *)comm_fd;
   write(fd, READY, strlen(READY));
-
+  KVStore::KVStoreClient kvstore_;
   while (true) {
     read(fd, head, 1020 - strlen(buffer));
     while ((tail = strstr(buffer, "\r\n")) != NULL) {
@@ -291,6 +289,7 @@ void *mailWorker(void *comm_fd) {
 }
 
 int main(int argc, char *argv[]) {
+  fprintf(stderr, "----\n");
   MailService mail_service;
   mail_service.startAccepting();
 }
