@@ -95,6 +95,12 @@ public:
     void downloadFile();
     void deleteFile();
 
+    void checkBackend();
+    void checkFrontend();
+    void suspendNode();
+    void reviveNode();
+
+    string extractValueFromHeader(string key);
     string checkCookie();
     void parseEmail(string email, string &user, string &host);
 };

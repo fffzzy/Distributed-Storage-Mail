@@ -1,5 +1,32 @@
 #include "api_handler.hpp"
 
+void APIHandler::parseGet()
+{
+    if (header.substr(0, 4) == "mail")
+    {
+        getEmailList();
+    }
+    else if (header.substr(0, 14) == "drive/download")
+    {
+        downloadFile();
+    }
+    else if (header.substr(0, 5) == "drive")
+    {
+        getFiles();
+    }
+    else if (header.substr(0, 7) == "backend")
+    {
+        checkBackend();
+    }
+    else if (header.substr(0, 8) == "frontend")
+    {
+        checkFrontend();
+    }
+    else
+    {
+    }
+}
+
 void APIHandler::parsePost()
 {
     if (header.substr(0, 6) == "signup")
@@ -18,28 +45,13 @@ void APIHandler::parsePost()
     {
         uploadFile();
     }
-    else if (header.substr(0, 5) == "drive")
+    else if (header.substr(0, 7) == "suspend")
     {
-        changeFiles();
+        suspendNode();
     }
-    else
+    else if (header.substr(0, 6) == "revive")
     {
-    }
-}
-
-void APIHandler::parseGet()
-{
-    if (header.substr(0, 4) == "mail")
-    {
-        getEmailList();
-    }
-    else if (header.substr(0, 14) == "drive/download")
-    {
-        downloadFile();
-    }
-    else if (header.substr(0, 5) == "drive")
-    {
-        getFiles();
+        reviveNode();
     }
     else
     {
@@ -233,15 +245,9 @@ void APIHandler::deleteEmail()
     }
     else
     {
-        string mail_matcher = "mailId=";
-        size_t index = header.find(mail_matcher);
-        size_t id_end = header.find(" ", index);
+        int mailId = stoi(extractValueFromHeader("mailId"));
 
         bool matched = false;
-
-        int mailId = stoi(header.substr(index + mail_matcher.size(), id_end - index - mail_matcher.size()));
-        if (is_verbose)
-            cout << "MailId detected in the header: " + mailId << endl;
 
         string mail_string = kvstore.Get(username, "mails");
         if (!mail_string.empty())
@@ -323,17 +329,9 @@ void APIHandler::uploadFile()
     }
     else
     {
-        string file_matcher = "fileId=";
-        size_t index = header.find(file_matcher);
-        size_t id_end = header.find(" ", index);
-
-        bool matched = false;
-
-        string fileId = header.substr(index + file_matcher.size(), id_end - index - file_matcher.size());
-        if (is_verbose)
-            cout << "fileId detected in the header: " + fileId << endl;
+        string fileId = extractValueFromHeader("fileId");
         page = "HTTP/1.1 200 success\r\n\r\n";
-        // string fileId = data["fileId"];
+
         kvstore.Put(username, fileId, chunk);
     }
     write(fd, page.c_str(), page.length());
@@ -350,16 +348,8 @@ void APIHandler::downloadFile()
     else
     {
         page = "HTTP/1.1 200 success\r\n\r\n";
-        string file_matcher = "fileId=";
-        size_t index = header.find(file_matcher);
-        size_t id_end = header.find(" ", index);
+        string fileId = extractValueFromHeader("fileId");
 
-        bool matched = false;
-
-        string fileId = header.substr(index + file_matcher.size(), id_end - index - file_matcher.size());
-        if (is_verbose)
-            cout << "fileId detected in the header: " + fileId << endl;
-        
         string file = kvstore.Get(username, fileId);
 
         page += file;
@@ -381,19 +371,51 @@ void APIHandler::deleteFile()
     else
     {
         page = "HTTP/1.1 200 success\r\n\r\n";
-        string file_matcher = "fileId=";
-        size_t index = header.find(file_matcher);
-        size_t id_end = header.find(" ", index);
-
-        bool matched = false;
-
-        string fileId = header.substr(index + file_matcher.size(), id_end - index - file_matcher.size());
-        if (is_verbose)
-            cout << "fileId detected in the header: " + fileId << endl;
+        string fileId = extractValueFromHeader("fileId");
 
         kvstore.Delete(username, fileId);
     }
     write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::checkBackend()
+{
+    vector<vector<NodeInfo>> list = kvstore.PollStatus();
+    json list_json;
+    for (auto &cluster : list)
+    {
+        json cluster_json;
+        for (auto &node : cluster)
+        {
+            json node_json = {
+                {"is_primary", node.is_primary},
+                {"addr", node.addr},
+                {"status", node.status},
+            };
+            cluster_json.push_back(node_json);
+        }
+        list_json.push_back(cluster_json);
+    }
+    string page = "HTTP/1.1 200 success\r\n\r\n";
+    page += list_json.dump();
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
+}
+
+void APIHandler::checkFrontend()
+{
+}
+
+void APIHandler::suspendNode()
+{
+    string node_addr = extractValueFromHeader("node_addr");
+    kvstore.Suspend(node_addr);
+}
+
+void APIHandler::reviveNode()
+{
+    string node_addr = extractValueFromHeader("node_addr");
+    kvstore.Revive(node_addr);
 }
 
 string APIHandler::checkCookie()
@@ -462,6 +484,27 @@ string urlEncode(string str)
         }
     }
     return new_str;
+}
+
+string APIHandler::extractValueFromHeader(string key)
+{
+    string matcher = key + "=";
+    size_t index = header.find(matcher);
+    size_t end = header.find(" ", index);
+
+    if (index == string::npos)
+    {
+        if (is_verbose)
+            cout << "No " << key << " detected in the header." << endl;
+        return "";
+    }
+    else
+    {
+        string value = header.substr(index + matcher.size(), end - index - matcher.size());
+        if (is_verbose)
+            cout << key << " detected in the header: " + value << endl;
+        return value;
+    }
 }
 
 void APIHandler::parseEmail(string email, string &user, string &host)
