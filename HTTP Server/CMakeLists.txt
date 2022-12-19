@@ -61,6 +61,16 @@ target_link_libraries(kvstore_client_helper
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
+# kvstore_client_helper
+add_library(kvstore_console_helper
+  "../KVStore/kvstore_console.h"
+  "../KVStore/kvstore_console.cc")
+target_link_libraries(kvstore_console_helper
+  rg_grpc_proto
+  ${_REFLECTION}
+  ${_GRPC_GRPCPP}
+  ${_PROTOBUF_LIBPROTOBUF})
+
 # api_handler_helper
 set(NLOHMANN_DIR ../third_party)
 include_directories(${NLOHMANN_DIR})
@@ -73,4 +83,9 @@ target_link_libraries(api_handler_helper
 
 # Target server
 add_executable(server server.cpp)
-target_link_libraries(server api_handler_helper)
+target_link_libraries(server api_handler_helper kvstore_console_helper)
+
+
+# Mail Service
+add_executable(mail mail_service.cpp)
+target_link_libraries(mail kvstore_client_helper)

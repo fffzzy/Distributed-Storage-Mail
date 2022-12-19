@@ -5,25 +5,30 @@ static bool is_shut_down = false;
 static vector<int> fds;
 static vector<pthread_t> threads;
 static int listen_fd;
-static int port;
+static int port = 8019;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
-static string page_root = "../React/build1";
-static KVStoreClient kvstore("127.0.0.1:8017");
-
+static string page_root = "./react";
 int main(int argc, char *argv[]) {
   // signal(SIGINT, sigHandler);
   parseInput(argc, argv);
 
   listen_fd = socket(PF_INET, SOCK_STREAM, 0);
-  bind(listen_fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
+  struct sockaddr_in servaddr;
+  bzero(&servaddr, sizeof(servaddr));
+  servaddr.sin_family = AF_INET;
+  servaddr.sin_addr.s_addr = htons(INADDR_ANY);
+  servaddr.sin_port = htons(port);
+  while (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+    servaddr.sin_port = htons(--port);
+  }
+  cout << "Server start a port at: " << port << endl;
   listen(listen_fd, 100);
   while (!is_shut_down) {
-    cout << "Server start" << endl;
-    struct sockaddr_in client_addr;
-    socklen_t client_addrlen = sizeof(client_addr);
+    struct sockaddr_in clientaddr;
+    socklen_t clientaddrlen = sizeof(clientaddr);
     int comm_fd =
-        accept(listen_fd, (struct sockaddr *)&client_addr, &client_addrlen);
+        accept(listen_fd, (struct sockaddr *)&clientaddr, &clientaddrlen);
     if (!is_shut_down) {
       fds.push_back(comm_fd);
       // printf("Connection from %s\n", inet_ntoa(clientaddr.sin_addr));
@@ -52,36 +57,65 @@ void parseInput(int argc, char *argv[]) {
     }
   }
 
-  int index = atoi(argv[optind]);
+  // int index = atoi(argv[optind]);
 
-  ifstream server_list("../../servers.config");
+  // ifstream server_list("../servers.config");
 
-  int line_num = 1;
-  string line;
-  ServerType type;
-  while (getline(server_list, line)) {
-    if (line == "HTTP Servers") {
-      type = HTTP_SERVER;
-    } else if (line == "Backend Coordinator") {
-      type = BACKEND_COORDINATOR;
-    } else if (line == "Backend Servers") {
-      type = OTHERS;
-    } else {
-      switch (type) {
-        case HTTP_SERVER:
-          if (line_num == index) {
-            self_addr = parseSockaddr(line);
-          }
-          line_num++;
-          break;
+  // int line_num = 1;
+  // string line;
+  // ServerType type;
+  // while (getline(server_list, line))
+  // {
+  //     if (line == "HTTP Servers")
+  //     {
+  //         type = HTTP_SERVER;
+  //     }
+  //     else if (line == "Backend Coordinator")
+  //     {
+  //         type = BACKEND_COORDINATOR;
+  //     }
+  //     else if (line == "Backend Servers")
+  //     {
+  //         type = OTHERS;
+  //     }
+  //     else
+  //     {
+  //         switch (type)
+  //         {
+  //         case HTTP_SERVER:
+  //             if (line_num == index)
+  //             {
+  //                 self_addr = parseSockaddr(line);
+  //             }
+  //             line_num++;
+  //             break;
 
-        case BACKEND_COORDINATOR:
-          if (!line.empty()) backend_coordinator_addr = parseSockaddr(line);
+  //         case BACKEND_COORDINATOR:
+  //             if (!line.empty())
+  //                 backend_coordinator_addr = parseSockaddr(line);
 
-        default:
-          break;
-      }
+  //         default:
+  //             break;
+  //         }
+  //     }
+  // }
+}
+
+void sigHandler(int num) {
+  char SHUTDOWN[] = "-ERR Server shutting down\r\n";
+
+  is_shut_down = true;
+  close(listen_fd);
+  for (auto fd : fds) {
+    // write(fd, SHUTDOWN, strlen(SHUTDOWN));
+    close(fd);
+    if (is_verbose) {
+      // fprintf(stderr, "fd: %d\n", fd);
+      fprintf(stderr, "[%d] Connection closed\n", fd);
     }
+  }
+  for (auto thread : threads) {
+    pthread_kill(thread, 0);
   }
 }
 
@@ -99,35 +133,47 @@ sockaddr_in parseSockaddr(string s) {
 }
 
 void *messageWorker(void *comm_fd) {
-  char buffer[128000] = {};
+  // while (true)
+  // {
+  //     vector<char> buffer(BUFF_SIZE);
+
+  //     int read_len = recvfrom(sock, buffer.data(), BUFF_SIZE, 0,
+  //                             (struct sockaddr *)&source_address,
+  //                             &source_address_len);
+  //     string str;
+  //     str.append(buffer.begin(), buffer.begin() + read_len);
+  // }
+  size_t buffer_size = 50000;
+  char buffer[buffer_size] = {};
 
   int fd = *(int *)comm_fd;
-  read(fd, buffer, 127999);
-  if (is_verbose) printf("%s\n", buffer);
+  read(fd, buffer, buffer_size - 1);
+  // if (strlen(buffer) != buffer_size - 1)
+  size_t len = strlen(buffer);
+  if (is_verbose) {
+    if (len > 1000) {
+      cout << "Http request size: " << len << endl;
+    } else {
+      printf("%s\n", buffer);
+    }
+  }
 
   if (!strncmp(buffer, "GET / ", 6)) {
-    string page = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
-
-    ifstream infile(page_root + "/index.html");
-    string line;
-    while (getline(infile, line)) {
-      page += line;
-    }
-    write(fd, page.c_str(), page.length());
+    homepage(fd);
   } else if (!strncmp(buffer, "GET /api/", 9)) {
     string buf(buffer);
     buf = buf.substr(9);
-    APIHandler handler(buf, fd, is_verbose, kvstore);
+    APIHandler handler(buf, fd, is_verbose);
     handler.parseGet();
   } else if (!strncmp(buffer, "POST /api/", 10)) {
     string buf(buffer);
     buf = buf.substr(10);
-    APIHandler handler(buf, fd, is_verbose, kvstore);
+    APIHandler handler(buf, fd, is_verbose);
     handler.parsePost();
   } else if (!strncmp(buffer, "DELETE /api/", 12)) {
     string buf(buffer);
     buf = buf.substr(12);
-    APIHandler handler(buf, fd, is_verbose, kvstore);
+    APIHandler handler(buf, fd, is_verbose);
     handler.parseDelete();
   } else if (!strncmp(buffer, "GET", 3)) {
     string buf(buffer);
@@ -140,16 +186,21 @@ void *messageWorker(void *comm_fd) {
     string path = page_root + file;
     ios_base::openmode mode = ios_base::in;
 
-    if (file_type == "jpg" | file_type == "png") {
-      sendBinary(path, file_type, fd, page);
+    ifstream checkExists(path);
+    if (!checkExists) {
+      homepage(fd);
     } else {
-      page += "\r\n";
-      ifstream infile(path, mode);
-      string line;
-      while (getline(infile, line)) {
-        page += line;
+      if (file_type == "jpg" | file_type == "png") {
+        sendBinary(path, file_type, fd, page);
+      } else {
+        page += "\r\n";
+        ifstream infile(path, mode);
+        string line;
+        while (getline(infile, line)) {
+          page += line;
+        }
+        write(fd, page.c_str(), page.length());
       }
-      write(fd, page.c_str(), page.length());
     }
   }
 
@@ -174,4 +225,15 @@ void sendBinary(string file, string image_type, int fd, string page) {
   }
   FILE *fp = fdopen(fd, "wb");
   fwrite(buffer.data(), 1, buffer.size(), fp);
+}
+
+void homepage(int fd) {
+  string page = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+
+  ifstream infile(page_root + "/index.html");
+  string line;
+  while (getline(infile, line)) {
+    page += line;
+  }
+  write(fd, page.c_str(), page.length());
 }
