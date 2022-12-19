@@ -1,6 +1,7 @@
 #include "kvstore_node.h"
 
 ::grpc::Server* global_server;
+bool shutdown_flag = false;
 
 namespace KVStore {
 const char* serverlist_path = "../../Config/serverlist.txt";
@@ -1368,9 +1369,16 @@ void KVStoreNodeImpl::KVReplay(const KVRequest_KVReplayRequest* request,
 
 }  // namespace KVStore
 
+void CheckShutdownThreadFunc(void) {
+  while (!shutdown_flag) {
+    sleep(1);
+  }
+  global_server->Shutdown();
+}
+
 void signalHandler(int signum) {
   std::cout << "Shutdown server" << std::endl;
-  global_server->Shutdown();
+  shutdown_flag = true;
 }
 
 int main(int argc, char** argv) {
@@ -1380,6 +1388,7 @@ int main(int argc, char** argv) {
   }
 
   signal(SIGINT, signalHandler);
+  std::thread check_shutdown_thread(CheckShutdownThreadFunc);
 
   /* declare a node class */
   KVStore::KVStoreNodeImpl node;
@@ -1424,4 +1433,7 @@ int main(int argc, char** argv) {
   global_server = server.get();
   std::cout << "Server listening on " << server_address << std::endl;
   server->Wait();
+
+  check_shutdown_thread.join();
+  return 0;
 }
