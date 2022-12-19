@@ -12,8 +12,9 @@ using grpc::ServerContext;
 using grpc::Status;
 
 const int kMessageSizeLimit = 1024 * 1024 * 1024;
+const int kBackOffLimitMSec = 500;
 
-unsigned long long click = 0;
+unsigned long long tick = 0;
 
 // Verbose mode.
 bool verbose_ = false;
@@ -29,7 +30,7 @@ void* ThreadFunc(void* args) {
   std::vector<Cluster>* clusters = (std::vector<Cluster>*)args;
 
   while (true) {
-    VerboseLog("[Health Check] start checking " + std::to_string(click++) +
+    VerboseLog("[Health Check] start checking " + std::to_string(tick++) +
                " ... ... ");
 
     for (auto& cluster : (*clusters)) {
@@ -50,12 +51,15 @@ void* ThreadFunc(void* args) {
                          std::to_string(cluster.id) + " is RUNNING ... ");
             } else if (curr_status == SUSPENDED) {
               // Impossible.
-              fprintf(
-                  stderr,
-                  "[Health Check] node %s in Cluster-%d was suspended before. "
-                  "Impossible to become RUNNING without recovering.\n",
-                  it.first.c_str(), cluster.id);
-              abort();
+              // fprintf(
+              //     stderr,
+              //     "[Health Check] node %s in Cluster-%d was suspended before.
+              //     " "Impossible to become RUNNING without recovering.\n",
+              //     it.first.c_str(), cluster.id);
+              // abort();
+              cluster.status[it.first] = RUNNING;
+              VerboseLog("[Health Check] node " + it.first + " in Cluster-" +
+                         std::to_string(cluster.id) + " is RUNNING ... ");
             } else if (curr_status == RECOVERING) {
               cluster.status[it.first] = RUNNING;
               VerboseLog("[Health Check] node " + it.first + " in Cluster-" +
@@ -216,8 +220,9 @@ void KVStoreMasterImpl::ReadConfig() {
           grpc::CreateChannel(addr_str, grpc::InsecureChannelCredentials()));
 
       ChannelArguments args;
-      // 5GB incoming message size.
+      // 1GB incoming message size.
       args.SetMaxReceiveMessageSize(kMessageSizeLimit);
+      args.SetInt(GRPC_ARG_MAX_RECONNECT_BACKOFF_MS, kBackOffLimitMSec);
       clusters_[cluster_id].stubs[addr_str] =
           KVStoreNode::NewStub(grpc::CreateCustomChannel(
               addr_str, grpc::InsecureChannelCredentials(), args));

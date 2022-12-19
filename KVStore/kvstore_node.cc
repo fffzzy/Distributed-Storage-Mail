@@ -24,7 +24,7 @@ using grpc::ServerContext;
 using grpc::Status;
 
 const int kMessageSizeLimit = 1024 * 1024 * 1024;
-
+const int kBackOffLimitMSec = 500;
 }  // namespace
 
 KVStoreNodeImpl::KVStoreNodeImpl() {}
@@ -159,17 +159,19 @@ void KVStoreNodeImpl::InitEnv() {
   // create stub for master and peers
   // master_stub = KVStoreMaster::NewStub(
   //     grpc::CreateChannel(master_addr, grpc::InsecureChannelCredentials()));
-  ChannelArguments master_arg;  // 1GB incoming message size.
-  master_arg.SetMaxReceiveMessageSize(kMessageSizeLimit);
+  ChannelArguments master_args;  // 1GB incoming message size.
+  master_args.SetMaxReceiveMessageSize(kMessageSizeLimit);
+  master_args.SetInt(GRPC_ARG_MAX_RECONNECT_BACKOFF_MS, kBackOffLimitMSec);
   master_stub = KVStoreMaster::NewStub(grpc::CreateCustomChannel(
-      master_addr, grpc::InsecureChannelCredentials(), master_arg));
+      master_addr, grpc::InsecureChannelCredentials(), master_args));
   for (int i = 0; i < peer_addr_vec.size(); i++) {
     // peer_stub_vec.push_back(KVStoreNode::NewStub(grpc::CreateChannel(
     //     peer_addr_vec[i], grpc::InsecureChannelCredentials())));
-    ChannelArguments peer_arg;  // 1GB incoming message size.
-    peer_arg.SetMaxReceiveMessageSize(kMessageSizeLimit);
+    ChannelArguments peer_args;  // 1GB incoming message size.
+    peer_args.SetMaxReceiveMessageSize(kMessageSizeLimit);
+    peer_args.SetInt(GRPC_ARG_MAX_RECONNECT_BACKOFF_MS, kBackOffLimitMSec);
     peer_stub_vec.push_back(KVStoreNode::NewStub(grpc::CreateCustomChannel(
-        peer_addr_vec[i], grpc::InsecureChannelCredentials(), peer_arg)));
+        peer_addr_vec[i], grpc::InsecureChannelCredentials(), peer_args)));
   }
 }
 
