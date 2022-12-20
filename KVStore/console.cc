@@ -14,6 +14,7 @@ using grpc::Status;
 const std::regex regex_poll("poll");
 const std::regex regex_suspend("suspend (.+)");
 const std::regex regex_revive("revive (.+)");
+const std::regex regex_show_key_valyue("show (.+)");
 
 class KVStoreTestConsole : public KVStore::KVStoreConsole {
  public:
@@ -52,6 +53,14 @@ void KVStoreTestConsole::Run() {
         std::cout << "[Revive] succeed: " << std::endl;
       } else {
         std::cout << "[Revive] failed: " << res.ToString() << std::endl;
+      }
+    } else if (std::regex_match(line, sm, regex_show_key_valyue)) {
+      auto res = ShowKeyValue(sm[1].str());
+      if (res.ok()) {
+        std::cout << "[Revive] succeed: " << std::endl << *res << std::endl;
+      } else {
+        std::cout << "[Revive] failed: " << res.status().ToString()
+                  << std::endl;
       }
     } else {
       fprintf(stderr, "Unpported commands: %s\n", line.c_str());

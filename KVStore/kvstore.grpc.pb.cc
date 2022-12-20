@@ -25,6 +25,7 @@ static const char* KVStoreMaster_method_names[] = {
   "/KVStoreMaster/PollStatus",
   "/KVStoreMaster/Suspend",
   "/KVStoreMaster/Revive",
+  "/KVStoreMaster/ShowKeyValue",
   "/KVStoreMaster/NotifyRecoveryFinished",
 };
 
@@ -39,7 +40,8 @@ KVStoreMaster::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& chan
   , rpcmethod_PollStatus_(KVStoreMaster_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_Suspend_(KVStoreMaster_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_Revive_(KVStoreMaster_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_NotifyRecoveryFinished_(KVStoreMaster_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ShowKeyValue_(KVStoreMaster_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_NotifyRecoveryFinished_(KVStoreMaster_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status KVStoreMaster::Stub::FetchNodeAddr(::grpc::ClientContext* context, const ::FetchNodeRequest& request, ::FetchNodeResponse* response) {
@@ -134,6 +136,29 @@ void KVStoreMaster::Stub::async::Revive(::grpc::ClientContext* context, const ::
   return result;
 }
 
+::grpc::Status KVStoreMaster::Stub::ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::KVResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::ShowKeyValueRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ShowKeyValue_, context, request, response);
+}
+
+void KVStoreMaster::Stub::async::ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::ShowKeyValueRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ShowKeyValue_, context, request, response, std::move(f));
+}
+
+void KVStoreMaster::Stub::async::ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ShowKeyValue_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::PrepareAsyncShowKeyValueRaw(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::KVResponse, ::ShowKeyValueRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ShowKeyValue_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::KVResponse>* KVStoreMaster::Stub::AsyncShowKeyValueRaw(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncShowKeyValueRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 ::grpc::Status KVStoreMaster::Stub::NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::KVResponse* response) {
   return ::grpc::internal::BlockingUnaryCall< ::NotifyRecoveryFinishedRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_NotifyRecoveryFinished_, context, request, response);
 }
@@ -201,6 +226,16 @@ KVStoreMaster::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       KVStoreMaster_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::ShowKeyValueRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](KVStoreMaster::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::ShowKeyValueRequest* req,
+             ::KVResponse* resp) {
+               return service->ShowKeyValue(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      KVStoreMaster_method_names[5],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< KVStoreMaster::Service, ::NotifyRecoveryFinishedRequest, ::KVResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](KVStoreMaster::Service* service,
              ::grpc::ServerContext* ctx,
@@ -235,6 +270,13 @@ KVStoreMaster::Service::~Service() {
 }
 
 ::grpc::Status KVStoreMaster::Service::Revive(::grpc::ServerContext* context, const ::ReviveRequest* request, ::KVResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status KVStoreMaster::Service::ShowKeyValue(::grpc::ServerContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -103,6 +103,12 @@ class KVStoreNodeImpl final : public KVStoreNode::Service {
 
   // secondary receives replay request from primary
   void KVReplay(const KVRequest_KVReplayRequest* request, KVResponse* response);
+
+  void KVKeyvalueRequest(const KVRequest_KVKeyvalueRequest* request,
+                         KVResponse* response);
+
+  void KVSkeyvalueRequest(const KVRequest_KVSkeyvalueRequest* request,
+                          KVResponse* response);
 };
 
 void* KVPrimaryRecoveryThreadFunc(void* args);

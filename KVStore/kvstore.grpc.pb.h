@@ -66,6 +66,14 @@ class KVStoreMaster final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> PrepareAsyncRevive(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>>(PrepareAsyncReviveRaw(context, request, cq));
     }
+    // Console -> Master show all key-value pairs in specific node.
+    virtual ::grpc::Status ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::KVResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> AsyncShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>>(AsyncShowKeyValueRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> PrepareAsyncShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>>(PrepareAsyncShowKeyValueRaw(context, request, cq));
+    }
     // Node -> Master notify that recovery is finished.
     virtual ::grpc::Status NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::KVResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>> AsyncNotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) {
@@ -89,6 +97,9 @@ class KVStoreMaster final {
       // Console -> Master revives specific nodes.
       virtual void Revive(::grpc::ClientContext* context, const ::ReviveRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Revive(::grpc::ClientContext* context, const ::ReviveRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // Console -> Master show all key-value pairs in specific node.
+      virtual void ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // Node -> Master notify that recovery is finished.
       virtual void NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
@@ -105,6 +116,8 @@ class KVStoreMaster final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* PrepareAsyncSuspendRaw(::grpc::ClientContext* context, const ::SuspendRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* AsyncReviveRaw(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* PrepareAsyncReviveRaw(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* AsyncShowKeyValueRaw(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* PrepareAsyncShowKeyValueRaw(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* AsyncNotifyRecoveryFinishedRaw(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::KVResponse>* PrepareAsyncNotifyRecoveryFinishedRaw(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
@@ -139,6 +152,13 @@ class KVStoreMaster final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>> PrepareAsyncRevive(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>>(PrepareAsyncReviveRaw(context, request, cq));
     }
+    ::grpc::Status ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::KVResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>> AsyncShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>>(AsyncShowKeyValueRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>> PrepareAsyncShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>>(PrepareAsyncShowKeyValueRaw(context, request, cq));
+    }
     ::grpc::Status NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::KVResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>> AsyncNotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::KVResponse>>(AsyncNotifyRecoveryFinishedRaw(context, request, cq));
@@ -157,6 +177,8 @@ class KVStoreMaster final {
       void Suspend(::grpc::ClientContext* context, const ::SuspendRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void Revive(::grpc::ClientContext* context, const ::ReviveRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) override;
       void Revive(::grpc::ClientContext* context, const ::ReviveRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) override;
+      void ShowKeyValue(::grpc::ClientContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response, std::function<void(::grpc::Status)>) override;
       void NotifyRecoveryFinished(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
@@ -178,12 +200,15 @@ class KVStoreMaster final {
     ::grpc::ClientAsyncResponseReader< ::KVResponse>* PrepareAsyncSuspendRaw(::grpc::ClientContext* context, const ::SuspendRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::KVResponse>* AsyncReviveRaw(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::KVResponse>* PrepareAsyncReviveRaw(::grpc::ClientContext* context, const ::ReviveRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::KVResponse>* AsyncShowKeyValueRaw(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::KVResponse>* PrepareAsyncShowKeyValueRaw(::grpc::ClientContext* context, const ::ShowKeyValueRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::KVResponse>* AsyncNotifyRecoveryFinishedRaw(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::KVResponse>* PrepareAsyncNotifyRecoveryFinishedRaw(::grpc::ClientContext* context, const ::NotifyRecoveryFinishedRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_FetchNodeAddr_;
     const ::grpc::internal::RpcMethod rpcmethod_PollStatus_;
     const ::grpc::internal::RpcMethod rpcmethod_Suspend_;
     const ::grpc::internal::RpcMethod rpcmethod_Revive_;
+    const ::grpc::internal::RpcMethod rpcmethod_ShowKeyValue_;
     const ::grpc::internal::RpcMethod rpcmethod_NotifyRecoveryFinished_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
@@ -200,6 +225,8 @@ class KVStoreMaster final {
     virtual ::grpc::Status Suspend(::grpc::ServerContext* context, const ::SuspendRequest* request, ::KVResponse* response);
     // Console -> Master revives specific nodes.
     virtual ::grpc::Status Revive(::grpc::ServerContext* context, const ::ReviveRequest* request, ::KVResponse* response);
+    // Console -> Master show all key-value pairs in specific node.
+    virtual ::grpc::Status ShowKeyValue(::grpc::ServerContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response);
     // Node -> Master notify that recovery is finished.
     virtual ::grpc::Status NotifyRecoveryFinished(::grpc::ServerContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response);
   };
@@ -284,12 +311,32 @@ class KVStoreMaster final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_ShowKeyValue : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_ShowKeyValue() {
+      ::grpc::Service::MarkMethodAsync(4);
+    }
+    ~WithAsyncMethod_ShowKeyValue() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ShowKeyValue(::grpc::ServerContext* /*context*/, const ::ShowKeyValueRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestShowKeyValue(::grpc::ServerContext* context, ::ShowKeyValueRequest* request, ::grpc::ServerAsyncResponseWriter< ::KVResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_NotifyRecoveryFinished : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_NotifyRecoveryFinished() {
-      ::grpc::Service::MarkMethodAsync(4);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_NotifyRecoveryFinished() override {
       BaseClassMustBeDerivedFromService(this);
@@ -300,10 +347,10 @@ class KVStoreMaster final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestNotifyRecoveryFinished(::grpc::ServerContext* context, ::NotifyRecoveryFinishedRequest* request, ::grpc::ServerAsyncResponseWriter< ::KVResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_FetchNodeAddr<WithAsyncMethod_PollStatus<WithAsyncMethod_Suspend<WithAsyncMethod_Revive<WithAsyncMethod_NotifyRecoveryFinished<Service > > > > > AsyncService;
+  typedef WithAsyncMethod_FetchNodeAddr<WithAsyncMethod_PollStatus<WithAsyncMethod_Suspend<WithAsyncMethod_Revive<WithAsyncMethod_ShowKeyValue<WithAsyncMethod_NotifyRecoveryFinished<Service > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_FetchNodeAddr : public BaseClass {
    private:
@@ -413,18 +460,45 @@ class KVStoreMaster final {
       ::grpc::CallbackServerContext* /*context*/, const ::ReviveRequest* /*request*/, ::KVResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_ShowKeyValue : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_ShowKeyValue() {
+      ::grpc::Service::MarkMethodCallback(4,
+          new ::grpc::internal::CallbackUnaryHandler< ::ShowKeyValueRequest, ::KVResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::ShowKeyValueRequest* request, ::KVResponse* response) { return this->ShowKeyValue(context, request, response); }));}
+    void SetMessageAllocatorFor_ShowKeyValue(
+        ::grpc::MessageAllocator< ::ShowKeyValueRequest, ::KVResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::ShowKeyValueRequest, ::KVResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_ShowKeyValue() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ShowKeyValue(::grpc::ServerContext* /*context*/, const ::ShowKeyValueRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ShowKeyValue(
+      ::grpc::CallbackServerContext* /*context*/, const ::ShowKeyValueRequest* /*request*/, ::KVResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_NotifyRecoveryFinished : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_NotifyRecoveryFinished() {
-      ::grpc::Service::MarkMethodCallback(4,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::NotifyRecoveryFinishedRequest, ::KVResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::NotifyRecoveryFinishedRequest* request, ::KVResponse* response) { return this->NotifyRecoveryFinished(context, request, response); }));}
     void SetMessageAllocatorFor_NotifyRecoveryFinished(
         ::grpc::MessageAllocator< ::NotifyRecoveryFinishedRequest, ::KVResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::NotifyRecoveryFinishedRequest, ::KVResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -439,7 +513,7 @@ class KVStoreMaster final {
     virtual ::grpc::ServerUnaryReactor* NotifyRecoveryFinished(
       ::grpc::CallbackServerContext* /*context*/, const ::NotifyRecoveryFinishedRequest* /*request*/, ::KVResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_FetchNodeAddr<WithCallbackMethod_PollStatus<WithCallbackMethod_Suspend<WithCallbackMethod_Revive<WithCallbackMethod_NotifyRecoveryFinished<Service > > > > > CallbackService;
+  typedef WithCallbackMethod_FetchNodeAddr<WithCallbackMethod_PollStatus<WithCallbackMethod_Suspend<WithCallbackMethod_Revive<WithCallbackMethod_ShowKeyValue<WithCallbackMethod_NotifyRecoveryFinished<Service > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_FetchNodeAddr : public BaseClass {
@@ -510,12 +584,29 @@ class KVStoreMaster final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_ShowKeyValue : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_ShowKeyValue() {
+      ::grpc::Service::MarkMethodGeneric(4);
+    }
+    ~WithGenericMethod_ShowKeyValue() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ShowKeyValue(::grpc::ServerContext* /*context*/, const ::ShowKeyValueRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_NotifyRecoveryFinished : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_NotifyRecoveryFinished() {
-      ::grpc::Service::MarkMethodGeneric(4);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_NotifyRecoveryFinished() override {
       BaseClassMustBeDerivedFromService(this);
@@ -607,12 +698,32 @@ class KVStoreMaster final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_ShowKeyValue : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_ShowKeyValue() {
+      ::grpc::Service::MarkMethodRaw(4);
+    }
+    ~WithRawMethod_ShowKeyValue() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ShowKeyValue(::grpc::ServerContext* /*context*/, const ::ShowKeyValueRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestShowKeyValue(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_NotifyRecoveryFinished : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_NotifyRecoveryFinished() {
-      ::grpc::Service::MarkMethodRaw(4);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_NotifyRecoveryFinished() override {
       BaseClassMustBeDerivedFromService(this);
@@ -623,7 +734,7 @@ class KVStoreMaster final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestNotifyRecoveryFinished(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -715,12 +826,34 @@ class KVStoreMaster final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_ShowKeyValue : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_ShowKeyValue() {
+      ::grpc::Service::MarkMethodRawCallback(4,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ShowKeyValue(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_ShowKeyValue() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ShowKeyValue(::grpc::ServerContext* /*context*/, const ::ShowKeyValueRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ShowKeyValue(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_NotifyRecoveryFinished : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_NotifyRecoveryFinished() {
-      ::grpc::Service::MarkMethodRawCallback(4,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->NotifyRecoveryFinished(context, request, response); }));
@@ -845,12 +978,39 @@ class KVStoreMaster final {
     virtual ::grpc::Status StreamedRevive(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::ReviveRequest,::KVResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_ShowKeyValue : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_ShowKeyValue() {
+      ::grpc::Service::MarkMethodStreamed(4,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::ShowKeyValueRequest, ::KVResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::ShowKeyValueRequest, ::KVResponse>* streamer) {
+                       return this->StreamedShowKeyValue(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_ShowKeyValue() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status ShowKeyValue(::grpc::ServerContext* /*context*/, const ::ShowKeyValueRequest* /*request*/, ::KVResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedShowKeyValue(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::ShowKeyValueRequest,::KVResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_NotifyRecoveryFinished : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_NotifyRecoveryFinished() {
-      ::grpc::Service::MarkMethodStreamed(4,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
           ::NotifyRecoveryFinishedRequest, ::KVResponse>(
             [this](::grpc::ServerContext* context,
@@ -871,9 +1031,9 @@ class KVStoreMaster final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedNotifyRecoveryFinished(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::NotifyRecoveryFinishedRequest,::KVResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_FetchNodeAddr<WithStreamedUnaryMethod_PollStatus<WithStreamedUnaryMethod_Suspend<WithStreamedUnaryMethod_Revive<WithStreamedUnaryMethod_NotifyRecoveryFinished<Service > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_FetchNodeAddr<WithStreamedUnaryMethod_PollStatus<WithStreamedUnaryMethod_Suspend<WithStreamedUnaryMethod_Revive<WithStreamedUnaryMethod_ShowKeyValue<WithStreamedUnaryMethod_NotifyRecoveryFinished<Service > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_FetchNodeAddr<WithStreamedUnaryMethod_PollStatus<WithStreamedUnaryMethod_Suspend<WithStreamedUnaryMethod_Revive<WithStreamedUnaryMethod_NotifyRecoveryFinished<Service > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_FetchNodeAddr<WithStreamedUnaryMethod_PollStatus<WithStreamedUnaryMethod_Suspend<WithStreamedUnaryMethod_Revive<WithStreamedUnaryMethod_ShowKeyValue<WithStreamedUnaryMethod_NotifyRecoveryFinished<Service > > > > > > StreamedService;
 };
 
 // Interface exported by the KVStore Service Worker nodes which actually 

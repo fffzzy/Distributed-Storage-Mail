@@ -463,6 +463,42 @@ Status KVStoreMasterImpl::Revive(ServerContext* context,
   return Status::OK;
 };
 
+Status KVStoreMasterImpl::ShowKeyValue(ServerContext* context,
+                                       const ShowKeyValueRequest* request,
+                                       KVResponse* response) {
+  int cluster_id = request->cluster_id();
+
+  pthread_mutex_lock(&clusters_[cluster_id].lock);
+  std::string primay = clusters_[cluster_id].primary;
+  pthread_mutex_unlock(&clusters_[cluster_id].lock);
+
+  if (primay.empty()) {
+    response->set_status(KVStatusCode::FAILURE);
+    response->set_message("-ERR cluster has no primary node available.");
+  } else {
+    ClientContext context;
+    KVRequest req;
+    KVResponse res;
+    req.mutable_keyvalue_request()->set_target_addr(primay);
+    Status grpc_status =
+        clusters_[cluster_id].stubs[primay]->Execute(&context, req, &res);
+    if (grpc_status.ok()) {
+      if (res.status() == KVStatusCode::SUCCESS) {
+        response->set_status(KVStatusCode::SUCCESS);
+        response->set_message(res.message());
+      } else {
+        response->set_status(KVStatusCode::FAILURE);
+        response->set_message(res.message());
+      }
+    } else {
+      response->set_status(KVStatusCode::FAILURE);
+      response->set_message("grpc failed, service unavailable.");
+    }
+  }
+
+  return Status::OK;
+}
+
 }  // namespace KVStore
 
 int main(int argc, char** argv) {

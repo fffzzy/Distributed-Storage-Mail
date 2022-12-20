@@ -16,6 +16,9 @@ service KVStoreMaster {
   // Console -> Master revives specific nodes.
   rpc Revive(ReviveRequest) returns (KVResponse) {}
 
+  // Console -> Master show all key-value pairs in specific node.
+  rpc ShowKeyValue(ShowKeyValueRequest) returns (KVResponse) {}
+
   // Node -> Master notify that recovery is finished.
   rpc NotifyRecoveryFinished(NotifyRecoveryFinishedRequest) returns (KVResponse) {}
 }
@@ -135,6 +138,14 @@ message KVRequest {
     optional string tablet_target = 2;  // [Required] format <tablet_idx1>,<tablet_idx2>,<tablet_idx3>,
   }
 
+  message KVKeyvalueRequest {
+    optional string target_addr = 1;    // [Required]
+  }
+
+  message KVSkeyvalueRequest {
+    optional string target_addr = 1;    // [Required]
+  }
+
   // Request can only be one of put/get/cput/delete.
   oneof request {
     KVGetRequest get_request = 1;
@@ -151,6 +162,8 @@ message KVRequest {
     KVSrecoveryRequest srecovery_request = 12;
     KVFiletransferRequest filetransfer_request = 13;
     KVReplayRequest replay_request = 14;
+    KVKeyvalueRequest keyvalue_request = 15;
+    KVSkeyvalueRequest skeyvalue_request = 16;
   }
 }
 
@@ -216,4 +229,8 @@ message ReviveRequest {
 // KVAckrecoverRequest (primary node -> master, ack recovering is finished)
 message NotifyRecoveryFinishedRequest {
   optional string target_addr = 1;    // [Required] target_addr is the addr of the secondary to be revived
+}
+
+message ShowKeyValueRequest {
+  optional int32 cluster_id = 1;
 }

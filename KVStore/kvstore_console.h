@@ -40,6 +40,14 @@ class KVStoreConsole {
    */
   absl::Status Revive(const std::string& node_addr);
 
+  /**
+   * @brief Show all key value pairs in specific node, given its address.
+   *
+   * @param node_addr
+   * @return absl::Status
+   */
+  absl::StatusOr<std::string> ShowKeyValue(const std::string& node_addr);
+
  private:
   /**
    * @brief Find which cluster the node belongs to.

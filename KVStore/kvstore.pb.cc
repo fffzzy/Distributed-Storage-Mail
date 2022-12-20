@@ -235,6 +235,34 @@ struct KVRequest_KVReplayRequestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 KVRequest_KVReplayRequestDefaultTypeInternal _KVRequest_KVReplayRequest_default_instance_;
+PROTOBUF_CONSTEXPR KVRequest_KVKeyvalueRequest::KVRequest_KVKeyvalueRequest(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.target_addr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}} {}
+struct KVRequest_KVKeyvalueRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR KVRequest_KVKeyvalueRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~KVRequest_KVKeyvalueRequestDefaultTypeInternal() {}
+  union {
+    KVRequest_KVKeyvalueRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 KVRequest_KVKeyvalueRequestDefaultTypeInternal _KVRequest_KVKeyvalueRequest_default_instance_;
+PROTOBUF_CONSTEXPR KVRequest_KVSkeyvalueRequest::KVRequest_KVSkeyvalueRequest(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.target_addr_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}} {}
+struct KVRequest_KVSkeyvalueRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR KVRequest_KVSkeyvalueRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~KVRequest_KVSkeyvalueRequestDefaultTypeInternal() {}
+  union {
+    KVRequest_KVSkeyvalueRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 KVRequest_KVSkeyvalueRequestDefaultTypeInternal _KVRequest_KVSkeyvalueRequest_default_instance_;
 PROTOBUF_CONSTEXPR KVRequest::KVRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.request_)*/{}
@@ -392,7 +420,21 @@ struct NotifyRecoveryFinishedRequestDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 NotifyRecoveryFinishedRequestDefaultTypeInternal _NotifyRecoveryFinishedRequest_default_instance_;
-static ::_pb::Metadata file_level_metadata_kvstore_2eproto[25];
+PROTOBUF_CONSTEXPR ShowKeyValueRequest::ShowKeyValueRequest(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.cluster_id_)*/0} {}
+struct ShowKeyValueRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ShowKeyValueRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ShowKeyValueRequestDefaultTypeInternal() {}
+  union {
+    ShowKeyValueRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ShowKeyValueRequestDefaultTypeInternal _ShowKeyValueRequest_default_instance_;
+static ::_pb::Metadata file_level_metadata_kvstore_2eproto[28];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_kvstore_2eproto[2];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_kvstore_2eproto = nullptr;
 
@@ -547,12 +589,30 @@ const uint32_t TableStruct_kvstore_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   PROTOBUF_FIELD_OFFSET(::KVRequest_KVReplayRequest, _impl_.tablet_target_),
   1,
   0,
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVKeyvalueRequest, _impl_._has_bits_),
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVKeyvalueRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVKeyvalueRequest, _impl_.target_addr_),
+  0,
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVSkeyvalueRequest, _impl_._has_bits_),
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVSkeyvalueRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::KVRequest_KVSkeyvalueRequest, _impl_.target_addr_),
+  0,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::KVRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   PROTOBUF_FIELD_OFFSET(::KVRequest, _impl_._oneof_case_[0]),
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
   ::_pbi::kInvalidFieldOffsetTag,
@@ -660,6 +720,14 @@ const uint32_t TableStruct_kvstore_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::NotifyRecoveryFinishedRequest, _impl_.target_addr_),
   0,
+  PROTOBUF_FIELD_OFFSET(::ShowKeyValueRequest, _impl_._has_bits_),
+  PROTOBUF_FIELD_OFFSET(::ShowKeyValueRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::ShowKeyValueRequest, _impl_.cluster_id_),
+  0,
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 8, -1, sizeof(::KVRequest_KVGetRequest)},
@@ -676,17 +744,20 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 116, 125, -1, sizeof(::KVRequest_KVChecksumRequest)},
   { 128, 137, -1, sizeof(::KVRequest_KVFiletransferRequest)},
   { 140, 148, -1, sizeof(::KVRequest_KVReplayRequest)},
-  { 150, -1, -1, sizeof(::KVRequest)},
-  { 171, 179, -1, sizeof(::KVResponse)},
-  { 181, 189, -1, sizeof(::FetchNodeRequest)},
-  { 191, 200, -1, sizeof(::FetchNodeResponse)},
-  { 203, -1, -1, sizeof(::PollStatusRequest)},
-  { 209, 218, -1, sizeof(::PollStatusResponse_Cluster_Node)},
-  { 221, -1, -1, sizeof(::PollStatusResponse_Cluster)},
-  { 228, -1, -1, sizeof(::PollStatusResponse)},
-  { 235, 243, -1, sizeof(::SuspendRequest)},
-  { 245, 253, -1, sizeof(::ReviveRequest)},
-  { 255, 262, -1, sizeof(::NotifyRecoveryFinishedRequest)},
+  { 150, 157, -1, sizeof(::KVRequest_KVKeyvalueRequest)},
+  { 158, 165, -1, sizeof(::KVRequest_KVSkeyvalueRequest)},
+  { 166, -1, -1, sizeof(::KVRequest)},
+  { 189, 197, -1, sizeof(::KVResponse)},
+  { 199, 207, -1, sizeof(::FetchNodeRequest)},
+  { 209, 218, -1, sizeof(::FetchNodeResponse)},
+  { 221, -1, -1, sizeof(::PollStatusRequest)},
+  { 227, 236, -1, sizeof(::PollStatusResponse_Cluster_Node)},
+  { 239, -1, -1, sizeof(::PollStatusResponse_Cluster)},
+  { 246, -1, -1, sizeof(::PollStatusResponse)},
+  { 253, 261, -1, sizeof(::SuspendRequest)},
+  { 263, 271, -1, sizeof(::ReviveRequest)},
+  { 273, 280, -1, sizeof(::NotifyRecoveryFinishedRequest)},
+  { 281, 288, -1, sizeof(::ShowKeyValueRequest)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -704,6 +775,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::_KVRequest_KVChecksumRequest_default_instance_._instance,
   &::_KVRequest_KVFiletransferRequest_default_instance_._instance,
   &::_KVRequest_KVReplayRequest_default_instance_._instance,
+  &::_KVRequest_KVKeyvalueRequest_default_instance_._instance,
+  &::_KVRequest_KVSkeyvalueRequest_default_instance_._instance,
   &::_KVRequest_default_instance_._instance,
   &::_KVResponse_default_instance_._instance,
   &::_FetchNodeRequest_default_instance_._instance,
@@ -715,11 +788,12 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::_SuspendRequest_default_instance_._instance,
   &::_ReviveRequest_default_instance_._instance,
   &::_NotifyRecoveryFinishedRequest_default_instance_._instance,
+  &::_ShowKeyValueRequest_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\rkvstore.proto\032\033google/protobuf/empty.p"
-  "roto\"\336\020\n\tKVRequest\022.\n\013get_request\030\001 \001(\0132"
+  "roto\"\323\022\n\tKVRequest\022.\n\013get_request\030\001 \001(\0132"
   "\027.KVRequest.KVGetRequestH\000\0220\n\014sget_reque"
   "st\030\002 \001(\0132\030.KVRequest.KVSgetRequestH\000\022.\n\013"
   "put_request\030\003 \001(\0132\027.KVRequest.KVPutReque"
@@ -738,84 +812,93 @@ const char descriptor_table_protodef_kvstore_2eproto[] PROTOBUF_SECTION_VARIABLE
   "SrecoveryRequestH\000\022@\n\024filetransfer_reque"
   "st\030\r \001(\0132 .KVRequest.KVFiletransferReque"
   "stH\000\0224\n\016replay_request\030\016 \001(\0132\032.KVRequest"
-  ".KVReplayRequestH\000\032B\n\014KVGetRequest\022\020\n\003ro"
-  "w\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006"
-  "\n\004_col\032C\n\rKVSgetRequest\022\020\n\003row\030\001 \001(\tH\000\210\001"
-  "\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032`\n\014K"
-  "VPutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001"
-  "(\tH\001\210\001\001\022\022\n\005value\030\003 \001(\tH\002\210\001\001B\006\n\004_rowB\006\n\004_"
-  "colB\010\n\006_value\032a\n\rKVSputRequest\022\020\n\003row\030\001 "
-  "\001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\022\n\005value\030\003 \001("
-  "\tH\002\210\001\001B\006\n\004_rowB\006\n\004_colB\010\n\006_value\032\217\001\n\rKVC"
-  "PutRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001("
-  "\tH\001\210\001\001\022\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_va"
-  "lue\030\004 \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cur_v"
-  "alueB\014\n\n_new_value\032\220\001\n\016KVScputRequest\022\020\n"
-  "\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\026\n\tcur"
-  "_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_value\030\004 \001(\tH\003\210\001"
-  "\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cur_valueB\014\n\n_new_"
-  "value\032E\n\017KVDeleteRequest\022\020\n\003row\030\001 \001(\tH\000\210"
-  "\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032F\n\020"
-  "KVSdeleteRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003co"
-  "l\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032<\n\020KVSuspen"
-  "dRequest\022\030\n\013target_addr\030\001 \001(\tH\000\210\001\001B\016\n\014_t"
-  "arget_addr\032=\n\021KVRecoveryRequest\022\030\n\013targe"
-  "t_addr\030\001 \001(\tH\000\210\001\001B\016\n\014_target_addr\032>\n\022KVS"
-  "recoveryRequest\022\030\n\013target_addr\030\001 \001(\tH\000\210\001"
-  "\001B\016\n\014_target_addr\032\220\001\n\021KVChecksumRequest\022"
-  "!\n\tfile_type\030\001 \001(\0162\t.FileTypeH\000\210\001\001\022\027\n\nta"
-  "blet_idx\030\002 \001(\005H\001\210\001\001\022\025\n\010checksum\030\003 \001(\tH\002\210"
-  "\001\001B\014\n\n_file_typeB\r\n\013_tablet_idxB\013\n\t_chec"
-  "ksum\032\222\001\n\025KVFiletransferRequest\022!\n\tfile_t"
-  "ype\030\001 \001(\0162\t.FileTypeH\000\210\001\001\022\027\n\ntablet_idx\030"
-  "\002 \001(\005H\001\210\001\001\022\024\n\007content\030\003 \001(\tH\002\210\001\001B\014\n\n_fil"
-  "e_typeB\r\n\013_tablet_idxB\n\n\010_content\032g\n\017KVR"
-  "eplayRequest\022\027\n\ntablet_num\030\001 \001(\005H\000\210\001\001\022\032\n"
-  "\rtablet_target\030\002 \001(\tH\001\210\001\001B\r\n\013_tablet_num"
-  "B\020\n\016_tablet_targetB\t\n\007request\"]\n\nKVRespo"
-  "nse\022\"\n\006status\030\001 \001(\0162\r.KVStatusCodeH\000\210\001\001\022"
-  "\024\n\007message\030\002 \001(\tH\001\210\001\001B\t\n\007_statusB\n\n\010_mes"
-  "sage\"F\n\020FetchNodeRequest\022\020\n\003row\030\001 \001(\tH\000\210"
-  "\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\"\214\001\n"
-  "\021FetchNodeResponse\022\"\n\006status\030\001 \001(\0162\r.KVS"
-  "tatusCodeH\000\210\001\001\022\021\n\004addr\030\002 \001(\tH\001\210\001\001\022\032\n\rerr"
-  "or_message\030\003 \001(\tH\002\210\001\001B\t\n\007_statusB\007\n\005_add"
-  "rB\020\n\016_error_message\"\023\n\021PollStatusRequest"
-  "\"\360\001\n\022PollStatusResponse\022-\n\010clusters\030\001 \003("
-  "\0132\033.PollStatusResponse.Cluster\032\252\001\n\007Clust"
-  "er\022/\n\005nodes\030\001 \003(\0132 .PollStatusResponse.C"
-  "luster.Node\032n\n\004Node\022\027\n\nis_primary\030\001 \001(\010H"
-  "\000\210\001\001\022\024\n\007address\030\002 \001(\tH\001\210\001\001\022\022\n\005state\030\003 \001("
-  "\tH\002\210\001\001B\r\n\013_is_primaryB\n\n\010_addressB\010\n\006_st"
-  "ate\"^\n\016SuspendRequest\022\027\n\ncluster_id\030\001 \001("
-  "\005H\000\210\001\001\022\026\n\tnode_addr\030\002 \001(\tH\001\210\001\001B\r\n\013_clust"
-  "er_idB\014\n\n_node_addr\"]\n\rReviveRequest\022\027\n\n"
-  "cluster_id\030\001 \001(\005H\000\210\001\001\022\026\n\tnode_addr\030\002 \001(\t"
-  "H\001\210\001\001B\r\n\013_cluster_idB\014\n\n_node_addr\"I\n\035No"
-  "tifyRecoveryFinishedRequest\022\030\n\013target_ad"
-  "dr\030\001 \001(\tH\000\210\001\001B\016\n\014_target_addr*G\n\014KVStatu"
-  "sCode\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\001\022\r\n\tSUSPE"
-  "NDED\020\002\022\016\n\nRECOVERING\020\003*\'\n\010FileType\022\016\n\nCH"
-  "ECKPOINT\020\000\022\013\n\007LOGFILE\020\0012\237\002\n\rKVStoreMaste"
-  "r\0228\n\rFetchNodeAddr\022\021.FetchNodeRequest\032\022."
-  "FetchNodeResponse\"\000\0227\n\nPollStatus\022\022.Poll"
-  "StatusRequest\032\023.PollStatusResponse\"\000\022)\n\007"
-  "Suspend\022\017.SuspendRequest\032\013.KVResponse\"\000\022"
-  "\'\n\006Revive\022\016.ReviveRequest\032\013.KVResponse\"\000"
-  "\022G\n\026NotifyRecoveryFinished\022\036.NotifyRecov"
-  "eryFinishedRequest\032\013.KVResponse\"\0002i\n\013KVS"
-  "toreNode\022$\n\007Execute\022\n.KVRequest\032\013.KVResp"
-  "onse\"\000\0224\n\013CheckHealth\022\026.google.protobuf."
-  "Empty\032\013.KVResponse\"\000b\006proto3"
+  ".KVReplayRequestH\000\0228\n\020keyvalue_request\030\017"
+  " \001(\0132\034.KVRequest.KVKeyvalueRequestH\000\022:\n\021"
+  "skeyvalue_request\030\020 \001(\0132\035.KVRequest.KVSk"
+  "eyvalueRequestH\000\032B\n\014KVGetRequest\022\020\n\003row\030"
+  "\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004"
+  "_col\032C\n\rKVSgetRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022"
+  "\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032`\n\014KVP"
+  "utRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\t"
+  "H\001\210\001\001\022\022\n\005value\030\003 \001(\tH\002\210\001\001B\006\n\004_rowB\006\n\004_co"
+  "lB\010\n\006_value\032a\n\rKVSputRequest\022\020\n\003row\030\001 \001("
+  "\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\022\n\005value\030\003 \001(\tH"
+  "\002\210\001\001B\006\n\004_rowB\006\n\004_colB\010\n\006_value\032\217\001\n\rKVCPu"
+  "tRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH"
+  "\001\210\001\001\022\026\n\tcur_value\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_valu"
+  "e\030\004 \001(\tH\003\210\001\001B\006\n\004_rowB\006\n\004_colB\014\n\n_cur_val"
+  "ueB\014\n\n_new_value\032\220\001\n\016KVScputRequest\022\020\n\003r"
+  "ow\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001\022\026\n\tcur_v"
+  "alue\030\003 \001(\tH\002\210\001\001\022\026\n\tnew_value\030\004 \001(\tH\003\210\001\001B"
+  "\006\n\004_rowB\006\n\004_colB\014\n\n_cur_valueB\014\n\n_new_va"
+  "lue\032E\n\017KVDeleteRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001"
+  "\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032F\n\020KV"
+  "SdeleteRequest\022\020\n\003row\030\001 \001(\tH\000\210\001\001\022\020\n\003col\030"
+  "\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_col\032<\n\020KVSuspendR"
+  "equest\022\030\n\013target_addr\030\001 \001(\tH\000\210\001\001B\016\n\014_tar"
+  "get_addr\032=\n\021KVRecoveryRequest\022\030\n\013target_"
+  "addr\030\001 \001(\tH\000\210\001\001B\016\n\014_target_addr\032>\n\022KVSre"
+  "coveryRequest\022\030\n\013target_addr\030\001 \001(\tH\000\210\001\001B"
+  "\016\n\014_target_addr\032\220\001\n\021KVChecksumRequest\022!\n"
+  "\tfile_type\030\001 \001(\0162\t.FileTypeH\000\210\001\001\022\027\n\ntabl"
+  "et_idx\030\002 \001(\005H\001\210\001\001\022\025\n\010checksum\030\003 \001(\tH\002\210\001\001"
+  "B\014\n\n_file_typeB\r\n\013_tablet_idxB\013\n\t_checks"
+  "um\032\222\001\n\025KVFiletransferRequest\022!\n\tfile_typ"
+  "e\030\001 \001(\0162\t.FileTypeH\000\210\001\001\022\027\n\ntablet_idx\030\002 "
+  "\001(\005H\001\210\001\001\022\024\n\007content\030\003 \001(\tH\002\210\001\001B\014\n\n_file_"
+  "typeB\r\n\013_tablet_idxB\n\n\010_content\032g\n\017KVRep"
+  "layRequest\022\027\n\ntablet_num\030\001 \001(\005H\000\210\001\001\022\032\n\rt"
+  "ablet_target\030\002 \001(\tH\001\210\001\001B\r\n\013_tablet_numB\020"
+  "\n\016_tablet_target\032=\n\021KVKeyvalueRequest\022\030\n"
+  "\013target_addr\030\001 \001(\tH\000\210\001\001B\016\n\014_target_addr\032"
+  ">\n\022KVSkeyvalueRequest\022\030\n\013target_addr\030\001 \001"
+  "(\tH\000\210\001\001B\016\n\014_target_addrB\t\n\007request\"]\n\nKV"
+  "Response\022\"\n\006status\030\001 \001(\0162\r.KVStatusCodeH"
+  "\000\210\001\001\022\024\n\007message\030\002 \001(\tH\001\210\001\001B\t\n\007_statusB\n\n"
+  "\010_message\"F\n\020FetchNodeRequest\022\020\n\003row\030\001 \001"
+  "(\tH\000\210\001\001\022\020\n\003col\030\002 \001(\tH\001\210\001\001B\006\n\004_rowB\006\n\004_co"
+  "l\"\214\001\n\021FetchNodeResponse\022\"\n\006status\030\001 \001(\0162"
+  "\r.KVStatusCodeH\000\210\001\001\022\021\n\004addr\030\002 \001(\tH\001\210\001\001\022\032"
+  "\n\rerror_message\030\003 \001(\tH\002\210\001\001B\t\n\007_statusB\007\n"
+  "\005_addrB\020\n\016_error_message\"\023\n\021PollStatusRe"
+  "quest\"\360\001\n\022PollStatusResponse\022-\n\010clusters"
+  "\030\001 \003(\0132\033.PollStatusResponse.Cluster\032\252\001\n\007"
+  "Cluster\022/\n\005nodes\030\001 \003(\0132 .PollStatusRespo"
+  "nse.Cluster.Node\032n\n\004Node\022\027\n\nis_primary\030\001"
+  " \001(\010H\000\210\001\001\022\024\n\007address\030\002 \001(\tH\001\210\001\001\022\022\n\005state"
+  "\030\003 \001(\tH\002\210\001\001B\r\n\013_is_primaryB\n\n\010_addressB\010"
+  "\n\006_state\"^\n\016SuspendRequest\022\027\n\ncluster_id"
+  "\030\001 \001(\005H\000\210\001\001\022\026\n\tnode_addr\030\002 \001(\tH\001\210\001\001B\r\n\013_"
+  "cluster_idB\014\n\n_node_addr\"]\n\rReviveReques"
+  "t\022\027\n\ncluster_id\030\001 \001(\005H\000\210\001\001\022\026\n\tnode_addr\030"
+  "\002 \001(\tH\001\210\001\001B\r\n\013_cluster_idB\014\n\n_node_addr\""
+  "I\n\035NotifyRecoveryFinishedRequest\022\030\n\013targ"
+  "et_addr\030\001 \001(\tH\000\210\001\001B\016\n\014_target_addr\"=\n\023Sh"
+  "owKeyValueRequest\022\027\n\ncluster_id\030\001 \001(\005H\000\210"
+  "\001\001B\r\n\013_cluster_id*G\n\014KVStatusCode\022\013\n\007SUC"
+  "CESS\020\000\022\013\n\007FAILURE\020\001\022\r\n\tSUSPENDED\020\002\022\016\n\nRE"
+  "COVERING\020\003*\'\n\010FileType\022\016\n\nCHECKPOINT\020\000\022\013"
+  "\n\007LOGFILE\020\0012\324\002\n\rKVStoreMaster\0228\n\rFetchNo"
+  "deAddr\022\021.FetchNodeRequest\032\022.FetchNodeRes"
+  "ponse\"\000\0227\n\nPollStatus\022\022.PollStatusReques"
+  "t\032\023.PollStatusResponse\"\000\022)\n\007Suspend\022\017.Su"
+  "spendRequest\032\013.KVResponse\"\000\022\'\n\006Revive\022\016."
+  "ReviveRequest\032\013.KVResponse\"\000\0223\n\014ShowKeyV"
+  "alue\022\024.ShowKeyValueRequest\032\013.KVResponse\""
+  "\000\022G\n\026NotifyRecoveryFinished\022\036.NotifyReco"
+  "veryFinishedRequest\032\013.KVResponse\"\0002i\n\013KV"
+  "StoreNode\022$\n\007Execute\022\n.KVRequest\032\013.KVRes"
+  "ponse\"\000\0224\n\013CheckHealth\022\026.google.protobuf"
+  ".Empty\032\013.KVResponse\"\000b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_kvstore_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2fempty_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_kvstore_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_kvstore_2eproto = {
-    false, false, 3548, descriptor_table_protodef_kvstore_2eproto,
+    false, false, 3909, descriptor_table_protodef_kvstore_2eproto,
     "kvstore.proto",
-    &descriptor_table_kvstore_2eproto_once, descriptor_table_kvstore_2eproto_deps, 1, 25,
+    &descriptor_table_kvstore_2eproto_once, descriptor_table_kvstore_2eproto_deps, 1, 28,
     schemas, file_default_instances, TableStruct_kvstore_2eproto::offsets,
     file_level_metadata_kvstore_2eproto, file_level_enum_descriptors_kvstore_2eproto,
     file_level_service_descriptors_kvstore_2eproto,
@@ -4916,6 +4999,440 @@ void KVRequest_KVReplayRequest::InternalSwap(KVRequest_KVReplayRequest* other) {
 
 // ===================================================================
 
+class KVRequest_KVKeyvalueRequest::_Internal {
+ public:
+  using HasBits = decltype(std::declval<KVRequest_KVKeyvalueRequest>()._impl_._has_bits_);
+  static void set_has_target_addr(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+KVRequest_KVKeyvalueRequest::KVRequest_KVKeyvalueRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:KVRequest.KVKeyvalueRequest)
+}
+KVRequest_KVKeyvalueRequest::KVRequest_KVKeyvalueRequest(const KVRequest_KVKeyvalueRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  KVRequest_KVKeyvalueRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.target_addr_){}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.target_addr_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_target_addr()) {
+    _this->_impl_.target_addr_.Set(from._internal_target_addr(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:KVRequest.KVKeyvalueRequest)
+}
+
+inline void KVRequest_KVKeyvalueRequest::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.target_addr_){}
+  };
+  _impl_.target_addr_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+KVRequest_KVKeyvalueRequest::~KVRequest_KVKeyvalueRequest() {
+  // @@protoc_insertion_point(destructor:KVRequest.KVKeyvalueRequest)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void KVRequest_KVKeyvalueRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.target_addr_.Destroy();
+}
+
+void KVRequest_KVKeyvalueRequest::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void KVRequest_KVKeyvalueRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:KVRequest.KVKeyvalueRequest)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.target_addr_.ClearNonDefaultToEmpty();
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* KVRequest_KVKeyvalueRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional string target_addr = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_target_addr();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "KVRequest.KVKeyvalueRequest.target_addr"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* KVRequest_KVKeyvalueRequest::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:KVRequest.KVKeyvalueRequest)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // optional string target_addr = 1;
+  if (_internal_has_target_addr()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_target_addr().data(), static_cast<int>(this->_internal_target_addr().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "KVRequest.KVKeyvalueRequest.target_addr");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_target_addr(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:KVRequest.KVKeyvalueRequest)
+  return target;
+}
+
+size_t KVRequest_KVKeyvalueRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:KVRequest.KVKeyvalueRequest)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional string target_addr = 1;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_target_addr());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData KVRequest_KVKeyvalueRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    KVRequest_KVKeyvalueRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*KVRequest_KVKeyvalueRequest::GetClassData() const { return &_class_data_; }
+
+
+void KVRequest_KVKeyvalueRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<KVRequest_KVKeyvalueRequest*>(&to_msg);
+  auto& from = static_cast<const KVRequest_KVKeyvalueRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:KVRequest.KVKeyvalueRequest)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_target_addr()) {
+    _this->_internal_set_target_addr(from._internal_target_addr());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void KVRequest_KVKeyvalueRequest::CopyFrom(const KVRequest_KVKeyvalueRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:KVRequest.KVKeyvalueRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool KVRequest_KVKeyvalueRequest::IsInitialized() const {
+  return true;
+}
+
+void KVRequest_KVKeyvalueRequest::InternalSwap(KVRequest_KVKeyvalueRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.target_addr_, lhs_arena,
+      &other->_impl_.target_addr_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata KVRequest_KVKeyvalueRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
+      file_level_metadata_kvstore_2eproto[14]);
+}
+
+// ===================================================================
+
+class KVRequest_KVSkeyvalueRequest::_Internal {
+ public:
+  using HasBits = decltype(std::declval<KVRequest_KVSkeyvalueRequest>()._impl_._has_bits_);
+  static void set_has_target_addr(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+KVRequest_KVSkeyvalueRequest::KVRequest_KVSkeyvalueRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:KVRequest.KVSkeyvalueRequest)
+}
+KVRequest_KVSkeyvalueRequest::KVRequest_KVSkeyvalueRequest(const KVRequest_KVSkeyvalueRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  KVRequest_KVSkeyvalueRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.target_addr_){}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.target_addr_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_target_addr()) {
+    _this->_impl_.target_addr_.Set(from._internal_target_addr(), 
+      _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:KVRequest.KVSkeyvalueRequest)
+}
+
+inline void KVRequest_KVSkeyvalueRequest::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.target_addr_){}
+  };
+  _impl_.target_addr_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.target_addr_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+KVRequest_KVSkeyvalueRequest::~KVRequest_KVSkeyvalueRequest() {
+  // @@protoc_insertion_point(destructor:KVRequest.KVSkeyvalueRequest)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void KVRequest_KVSkeyvalueRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.target_addr_.Destroy();
+}
+
+void KVRequest_KVSkeyvalueRequest::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void KVRequest_KVSkeyvalueRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:KVRequest.KVSkeyvalueRequest)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.target_addr_.ClearNonDefaultToEmpty();
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* KVRequest_KVSkeyvalueRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional string target_addr = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_target_addr();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "KVRequest.KVSkeyvalueRequest.target_addr"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* KVRequest_KVSkeyvalueRequest::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:KVRequest.KVSkeyvalueRequest)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // optional string target_addr = 1;
+  if (_internal_has_target_addr()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_target_addr().data(), static_cast<int>(this->_internal_target_addr().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "KVRequest.KVSkeyvalueRequest.target_addr");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_target_addr(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:KVRequest.KVSkeyvalueRequest)
+  return target;
+}
+
+size_t KVRequest_KVSkeyvalueRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:KVRequest.KVSkeyvalueRequest)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional string target_addr = 1;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_target_addr());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData KVRequest_KVSkeyvalueRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    KVRequest_KVSkeyvalueRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*KVRequest_KVSkeyvalueRequest::GetClassData() const { return &_class_data_; }
+
+
+void KVRequest_KVSkeyvalueRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<KVRequest_KVSkeyvalueRequest*>(&to_msg);
+  auto& from = static_cast<const KVRequest_KVSkeyvalueRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:KVRequest.KVSkeyvalueRequest)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_target_addr()) {
+    _this->_internal_set_target_addr(from._internal_target_addr());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void KVRequest_KVSkeyvalueRequest::CopyFrom(const KVRequest_KVSkeyvalueRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:KVRequest.KVSkeyvalueRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool KVRequest_KVSkeyvalueRequest::IsInitialized() const {
+  return true;
+}
+
+void KVRequest_KVSkeyvalueRequest::InternalSwap(KVRequest_KVSkeyvalueRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.target_addr_, lhs_arena,
+      &other->_impl_.target_addr_, rhs_arena
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata KVRequest_KVSkeyvalueRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
+      file_level_metadata_kvstore_2eproto[15]);
+}
+
+// ===================================================================
+
 class KVRequest::_Internal {
  public:
   static const ::KVRequest_KVGetRequest& get_request(const KVRequest* msg);
@@ -4932,6 +5449,8 @@ class KVRequest::_Internal {
   static const ::KVRequest_KVSrecoveryRequest& srecovery_request(const KVRequest* msg);
   static const ::KVRequest_KVFiletransferRequest& filetransfer_request(const KVRequest* msg);
   static const ::KVRequest_KVReplayRequest& replay_request(const KVRequest* msg);
+  static const ::KVRequest_KVKeyvalueRequest& keyvalue_request(const KVRequest* msg);
+  static const ::KVRequest_KVSkeyvalueRequest& skeyvalue_request(const KVRequest* msg);
 };
 
 const ::KVRequest_KVGetRequest&
@@ -4989,6 +5508,14 @@ KVRequest::_Internal::filetransfer_request(const KVRequest* msg) {
 const ::KVRequest_KVReplayRequest&
 KVRequest::_Internal::replay_request(const KVRequest* msg) {
   return *msg->_impl_.request_.replay_request_;
+}
+const ::KVRequest_KVKeyvalueRequest&
+KVRequest::_Internal::keyvalue_request(const KVRequest* msg) {
+  return *msg->_impl_.request_.keyvalue_request_;
+}
+const ::KVRequest_KVSkeyvalueRequest&
+KVRequest::_Internal::skeyvalue_request(const KVRequest* msg) {
+  return *msg->_impl_.request_.skeyvalue_request_;
 }
 void KVRequest::set_allocated_get_request(::KVRequest_KVGetRequest* get_request) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
@@ -5200,6 +5727,36 @@ void KVRequest::set_allocated_replay_request(::KVRequest_KVReplayRequest* replay
   }
   // @@protoc_insertion_point(field_set_allocated:KVRequest.replay_request)
 }
+void KVRequest::set_allocated_keyvalue_request(::KVRequest_KVKeyvalueRequest* keyvalue_request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_request();
+  if (keyvalue_request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(keyvalue_request);
+    if (message_arena != submessage_arena) {
+      keyvalue_request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, keyvalue_request, submessage_arena);
+    }
+    set_has_keyvalue_request();
+    _impl_.request_.keyvalue_request_ = keyvalue_request;
+  }
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.keyvalue_request)
+}
+void KVRequest::set_allocated_skeyvalue_request(::KVRequest_KVSkeyvalueRequest* skeyvalue_request) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  clear_request();
+  if (skeyvalue_request) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+      ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(skeyvalue_request);
+    if (message_arena != submessage_arena) {
+      skeyvalue_request = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, skeyvalue_request, submessage_arena);
+    }
+    set_has_skeyvalue_request();
+    _impl_.request_.skeyvalue_request_ = skeyvalue_request;
+  }
+  // @@protoc_insertion_point(field_set_allocated:KVRequest.skeyvalue_request)
+}
 KVRequest::KVRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
@@ -5285,6 +5842,16 @@ KVRequest::KVRequest(const KVRequest& from)
     case kReplayRequest: {
       _this->_internal_mutable_replay_request()->::KVRequest_KVReplayRequest::MergeFrom(
           from._internal_replay_request());
+      break;
+    }
+    case kKeyvalueRequest: {
+      _this->_internal_mutable_keyvalue_request()->::KVRequest_KVKeyvalueRequest::MergeFrom(
+          from._internal_keyvalue_request());
+      break;
+    }
+    case kSkeyvalueRequest: {
+      _this->_internal_mutable_skeyvalue_request()->::KVRequest_KVSkeyvalueRequest::MergeFrom(
+          from._internal_skeyvalue_request());
       break;
     }
     case REQUEST_NOT_SET: {
@@ -5410,6 +5977,18 @@ void KVRequest::clear_request() {
     case kReplayRequest: {
       if (GetArenaForAllocation() == nullptr) {
         delete _impl_.request_.replay_request_;
+      }
+      break;
+    }
+    case kKeyvalueRequest: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.request_.keyvalue_request_;
+      }
+      break;
+    }
+    case kSkeyvalueRequest: {
+      if (GetArenaForAllocation() == nullptr) {
+        delete _impl_.request_.skeyvalue_request_;
       }
       break;
     }
@@ -5549,6 +6128,22 @@ const char* KVRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx
         } else
           goto handle_unusual;
         continue;
+      // .KVRequest.KVKeyvalueRequest keyvalue_request = 15;
+      case 15:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 122)) {
+          ptr = ctx->ParseMessage(_internal_mutable_keyvalue_request(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .KVRequest.KVSkeyvalueRequest skeyvalue_request = 16;
+      case 16:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 130)) {
+          ptr = ctx->ParseMessage(_internal_mutable_skeyvalue_request(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -5676,6 +6271,20 @@ uint8_t* KVRequest::_InternalSerialize(
         _Internal::replay_request(this).GetCachedSize(), target, stream);
   }
 
+  // .KVRequest.KVKeyvalueRequest keyvalue_request = 15;
+  if (_internal_has_keyvalue_request()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(15, _Internal::keyvalue_request(this),
+        _Internal::keyvalue_request(this).GetCachedSize(), target, stream);
+  }
+
+  // .KVRequest.KVSkeyvalueRequest skeyvalue_request = 16;
+  if (_internal_has_skeyvalue_request()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(16, _Internal::skeyvalue_request(this),
+        _Internal::skeyvalue_request(this).GetCachedSize(), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5791,6 +6400,20 @@ size_t KVRequest::ByteSizeLong() const {
           *_impl_.request_.replay_request_);
       break;
     }
+    // .KVRequest.KVKeyvalueRequest keyvalue_request = 15;
+    case kKeyvalueRequest: {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.request_.keyvalue_request_);
+      break;
+    }
+    // .KVRequest.KVSkeyvalueRequest skeyvalue_request = 16;
+    case kSkeyvalueRequest: {
+      total_size += 2 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.request_.skeyvalue_request_);
+      break;
+    }
     case REQUEST_NOT_SET: {
       break;
     }
@@ -5884,6 +6507,16 @@ void KVRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROT
           from._internal_replay_request());
       break;
     }
+    case kKeyvalueRequest: {
+      _this->_internal_mutable_keyvalue_request()->::KVRequest_KVKeyvalueRequest::MergeFrom(
+          from._internal_keyvalue_request());
+      break;
+    }
+    case kSkeyvalueRequest: {
+      _this->_internal_mutable_skeyvalue_request()->::KVRequest_KVSkeyvalueRequest::MergeFrom(
+          from._internal_skeyvalue_request());
+      break;
+    }
     case REQUEST_NOT_SET: {
       break;
     }
@@ -5912,7 +6545,7 @@ void KVRequest::InternalSwap(KVRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata KVRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[14]);
+      file_level_metadata_kvstore_2eproto[16]);
 }
 
 // ===================================================================
@@ -6168,7 +6801,7 @@ void KVResponse::InternalSwap(KVResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata KVResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[15]);
+      file_level_metadata_kvstore_2eproto[17]);
 }
 
 // ===================================================================
@@ -6447,7 +7080,7 @@ void FetchNodeRequest::InternalSwap(FetchNodeRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata FetchNodeRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[16]);
+      file_level_metadata_kvstore_2eproto[18]);
 }
 
 // ===================================================================
@@ -6760,7 +7393,7 @@ void FetchNodeResponse::InternalSwap(FetchNodeResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata FetchNodeResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[17]);
+      file_level_metadata_kvstore_2eproto[19]);
 }
 
 // ===================================================================
@@ -6800,7 +7433,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*PollStatusRequest::GetClassDat
 ::PROTOBUF_NAMESPACE_ID::Metadata PollStatusRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[18]);
+      file_level_metadata_kvstore_2eproto[20]);
 }
 
 // ===================================================================
@@ -7111,7 +7744,7 @@ void PollStatusResponse_Cluster_Node::InternalSwap(PollStatusResponse_Cluster_No
 ::PROTOBUF_NAMESPACE_ID::Metadata PollStatusResponse_Cluster_Node::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[19]);
+      file_level_metadata_kvstore_2eproto[21]);
 }
 
 // ===================================================================
@@ -7296,7 +7929,7 @@ void PollStatusResponse_Cluster::InternalSwap(PollStatusResponse_Cluster* other)
 ::PROTOBUF_NAMESPACE_ID::Metadata PollStatusResponse_Cluster::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[20]);
+      file_level_metadata_kvstore_2eproto[22]);
 }
 
 // ===================================================================
@@ -7481,7 +8114,7 @@ void PollStatusResponse::InternalSwap(PollStatusResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata PollStatusResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[21]);
+      file_level_metadata_kvstore_2eproto[23]);
 }
 
 // ===================================================================
@@ -7735,7 +8368,7 @@ void SuspendRequest::InternalSwap(SuspendRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SuspendRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[22]);
+      file_level_metadata_kvstore_2eproto[24]);
 }
 
 // ===================================================================
@@ -7989,7 +8622,7 @@ void ReviveRequest::InternalSwap(ReviveRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ReviveRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[23]);
+      file_level_metadata_kvstore_2eproto[25]);
 }
 
 // ===================================================================
@@ -8206,7 +8839,197 @@ void NotifyRecoveryFinishedRequest::InternalSwap(NotifyRecoveryFinishedRequest* 
 ::PROTOBUF_NAMESPACE_ID::Metadata NotifyRecoveryFinishedRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
-      file_level_metadata_kvstore_2eproto[24]);
+      file_level_metadata_kvstore_2eproto[26]);
+}
+
+// ===================================================================
+
+class ShowKeyValueRequest::_Internal {
+ public:
+  using HasBits = decltype(std::declval<ShowKeyValueRequest>()._impl_._has_bits_);
+  static void set_has_cluster_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+};
+
+ShowKeyValueRequest::ShowKeyValueRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:ShowKeyValueRequest)
+}
+ShowKeyValueRequest::ShowKeyValueRequest(const ShowKeyValueRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ShowKeyValueRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.cluster_id_){}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.cluster_id_ = from._impl_.cluster_id_;
+  // @@protoc_insertion_point(copy_constructor:ShowKeyValueRequest)
+}
+
+inline void ShowKeyValueRequest::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.cluster_id_){0}
+  };
+}
+
+ShowKeyValueRequest::~ShowKeyValueRequest() {
+  // @@protoc_insertion_point(destructor:ShowKeyValueRequest)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void ShowKeyValueRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void ShowKeyValueRequest::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void ShowKeyValueRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:ShowKeyValueRequest)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.cluster_id_ = 0;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ShowKeyValueRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // optional int32 cluster_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _Internal::set_has_cluster_id(&has_bits);
+          _impl_.cluster_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  _impl_._has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* ShowKeyValueRequest::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:ShowKeyValueRequest)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // optional int32 cluster_id = 1;
+  if (_internal_has_cluster_id()) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_cluster_id(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:ShowKeyValueRequest)
+  return target;
+}
+
+size_t ShowKeyValueRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:ShowKeyValueRequest)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // optional int32 cluster_id = 1;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_cluster_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ShowKeyValueRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    ShowKeyValueRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ShowKeyValueRequest::GetClassData() const { return &_class_data_; }
+
+
+void ShowKeyValueRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ShowKeyValueRequest*>(&to_msg);
+  auto& from = static_cast<const ShowKeyValueRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:ShowKeyValueRequest)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_cluster_id()) {
+    _this->_internal_set_cluster_id(from._internal_cluster_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ShowKeyValueRequest::CopyFrom(const ShowKeyValueRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:ShowKeyValueRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ShowKeyValueRequest::IsInitialized() const {
+  return true;
+}
+
+void ShowKeyValueRequest::InternalSwap(ShowKeyValueRequest* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.cluster_id_, other->_impl_.cluster_id_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata ShowKeyValueRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_kvstore_2eproto_getter, &descriptor_table_kvstore_2eproto_once,
+      file_level_metadata_kvstore_2eproto[27]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -8267,6 +9090,14 @@ template<> PROTOBUF_NOINLINE ::KVRequest_KVReplayRequest*
 Arena::CreateMaybeMessage< ::KVRequest_KVReplayRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::KVRequest_KVReplayRequest >(arena);
 }
+template<> PROTOBUF_NOINLINE ::KVRequest_KVKeyvalueRequest*
+Arena::CreateMaybeMessage< ::KVRequest_KVKeyvalueRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::KVRequest_KVKeyvalueRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::KVRequest_KVSkeyvalueRequest*
+Arena::CreateMaybeMessage< ::KVRequest_KVSkeyvalueRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::KVRequest_KVSkeyvalueRequest >(arena);
+}
 template<> PROTOBUF_NOINLINE ::KVRequest*
 Arena::CreateMaybeMessage< ::KVRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::KVRequest >(arena);
@@ -8310,6 +9141,10 @@ Arena::CreateMaybeMessage< ::ReviveRequest >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::NotifyRecoveryFinishedRequest*
 Arena::CreateMaybeMessage< ::NotifyRecoveryFinishedRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::NotifyRecoveryFinishedRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::ShowKeyValueRequest*
+Arena::CreateMaybeMessage< ::ShowKeyValueRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::ShowKeyValueRequest >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

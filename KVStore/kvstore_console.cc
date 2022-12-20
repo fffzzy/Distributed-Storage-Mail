@@ -122,4 +122,27 @@ absl::Status KVStoreConsole::Revive(const std::string& node) {
   return absl::UnavailableError("grpc failed, service unavailable.");
 }
 
+absl::StatusOr<std::string> KVStoreConsole::ShowKeyValue(
+    const std::string& node) {
+  int cluster_id = FindClusterId(node);
+  if (cluster_id < 0) {
+    return absl::NotFoundError(node + " not found.");
+  }
+
+  ClientContext context;
+  ShowKeyValueRequest req;
+  KVResponse res;
+  req.set_cluster_id(cluster_id);
+  Status grpc_status = kvstore_master_->ShowKeyValue(&context, req, &res);
+  if (grpc_status.ok()) {
+    if (res.status() == KVStatusCode::SUCCESS) {
+      return res.message();
+    } else {
+      return absl::CancelledError(res.message());
+    }
+  }
+
+  return absl::UnavailableError("grpc failed, service unavailable.");
+}
+
 }  // namespace KVStore

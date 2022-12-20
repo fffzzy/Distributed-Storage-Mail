@@ -48,6 +48,10 @@ class KVStoreMasterImpl final : public KVStoreMaster::Service {
                         const ::ReviveRequest* request,
                         ::KVResponse* response) override;
 
+  ::grpc::Status ShowKeyValue(::grpc::ServerContext* context,
+                              const ::ShowKeyValueRequest* request,
+                              ::KVResponse* response) override;
+
   ::grpc::Status NotifyRecoveryFinished(
       ::grpc::ServerContext* context,
       const ::NotifyRecoveryFinishedRequest* request,

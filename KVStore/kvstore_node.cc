@@ -228,6 +228,14 @@ Status KVStoreNodeImpl::Execute(ServerContext* context,
         KVSecondaryRecovery(&request->srecovery_request(), response);
         break;
       }
+      case KVRequest::RequestCase::kKeyvalueRequest: {
+        KVKeyvalueRequest(&request->keyvalue_request(), response);
+        break;
+      }
+      case KVRequest::RequestCase::kSkeyvalueRequest: {
+        KVSkeyvalueRequest(&request->skeyvalue_request(), response);
+        break;
+      }
       default: {
         VerboseLog("-ERR unsupported mthods when node is alive");
         response->set_status(KVStatusCode::FAILURE);
@@ -1363,6 +1371,97 @@ void KVStoreNodeImpl::KVReplay(const KVRequest_KVReplayRequest* request,
   response->set_status(KVStatusCode::SUCCESS);
 
   VerboseLog("Secondary finishes recovery");
+
+  return;
+}
+
+void KVStoreNodeImpl::KVKeyvalueRequest(
+    const KVRequest_KVKeyvalueRequest* request, KVResponse* response) {
+  std::string target_addr = request->target_addr();
+  assert(addr.compare(target_addr) == 0);
+
+  // send sdelete request to secondary nodes
+  for (int i = 0; i < peer_stub_vec.size(); i++) {
+    ClientContext healthcheck_context;
+    Empty healthcheck_request;
+    KVResponse healthcheck_response;
+    Status healthcheck_status = peer_stub_vec[i].get()->CheckHealth(
+        &healthcheck_context, healthcheck_request, &healthcheck_response);
+    if (healthcheck_status.ok() &&
+        healthcheck_response.status() == KVStatusCode::SUCCESS) {
+      // only if alive, send secondary request
+      KVRequest secondary_request;
+      secondary_request.mutable_skeyvalue_request()->set_target_addr(
+          target_addr);
+      KVResponse secondary_response;
+      ClientContext secondary_context;
+      Status status = peer_stub_vec[i].get()->Execute(
+          &secondary_context, secondary_request, &secondary_response);
+      VerboseLog("Send Skeyvalue to " + peer_addr_vec[i]);
+    } else {
+      VerboseLog("Cannot send Skeyvalue to " + peer_addr_vec[i] +
+                 " as it's not alive");
+    }
+  }
+
+  std::string keyvalue_pairs;
+  for (int tablet_idx = 0; tablet_idx < num_tablet_total; tablet_idx++) {
+    // check if tablet is in memory
+    Tablet* tablet = GetTabletFromMem(tablet_idx);
+    // if tablet is not in mem
+    if (tablet == NULL) {
+      /* load target tablet to mem */
+      // if vec is full, unload the first one
+      if (tablet_mem_vec.size() == num_tablet_mem) {
+        UnloadTablet();
+      }
+      // load target tablet
+      tablet = LoadTablet(tablet_idx);
+    }
+    // target tablet should not be null
+    assert(tablet != NULL);
+
+    for (auto& row_entry : tablet->map) {
+      std::string row = row_entry.first;
+      for (auto& col_entry : row_entry.second) {
+        std::string col = col_entry.first;
+        std::cout << "<" + row + ", " + col + "> " + col_entry.second
+                  << std::endl;
+        keyvalue_pairs = keyvalue_pairs + "<" + row + ", " + col + "> " +
+                         col_entry.second + "\n";
+      }
+    }
+  }
+
+  response->set_status(KVStatusCode::SUCCESS);
+  response->set_message(keyvalue_pairs);
+
+  return;
+}
+
+void KVStoreNodeImpl::KVSkeyvalueRequest(
+    const KVRequest_KVSkeyvalueRequest* request, KVResponse* response) {
+  std::string target_addr = request->target_addr();
+  assert(addr.compare(target_addr) != 0);
+
+  for (int tablet_idx = 0; tablet_idx < num_tablet_total; tablet_idx++) {
+    // check if tablet is in memory
+    Tablet* tablet = GetTabletFromMem(tablet_idx);
+    // if tablet is not in mem
+    if (tablet == NULL) {
+      /* load target tablet to mem */
+      // if vec is full, unload the first one
+      if (tablet_mem_vec.size() == num_tablet_mem) {
+        UnloadTablet();
+      }
+      // load target tablet
+      tablet = LoadTablet(tablet_idx);
+    }
+    // target tablet should not be null
+    assert(tablet != NULL);
+  }
+
+  response->set_status(KVStatusCode::SUCCESS);
 
   return;
 }
