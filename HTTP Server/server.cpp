@@ -5,7 +5,7 @@ static bool is_shut_down = false;
 static vector<int> fds;
 static vector<pthread_t> threads;
 static int listen_fd;
-static int port = 8019;
+static int port;
 static sockaddr_in backend_coordinator_addr;
 static sockaddr_in self_addr;
 static string page_root = "./build";
@@ -51,12 +51,16 @@ void parseInput(int argc, char *argv[])
 {
     int opt;
 
-    while ((opt = getopt(argc, argv, "v")) != -1)
+    while ((opt = getopt(argc, argv, "p:v")) != -1)
     {
         switch (opt)
         {
         case 'v':
             is_verbose = true;
+            break;
+
+        case 'p':
+            port = atoi(optarg);
             break;
 
         default: /* '?' */

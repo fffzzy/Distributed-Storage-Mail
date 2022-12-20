@@ -45,6 +45,10 @@ void APIHandler::parsePost()
     {
         uploadFile();
     }
+    else if (header.substr(0, 5) == "drive")
+    {
+        changeFiles();
+    }
     else if (header.substr(0, 7) == "suspend")
     {
         suspendNode();
