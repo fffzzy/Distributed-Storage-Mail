@@ -29,7 +29,7 @@ KVStoreConsole::KVStoreConsole() {
   absl::StatusOr<std::string> addr = GetMasterAddrFromConfig();
   if (addr.ok()) {
     kvstore_master_ = KVStoreMaster::NewStub(
-        grpc::CreateChannel(addr->data(), grpc::InsecureChannelCredentials()));
+        grpc::CreateChannel(*addr, grpc::InsecureChannelCredentials()));
   } else {
     std::cout << addr.status().ToString().c_str() << std::endl;
     exit(-1);
@@ -45,6 +45,7 @@ int KVStoreConsole::FindClusterId(const std::string& node) {
 
 absl::StatusOr<std::vector<std::vector<NodeInfo>>>
 KVStoreConsole::PollStatus() {
+  std::cout << "poll status begin" << std::endl;
   ClientContext context;
   PollStatusResponse res;
   Status grpc_status =
@@ -63,13 +64,16 @@ KVStoreConsole::PollStatus() {
       status.push_back(cluster);
     }
 
-    if (node_to_cluster_.empty()) {
+    if (node_to_cluster_.size() == 0) {
+      std::cout << "init node_to_cluster" << std::endl;
       for (int i = 0; i < status.size(); i++) {
         for (auto& node : status[i]) {
           node_to_cluster_[node.addr] = i;
         }
       }
     }
+    std::cout << "init node_to_cluster size: " << node_to_cluster_.size()
+              << std::endl;
 
     return status;
   } else {
@@ -78,6 +82,7 @@ KVStoreConsole::PollStatus() {
 }
 
 absl::Status KVStoreConsole::Suspend(const std::string& node) {
+  std::cout << "size: " << node_to_cluster_.size() << std::endl;
   int cluster_id = FindClusterId(node);
   if (cluster_id < 0) {
     return absl::NotFoundError(node + " not found.");

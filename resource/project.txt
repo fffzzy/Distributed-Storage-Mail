@@ -1,0 +1,18 @@
+CIS 5050: Software Systems
+
+Fall 2022
+
+Final project: PennCloud
+
+Teams must form by November 2, 10:00pm EST Project proposal due on November 11, 10:00pm EST Work-in-progress demo on the week November 28 - December 2 Final project demo in the finals week December 15-22 Project code and report due on December 22
+
+1 Overview
+
+The final project is to build a small cloud platform, somewhat similar to Google Apps, but obviously with fewer features. The cloud platform will have a webmail service, analogous to Gmail, as well as a storage service, analogous to Google Drive.
+
+The figure on the right illustrates the high-level structure of the system. Users can connect to a set of frontend servers with their browsers and interact with the services using a simple web interface. Each frontend server runs a small web server that contains the logic for the different services; however, it does not keep any local state. Instead, all state is stored in a set of backend servers that provide a key-value store abstraction. That way, if one of the frontend servers crashes, users can simply be redirected to a different frontend server, and it is easy to launch additional frontend servers if the system becomes overloaded.
+
+The project should be completed in teams of four. There are several different components that need to interact properly (this is a true “software system”!), so it is critical that you and your teammates think carefully about the overall design, and that you define clear interfaces before you begin. In Section 3, we have included some example questions you may want to discuss with your team. It is also very important that you work together closely, and that you regularly integrate and test your components – if you build the components separately and then try to run everything together two hours before your demo, that is a sure recipe for disaster. To make integration easier, we will provide shared Git repositories for each team (after all teams have been formed). Please do not use Github or some other web repository for this project.
+
+In the specification below, we have described a minimal solution and a complete solution for each component. The former represents the minimum functionality you will need to get the project to work; we recommend that you start with this functionality, do some integration testing to make sure that all the components work together, and only then add the remaining features. The latter represents the functionality
+

@@ -40,29 +40,17 @@ class APIHandler {
   KVStore::KVStoreConsole console_;
   string chunk;
 
-  APIHandler(string buf, int f, bool is_verb) : fd(f), is_verbose(is_verb) {
-    size_t division = buf.find("\r\n\r\n");
-    header = buf.substr(0, division + 2);
-    string body = buf.substr(division + 4);
-    if (body.find("{") == string::npos) {
-      data = nullptr;
-      chunk = body;
-    } else if (body.size() < 10000) {
-      data = json::parse(body);
-      chunk = body;
-    } else {
-      data = nullptr;
-      chunk = body;
-    }
-    // if (is_verbose)
-    // {
-    //     cout << buf << endl;
-    //     cout << data << endl;
-    // }
-  };
-  void parsePost();
-  void parseGet();
-  void parseDelete();
+  APIHandler(bool is_verb)
+      : is_verbose(is_verb){
+            // if (is_verbose)
+            // {
+            //     cout << buf << endl;
+            //     cout << data << endl;
+            // }
+        };
+  void parsePost(string buf, int f);
+  void parseGet(string buf, int f);
+  void parseDelete(string buf, int f);
 
   void signup();
   void login();

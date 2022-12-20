@@ -1,6 +1,20 @@
 #include "api_handler.hpp"
 
-void APIHandler::parseGet() {
+void APIHandler::parseGet(string buf, int f) {
+  fd = f;
+  size_t division = buf.find("\r\n\r\n");
+  header = buf.substr(0, division + 2);
+  string body = buf.substr(division + 4);
+  if (body.find("{") == string::npos) {
+    data = nullptr;
+    chunk = body;
+  } else if (body.size() < 10000) {
+    data = json::parse(body);
+    chunk = body;
+  } else {
+    data = nullptr;
+    chunk = body;
+  }
   if (header.substr(0, 4) == "mail") {
     getEmailList();
   } else if (header.substr(0, 14) == "drive/download") {
@@ -15,7 +29,21 @@ void APIHandler::parseGet() {
   }
 }
 
-void APIHandler::parsePost() {
+void APIHandler::parsePost(string buf, int f) {
+  fd = f;
+  size_t division = buf.find("\r\n\r\n");
+  header = buf.substr(0, division + 2);
+  string body = buf.substr(division + 4);
+  if (body.find("{") == string::npos) {
+    data = nullptr;
+    chunk = body;
+  } else if (body.size() < 10000) {
+    data = json::parse(body);
+    chunk = body;
+  } else {
+    data = nullptr;
+    chunk = body;
+  }
   if (header.substr(0, 6) == "signup") {
     signup();
   } else if (header.substr(0, 5) == "login") {
@@ -34,7 +62,21 @@ void APIHandler::parsePost() {
   }
 }
 
-void APIHandler::parseDelete() {
+void APIHandler::parseDelete(string buf, int f) {
+  fd = f;
+  size_t division = buf.find("\r\n\r\n");
+  header = buf.substr(0, division + 2);
+  string body = buf.substr(division + 4);
+  if (body.find("{") == string::npos) {
+    data = nullptr;
+    chunk = body;
+  } else if (body.size() < 10000) {
+    data = json::parse(body);
+    chunk = body;
+  } else {
+    data = nullptr;
+    chunk = body;
+  }
   if (header.substr(0, 6) == "logout") {
     logout();
   } else if (header.substr(0, 11) == "mail/delete") {
@@ -362,6 +404,13 @@ void APIHandler::suspendNode() {
   if (!res.ok()) {
     fprintf(stderr, "failed to suspend %s: %s\n", node_addr.c_str(),
             res.ToString().c_str());
+    string page = "HTTP/1.1 500 failure\r\n\r\n";
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
+  } else {
+    string page = "HTTP/1.1 200 success\r\n\r\n";
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
   }
 }
 
@@ -371,6 +420,13 @@ void APIHandler::reviveNode() {
   if (!res.ok()) {
     fprintf(stderr, "failed to revive %s: %s\n", node_addr.c_str(),
             res.ToString().c_str());
+    string page = "HTTP/1.1 500 failure\r\n\r\n";
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
+  } else {
+    string page = "HTTP/1.1 200 success\r\n\r\n";
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
   }
 }
 
