@@ -19,3 +19,5 @@ Database/node*
 
 # Complied Object files
 *.o
+
+build/

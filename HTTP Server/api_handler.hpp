@@ -32,13 +32,13 @@ enum CookieType { MISSING = 0, WRONG, CORRECT };
 
 class APIHandler {
  public:
-  string header;
-  json data;
-  int fd;
+  // string header;
+  // json data;
+  // int fd;
   bool is_verbose;
   KVStore::KVStoreClient kvstore_;
   KVStore::KVStoreConsole console_;
-  string chunk;
+  // string chunk;
 
   APIHandler(bool is_verb)
       : is_verbose(is_verb){
@@ -48,35 +48,35 @@ class APIHandler {
             //     cout << data << endl;
             // }
         };
-  void parsePost(string buf, int f);
-  void parseGet(string buf, int f);
-  void parseDelete(string buf, int f);
+  void parsePost(string buf, int fd);
+  void parseGet(string buf, int fd);
+  void parseDelete(string buf, int fd);
 
-  void signup();
-  void login();
-  void logout();
-  void changePassword();
+  void signup(int fd, json& data);
+  void login(int fd, json& data);
+  void logout(int fd, string& header);
+  void changePassword(int fd, json& data);
 
-  void sendEmail();
-  void getEmailList();
-  void deleteEmail();
+  void sendEmail(int fd, string& header, json& data);
+  void getEmailList(int fd, string& header);
+  void deleteEmail(int fd, string& header);
 
-  void getFiles();
-  void changeFiles();
+  void getFiles(int fd, string& header);
+  void changeFiles(int fd, string& header, json& data);
 
-  void uploadFile();
-  void downloadFile();
-  void deleteFile();
+  void uploadFile(int fd, string& header, string& chunk);
+  void downloadFile(int fd, string& header);
+  void deleteFile(int fd, string& header);
 
-  void checkBackend();
-  void checkFrontend();
-  void suspendNode();
-  void reviveNode();
-  void showKeyValue();
+  void checkBackend(int fd);
+  void checkFrontend(int fd);
+  void suspendNode(int fd, string& header);
+  void reviveNode(int fd, string& header);
+  void showKeyValue(int fd, string& header);
 
-  string extractValueFromHeader(string key);
-  string checkCookie();
-  void parseEmail(string email, string &user, string &host);
+  string extractValueFromHeader(string key, string& header);
+  string checkCookie(string& header);
+  void parseEmail(string email, string& user, string& host);
 };
 
 string urlEncode(string str);

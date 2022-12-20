@@ -21,6 +21,7 @@
 #include <vector>
 // #include <sys/sendfile.h>
 #include "api_handler.hpp"
+#include "socket_reader.hpp"
 using namespace std;
 
 enum ServerType {

@@ -26,10 +26,21 @@ int main(int argc, char *argv[]) {
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = htons(INADDR_ANY);
   servaddr.sin_port = htons(port);
-  while (bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
-    servaddr.sin_port = htons(--port);
+
+  const int REUSE = 1;
+  int setsockoptret =
+      setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &REUSE, sizeof(REUSE));
+  if (setsockoptret < 0) {
+    std::cerr << "Error setting socket\r\n";
+    exit(2);
   }
-  cout << "Server start a port at: " << port << endl;
+  int bindret = bind(listen_fd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+  if (bindret < 0) {
+    std::cerr << "Error setting socket\r\n";
+    exit(2);
+  }
+
+  std::cout << "Server start a port at: " << port << std::endl;
   listen(listen_fd, 100);
   while (!is_shut_down) {
     struct sockaddr_in clientaddr;
@@ -104,47 +115,32 @@ sockaddr_in parseSockaddr(string s) {
 
 void *messageWorker(void *thread_args) {
   APIHandler *handler = ((args *)thread_args)->handler;
-  // while (true)
-  // {
-  //     vector<char> buffer(BUFF_SIZE);
-
-  //     int read_len = recvfrom(sock, buffer.data(), BUFF_SIZE, 0,
-  //                             (struct sockaddr *)&source_address,
-  //                             &source_address_len);
-  //     string str;
-  //     str.append(buffer.begin(), buffer.begin() + read_len);
-  // }
-  size_t buffer_size = 50000;
-  char buffer[buffer_size] = {};
-
   int fd = ((args *)thread_args)->comm_fd;
-  read(fd, buffer, buffer_size - 1);
-  // if (strlen(buffer) != buffer_size - 1)
-  size_t len = strlen(buffer);
-  if (is_verbose) {
-    if (len > 1000) {
-      cout << "Http request size: " << len << endl;
-    } else {
-      printf("%s\n", buffer);
-    }
-  }
 
-  if (!strncmp(buffer, "GET / ", 6)) {
+  SocketReader sr(fd);
+  string header, data;
+  sr.extractHeader(header);
+  bool contains_data = sr.readData(header, data);
+
+  cout << "Header as follow: \n" << header << "\n\n\n\n\n" << endl;
+  cout << "Data as follow: \n" << data << "\n\n\n\n\n" << endl;
+
+  if (header.substr(0, 6) == "GET / ") {
     homepage(fd);
-  } else if (!strncmp(buffer, "GET /api/", 9)) {
-    string buf(buffer);
+  } else if (header.substr(0, 9) == "GET /api/") {
+    string buf = header + "\r\n" + data;
     buf = buf.substr(9);
     handler->parseGet(buf, fd);
-  } else if (!strncmp(buffer, "POST /api/", 10)) {
-    string buf(buffer);
+  } else if (header.substr(0, 10) == "POST /api/") {
+    string buf = header + "\r\n" + data;
     buf = buf.substr(10);
     handler->parsePost(buf, fd);
-  } else if (!strncmp(buffer, "DELETE /api/", 12)) {
-    string buf(buffer);
+  } else if (header.substr(0, 12) == "DELETE /api/") {
+    string buf = header + "\r\n" + data;
     buf = buf.substr(12);
     handler->parseDelete(buf, fd);
-  } else if (!strncmp(buffer, "GET", 3)) {
-    string buf(buffer);
+  } else if (header.substr(0, 3) == "GET") {
+    string buf = header + "\r\n" + data;
     int head = buf.find(" ");
     string tmp = buf.substr(head + 1);
     int tail = tmp.find(" ");

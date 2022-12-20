@@ -3,6 +3,7 @@
 namespace KVStore {
 namespace {
 using grpc::Channel;
+using grpc::ChannelArguments;
 using grpc::ClientContext;
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -10,7 +11,7 @@ using grpc::ServerContext;
 using grpc::Status;
 
 const char* kServerListPath = "../../Config/serverlist.txt";
-
+const int kSendMsgLimit = 1024 * 1024 * 1024;
 absl::StatusOr<std::string> GetMasterAddrFromConfig() {
   std::ifstream configFile(kServerListPath);
   if (configFile.good()) {
@@ -28,8 +29,10 @@ absl::StatusOr<std::string> GetMasterAddrFromConfig() {
 KVStoreConsole::KVStoreConsole() {
   absl::StatusOr<std::string> addr = GetMasterAddrFromConfig();
   if (addr.ok()) {
-    kvstore_master_ = KVStoreMaster::NewStub(
-        grpc::CreateChannel(*addr, grpc::InsecureChannelCredentials()));
+    ChannelArguments master_arg;
+    master_arg.SetMaxReceiveMessageSize(kSendMsgLimit);
+    kvstore_master_ = KVStoreMaster::NewStub(grpc::CreateCustomChannel(
+        *addr, grpc::InsecureChannelCredentials(), master_arg));
   } else {
     std::cout << addr.status().ToString().c_str() << std::endl;
     exit(-1);
@@ -65,15 +68,12 @@ KVStoreConsole::PollStatus() {
     }
 
     if (node_to_cluster_.size() == 0) {
-      std::cout << "init node_to_cluster" << std::endl;
       for (int i = 0; i < status.size(); i++) {
         for (auto& node : status[i]) {
           node_to_cluster_[node.addr] = i;
         }
       }
     }
-    std::cout << "init node_to_cluster size: " << node_to_cluster_.size()
-              << std::endl;
 
     return status;
   } else {
@@ -82,7 +82,6 @@ KVStoreConsole::PollStatus() {
 }
 
 absl::Status KVStoreConsole::Suspend(const std::string& node) {
-  std::cout << "size: " << node_to_cluster_.size() << std::endl;
   int cluster_id = FindClusterId(node);
   if (cluster_id < 0) {
     return absl::NotFoundError(node + " not found.");

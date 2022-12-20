@@ -1,39 +1,30 @@
 #include "api_handler.hpp"
 
-void APIHandler::parseGet(string buf, int f) {
-  fd = f;
+void APIHandler::parseGet(string buf, int fd) {
   size_t division = buf.find("\r\n\r\n");
-  header = buf.substr(0, division + 2);
+  string header = buf.substr(0, division + 2);
   string body = buf.substr(division + 4);
-  if (body.find("{") == string::npos) {
-    data = nullptr;
-    chunk = body;
-  } else if (body.size() < 10000) {
-    data = json::parse(body);
-    chunk = body;
-  } else {
-    data = nullptr;
-    chunk = body;
-  }
+
   if (header.substr(0, 4) == "mail") {
-    getEmailList();
+    getEmailList(fd, header);
   } else if (header.substr(0, 14) == "drive/download") {
-    downloadFile();
+    downloadFile(fd, header);
   } else if (header.substr(0, 5) == "drive") {
-    getFiles();
+    getFiles(fd, header);
   } else if (header.substr(0, 7) == "backend") {
-    checkBackend();
+    checkBackend(fd);
   } else if (header.substr(0, 8) == "frontend") {
-    checkFrontend();
+    checkFrontend(fd);
   } else {
   }
 }
 
-void APIHandler::parsePost(string buf, int f) {
-  fd = f;
+void APIHandler::parsePost(string buf, int fd) {
   size_t division = buf.find("\r\n\r\n");
-  header = buf.substr(0, division + 2);
+  string header = buf.substr(0, division + 2);
   string body = buf.substr(division + 4);
+  json data;
+  string chunk;
   if (body.find("{") == string::npos) {
     data = nullptr;
     chunk = body;
@@ -45,32 +36,33 @@ void APIHandler::parsePost(string buf, int f) {
     chunk = body;
   }
   if (header.substr(0, 6) == "signup") {
-    signup();
+    signup(fd, data);
   } else if (header.substr(0, 5) == "login") {
-    login();
+    login(fd, data);
   } else if (header.substr(0, 14) == "changepassword") {
-    changePassword();
+    changePassword(fd, data);
   } else if (header.substr(0, 12) == "mail/compose") {
-    sendEmail();
+    sendEmail(fd, header, data);
   } else if (header.substr(0, 12) == "drive/upload") {
-    uploadFile();
+    uploadFile(fd, header, chunk);
   } else if (header.substr(0, 5) == "drive") {
-    changeFiles();
+    changeFiles(fd, header, data);
   } else if (header.substr(0, 7) == "suspend") {
-    suspendNode();
+    suspendNode(fd, header);
   } else if (header.substr(0, 6) == "revive") {
-    reviveNode();
+    reviveNode(fd, header);
   } else if (header.substr(0, 12) == "showkeyvalue") {
-    showKeyValue();
+    showKeyValue(fd, header);
   } else {
   }
 }
 
-void APIHandler::parseDelete(string buf, int f) {
-  fd = f;
+void APIHandler::parseDelete(string buf, int fd) {
   size_t division = buf.find("\r\n\r\n");
-  header = buf.substr(0, division + 2);
+  string header = buf.substr(0, division + 2);
   string body = buf.substr(division + 4);
+  json data;
+  string chunk;
   if (body.find("{") == string::npos) {
     data = nullptr;
     chunk = body;
@@ -82,16 +74,16 @@ void APIHandler::parseDelete(string buf, int f) {
     chunk = body;
   }
   if (header.substr(0, 6) == "logout") {
-    logout();
+    logout(fd, header);
   } else if (header.substr(0, 11) == "mail/delete") {
-    deleteEmail();
+    deleteEmail(fd, header);
   } else if (header.substr(0, 12) == "drive/delete") {
-    deleteFile();
+    deleteFile(fd, header);
   } else {
   }
 }
 
-void APIHandler::signup() {
+void APIHandler::signup(int fd, json& data) {
   if (!data.contains("username")) {
     cout << "No username found in the request body" << endl;
   } else {
@@ -113,7 +105,7 @@ void APIHandler::signup() {
   }
 }
 
-void APIHandler::changePassword() {
+void APIHandler::changePassword(int fd, json& data) {
   if (!data.contains("username")) {
     cout << "No username found in the request body" << endl;
   } else {
@@ -135,7 +127,7 @@ void APIHandler::changePassword() {
   }
 }
 
-void APIHandler::login() {
+void APIHandler::login(int fd, json& data) {
   if (!data.contains("username")) {
     cout << "No username found in the request body" << endl;
   } else {
@@ -169,8 +161,8 @@ void APIHandler::login() {
   }
 }
 
-void APIHandler::logout() {
-  string username = checkCookie();
+void APIHandler::logout(int fd, string& header) {
+  string username = checkCookie(header);
   if (!username.empty()) {
     auto res = kvstore_.Delete(username, "cookie");
     if (res.ok()) {
@@ -184,8 +176,8 @@ void APIHandler::logout() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::sendEmail() {
-  string username = checkCookie();
+void APIHandler::sendEmail(int fd, string& header, json& data) {
+  string username = checkCookie(header);
 
   string page;
   if (username.empty()) {
@@ -204,7 +196,7 @@ void APIHandler::sendEmail() {
 
     cout << data << endl;
 
-    for (const auto &recipient : data["recipients"]) {
+    for (const auto& recipient : data["recipients"]) {
       parseEmail(recipient, name, host);
 
       if (host == "localhost") {
@@ -241,8 +233,8 @@ void APIHandler::sendEmail() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::getEmailList() {
-  string username = checkCookie();
+void APIHandler::getEmailList(int fd, string& header) {
+  string username = checkCookie(header);
 
   string page;
   if (username.empty()) {
@@ -259,13 +251,13 @@ void APIHandler::getEmailList() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::deleteEmail() {
-  string username = checkCookie();
+void APIHandler::deleteEmail(int fd, string& header) {
+  string username = checkCookie(header);
   string page;
   if (username.empty()) {
     page = "HTTP/1.1 401 not logged in\r\n\r\n";
   } else {
-    int mailId = stoi(extractValueFromHeader("mailId"));
+    int mailId = stoi(extractValueFromHeader("mailId", header));
 
     bool matched = false;
 
@@ -302,8 +294,8 @@ void APIHandler::deleteEmail() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::getFiles() {
-  string username = checkCookie();
+void APIHandler::getFiles(int fd, string& header) {
+  string username = checkCookie(header);
   string page;
   if (username.empty()) {
     page = "HTTP/1.1 401 not logged in\r\n\r\n";
@@ -330,8 +322,8 @@ void APIHandler::getFiles() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::changeFiles() {
-  string username = checkCookie();
+void APIHandler::changeFiles(int fd, string& header, json& data) {
+  string username = checkCookie(header);
   string page;
   if (username.empty()) {
     page = "HTTP/1.1 401 not logged in\r\n\r\n";
@@ -346,13 +338,13 @@ void APIHandler::changeFiles() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::uploadFile() {
-  string username = checkCookie();
+void APIHandler::uploadFile(int fd, string& header, string& chunk) {
+  string username = checkCookie(header);
   string page;
   if (username.empty()) {
     page = "HTTP/1.1 401 not logged in\r\n\r\n";
   } else {
-    string fileId = extractValueFromHeader("fileId");
+    string fileId = extractValueFromHeader("fileId", header);
     page = "HTTP/1.1 200 success\r\n\r\n";
 
     auto res = kvstore_.Put(username, fileId, chunk);
@@ -364,14 +356,14 @@ void APIHandler::uploadFile() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::downloadFile() {
-  string username = checkCookie();
+void APIHandler::downloadFile(int fd, string& header) {
+  string username = checkCookie(header);
   string page;
   if (username.empty()) {
     page = "HTTP/1.1 401 not logged in\r\n\r\n";
   } else {
     page = "HTTP/1.1 200 success\r\n\r\n";
-    string fileId = extractValueFromHeader("fileId");
+    string fileId = extractValueFromHeader("fileId", header);
 
     auto res = kvstore_.Get(username, fileId);
     string file = res.ok() ? *res : "";
@@ -383,14 +375,14 @@ void APIHandler::downloadFile() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::deleteFile() {
-  string username = checkCookie();
+void APIHandler::deleteFile(int fd, string& header) {
+  string username = checkCookie(header);
   string page;
   if (username.empty()) {
     page = "HTTP/1.1 401 not logged in\r\n\r\n";
   } else {
     page = "HTTP/1.1 200 success\r\n\r\n";
-    string fileId = extractValueFromHeader("fileId");
+    string fileId = extractValueFromHeader("fileId", header);
 
     auto res = kvstore_.Delete(username, fileId);
     if (!res.ok()) {
@@ -398,10 +390,11 @@ void APIHandler::deleteFile() {
               res.ToString().c_str());
     }
   }
+  cout << "page: " << page << endl;
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::checkBackend() {
+void APIHandler::checkBackend(int fd) {
   auto res = console_.PollStatus();
   if (!res.ok()) {
     fprintf(stderr, "failed to poll status from console: %s\n",
@@ -409,9 +402,9 @@ void APIHandler::checkBackend() {
   }
   // vector<vector<NodeInfo>> list = kvstore.PollStatus();
   json list_json;
-  for (auto &cluster : *res) {
+  for (auto& cluster : *res) {
     json cluster_json;
-    for (auto &node : cluster) {
+    for (auto& node : cluster) {
       json node_json = {
           {"is_primary", node.is_primary},
           {"addr", node.addr},
@@ -427,10 +420,10 @@ void APIHandler::checkBackend() {
   write(fd, page.c_str(), page.length());
 }
 
-void APIHandler::checkFrontend() {}
+void APIHandler::checkFrontend(int fd) {}
 
-void APIHandler::suspendNode() {
-  string node_addr = extractValueFromHeader("node_addr");
+void APIHandler::suspendNode(int fd, string& header) {
+  string node_addr = extractValueFromHeader("node_addr", header);
 
   auto res = console_.Suspend(node_addr);
   if (!res.ok()) {
@@ -446,8 +439,8 @@ void APIHandler::suspendNode() {
   }
 }
 
-void APIHandler::reviveNode() {
-  string node_addr = extractValueFromHeader("node_addr");
+void APIHandler::reviveNode(int fd, string& header) {
+  string node_addr = extractValueFromHeader("node_addr", header);
   auto res = console_.Revive(node_addr);
   if (!res.ok()) {
     fprintf(stderr, "failed to revive %s: %s\n", node_addr.c_str(),
@@ -462,8 +455,8 @@ void APIHandler::reviveNode() {
   }
 }
 
-void APIHandler::showKeyValue() {
-  string node_addr = extractValueFromHeader("node_addr");
+void APIHandler::showKeyValue(int fd, string& header) {
+  string node_addr = extractValueFromHeader("node_addr", header);
   auto res = console_.ShowKeyValue(node_addr);
   if (!res.ok()) {
     fprintf(stderr, "failed to revive %s: %s\n", node_addr.c_str(),
@@ -479,7 +472,7 @@ void APIHandler::showKeyValue() {
   }
 }
 
-string APIHandler::checkCookie() {
+string APIHandler::checkCookie(string& header) {
   string cookie_matcher = "Cookie: ";
   size_t cookie_start = header.find(cookie_matcher);
   if (cookie_start != string::npos) {
@@ -517,7 +510,7 @@ string urlEncode(string str) {
   string new_str = "";
   char c;
   int ic;
-  const char *chars = str.c_str();
+  const char* chars = str.c_str();
   char bufHex[10];
   int len = strlen(chars);
 
@@ -541,7 +534,7 @@ string urlEncode(string str) {
   return new_str;
 }
 
-string APIHandler::extractValueFromHeader(string key) {
+string APIHandler::extractValueFromHeader(string key, string& header) {
   string matcher = key + "=";
   size_t index = header.find(matcher);
   size_t end = header.find(" ", index);
@@ -557,7 +550,7 @@ string APIHandler::extractValueFromHeader(string key) {
   }
 }
 
-void APIHandler::parseEmail(string email, string &user, string &host) {
+void APIHandler::parseEmail(string email, string& user, string& host) {
   auto separator = email.find("@");
   user = email.substr(0, separator);
   host = email.substr(separator + 1);

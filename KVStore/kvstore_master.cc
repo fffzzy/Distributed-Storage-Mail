@@ -216,8 +216,6 @@ void KVStoreMasterImpl::ReadConfig() {
         clusters_[cluster_id].id = cluster_id;
       }
       clusters_[cluster_id].status[addr_str] = CRASHED;
-      clusters_[cluster_id].stubs[addr_str] = KVStoreNode::NewStub(
-          grpc::CreateChannel(addr_str, grpc::InsecureChannelCredentials()));
 
       ChannelArguments args;
       // 1GB incoming message size.

@@ -71,6 +71,10 @@ target_link_libraries(kvstore_console_helper
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
+add_library(socket_reader
+  "socket_reader.cpp"
+  "socket_reader.hpp")
+
 # api_handler_helper
 set(NLOHMANN_DIR ../third_party)
 include_directories(${NLOHMANN_DIR})
@@ -83,7 +87,10 @@ target_link_libraries(api_handler_helper
 
 # Target server
 add_executable(server server.cpp)
-target_link_libraries(server api_handler_helper kvstore_console_helper)
+target_link_libraries(server 
+  api_handler_helper 
+  kvstore_console_helper
+  socket_reader)
 
 
 # Mail Service
