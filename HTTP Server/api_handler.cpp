@@ -48,6 +48,8 @@ void APIHandler::parsePost(string buf, int f) {
     signup();
   } else if (header.substr(0, 5) == "login") {
     login();
+  } else if (header.substr(0, 14) == "changepassword") {
+    changePassword();
   } else if (header.substr(0, 12) == "mail/compose") {
     sendEmail();
   } else if (header.substr(0, 12) == "drive/upload") {
@@ -58,6 +60,8 @@ void APIHandler::parsePost(string buf, int f) {
     suspendNode();
   } else if (header.substr(0, 6) == "revive") {
     reviveNode();
+  } else if (header.substr(0, 12) == "showkeyvalue") {
+    showKeyValue();
   } else {
   }
 }
@@ -99,6 +103,28 @@ void APIHandler::signup() {
     }
 
     auto res = kvstore_.Put(username, "password", password);
+    if (!res.ok()) {
+      fprintf(stderr, "failed to put username & password into kvstore: %s\n",
+              res.ToString().c_str());
+    }
+    string page = "HTTP/1.1 201 successfully created\r\n\r\n";
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
+  }
+}
+
+void APIHandler::changePassword() {
+  if (!data.contains("username")) {
+    cout << "No username found in the request body" << endl;
+  } else {
+    string username = data["username"];
+    string new_password = data["new_password"];
+    if (is_verbose) {
+      cout << "username: " << username << endl;
+      cout << "password: " << new_password << endl;
+    }
+
+    auto res = kvstore_.Put(username, "password", new_password);
     if (!res.ok()) {
       fprintf(stderr, "failed to put username & password into kvstore: %s\n",
               res.ToString().c_str());
@@ -245,6 +271,11 @@ void APIHandler::deleteEmail() {
 
     auto res = kvstore_.Get(username, "mails");
     string mail_string = res.ok() ? *res : "";
+    if (res.ok()) {
+      std::cout << "mail_string: " << *res << std::endl;
+    } else {
+      std::cout << res.status().ToString() << std::endl;
+    }
     if (!mail_string.empty()) {
       json mailList = json::parse(mail_string);
       // find email with that mailId in the email list
@@ -252,6 +283,7 @@ void APIHandler::deleteEmail() {
         if ((*it)["mailId"] == mailId) {
           mailList.erase(it);
           matched = true;
+          break;
         }
       }
 
@@ -425,6 +457,23 @@ void APIHandler::reviveNode() {
     write(fd, page.c_str(), page.length());
   } else {
     string page = "HTTP/1.1 200 success\r\n\r\n";
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
+  }
+}
+
+void APIHandler::showKeyValue() {
+  string node_addr = extractValueFromHeader("node_addr");
+  auto res = console_.ShowKeyValue(node_addr);
+  if (!res.ok()) {
+    fprintf(stderr, "failed to revive %s: %s\n", node_addr.c_str(),
+            res.status().ToString().c_str());
+    string page = "HTTP/1.1 500 failure\r\n\r\n";
+    if (is_verbose) cout << page << endl;
+    write(fd, page.c_str(), page.length());
+  } else {
+    string page = "HTTP/1.1 200 success\r\n\r\n";
+    page += *res;
     if (is_verbose) cout << page << endl;
     write(fd, page.c_str(), page.length());
   }

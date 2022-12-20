@@ -55,6 +55,7 @@ class APIHandler {
   void signup();
   void login();
   void logout();
+  void changePassword();
 
   void sendEmail();
   void getEmailList();
@@ -71,6 +72,7 @@ class APIHandler {
   void checkFrontend();
   void suspendNode();
   void reviveNode();
+  void showKeyValue();
 
   string extractValueFromHeader(string key);
   string checkCookie();
